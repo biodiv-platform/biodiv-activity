@@ -4,7 +4,7 @@ import java.util.List;
 
 public class MailData {
 
-	private observationMailData observationData;
+	private ObservationMailData observationData;
 	private DocumentMailData documentMailData;
 	private List<UserGroupMailData> userGroupData;
 	private SpeciesMailData speciesData;
@@ -22,7 +22,7 @@ public class MailData {
 	 * @param userGroupData
 	 * @param speciesData
 	 */
-	public MailData(observationMailData observationData, DocumentMailData documentMailData,
+	public MailData(ObservationMailData observationData, DocumentMailData documentMailData,
 			List<UserGroupMailData> userGroupData, SpeciesMailData speciesData) {
 		super();
 		this.observationData = observationData;
@@ -31,11 +31,11 @@ public class MailData {
 		this.speciesData = speciesData;
 	}
 
-	public observationMailData getObservationData() {
+	public ObservationMailData getObservationData() {
 		return observationData;
 	}
 
-	public void setObservationData(observationMailData observationData) {
+	public void setObservationData(ObservationMailData observationData) {
 		this.observationData = observationData;
 	}
 

@@ -3,10 +3,13 @@
  */
 package com.strandls.activity.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * @author Abhishek Rudra
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CommentLoggingData {
 
 	private String body;
@@ -15,6 +18,7 @@ public class CommentLoggingData {
 	private Long subRootHolderId;
 	private String subRootHolderType;
 	private MailData mailData;
+	private Long languageId;
 
 	/**
 	 * 
@@ -30,9 +34,10 @@ public class CommentLoggingData {
 	 * @param subRootHolderId
 	 * @param subRootHolderType
 	 * @param mailData
+	 * @param languageId
 	 */
 	public CommentLoggingData(String body, Long rootHolderId, String rootHolderType, Long subRootHolderId,
-			String subRootHolderType, MailData mailData) {
+			String subRootHolderType, MailData mailData, Long languageId) {
 		super();
 		this.body = body;
 		this.rootHolderId = rootHolderId;
@@ -40,6 +45,7 @@ public class CommentLoggingData {
 		this.subRootHolderId = subRootHolderId;
 		this.subRootHolderType = subRootHolderType;
 		this.mailData = mailData;
+		this.languageId = languageId;
 	}
 
 	public String getBody() {
@@ -88,6 +94,14 @@ public class CommentLoggingData {
 
 	public void setMailData(MailData mailData) {
 		this.mailData = mailData;
+	}
+
+	public Long getLanguageId() {
+		return languageId;
+	}
+
+	public void setLanguageId(Long languageId) {
+		this.languageId = languageId;
 	}
 
 }

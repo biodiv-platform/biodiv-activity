@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -8,7 +8,7 @@
 	<version>1.0.0</version>
 	<packaging>war</packaging>
 
-	<name>biodiv-activity-api</name>
+	<name>biodiv-activity</name>
 	<url>https://github.com/strandls/biodiv-activity</url>
 
 	<properties>
@@ -28,6 +28,11 @@
 		<srcDir>src/main/webapp</srcDir>
 		<base-path>/activity-api/api</base-path>
 		<location>com.strandls.activity</location>
+
+		<!-- Sonar Cloud -->
+		<sonar.projectKey>strandls_biodiv-activity</sonar.projectKey>
+		<sonar.organization>strandls</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 
 	<distributionManagement>
@@ -82,7 +87,7 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.13</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api -->
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
@@ -145,23 +150,23 @@
 			<artifactId>jersey-media-json-jackson</artifactId>
 			<version>2.31</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
 		<dependency>
-		    <groupId>com.fasterxml.jackson.core</groupId>
-		    <artifactId>jackson-core</artifactId>
-		    <version>2.11.0</version>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>2.11.0</version>
 		</dependency>
-				
-		
+
+
 		<!-- https://mvnrepository.com/artifact/io.swagger/swagger-annotations -->
 		<dependency>
-		    <groupId>io.swagger</groupId>
-		    <artifactId>swagger-annotations</artifactId>
-		    <version>1.6.1</version>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>1.6.1</version>
 		</dependency>
-		
-		
+
+
 		<!-- https://mvnrepository.com/artifact/io.swagger/swagger-jersey2-jaxrs -->
 		<dependency>
 			<groupId>io.swagger</groupId>
@@ -188,23 +193,23 @@
 			<artifactId>user-client</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>com.strandls.biodiv</groupId>
-		    <artifactId>authentication-utility</artifactId>
-		    <version>1.0.0</version>
+			<groupId>com.strandls.biodiv</groupId>
+			<artifactId>authentication-utility</artifactId>
+			<version>1.0.0</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/com.rabbitmq/amqp-client -->
 		<dependency>
-		    <groupId>com.rabbitmq</groupId>
-		    <artifactId>amqp-client</artifactId>
-		    <version>5.8.0</version>
+			<groupId>com.rabbitmq</groupId>
+			<artifactId>amqp-client</artifactId>
+			<version>5.8.0</version>
 		</dependency>
 		<dependency>
-		    <groupId>com.strandls.biodiv</groupId>
-		    <artifactId>mail-utility</artifactId>
-		    <version>1.0.0</version>
+			<groupId>com.strandls.biodiv</groupId>
+			<artifactId>mail-utility</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 
 	</dependencies>

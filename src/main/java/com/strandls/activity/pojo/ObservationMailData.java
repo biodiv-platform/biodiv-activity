@@ -9,7 +9,7 @@ import java.util.Date;
  * @author Abhishek Rudra
  *
  */
-public class observationMailData {
+public class ObservationMailData {
 
 	private Long observationId;
 	private String location;
@@ -22,7 +22,7 @@ public class observationMailData {
 	/**
 	 * 
 	 */
-	public observationMailData() {
+	public ObservationMailData() {
 		super();
 	}
 
@@ -35,7 +35,7 @@ public class observationMailData {
 	 * @param commonName
 	 * @param authorId
 	 */
-	public observationMailData(Long observationId, String location, Date observedOn, String iconURl,
+	public ObservationMailData(Long observationId, String location, Date observedOn, String iconURl,
 			String scientificName, String commonName, Long authorId) {
 		super();
 		this.observationId = observationId;

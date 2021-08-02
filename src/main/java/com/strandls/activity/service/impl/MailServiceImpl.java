@@ -21,7 +21,7 @@ import com.strandls.activity.pojo.RecoVoteActivity;
 import com.strandls.activity.pojo.TaggedUser;
 import com.strandls.activity.pojo.UserGroupActivity;
 import com.strandls.activity.pojo.UserGroupMailData;
-import com.strandls.activity.pojo.observationMailData;
+import com.strandls.activity.pojo.ObservationMailData;
 import com.strandls.activity.service.MailService;
 import com.strandls.activity.util.ActivityUtil;
 import com.strandls.mail_utility.model.EnumModel.COMMENT_POST;
@@ -59,8 +59,8 @@ public class MailServiceImpl implements MailService {
 
 	public MailServiceImpl() {
 		Properties props = PropertyFileUtil.fetchProperty("config.properties");
-		siteName = props.getProperty("portalName");
-		serverUrl = props.getProperty("portalAddress");
+		siteName = props.getProperty("siteName");
+		serverUrl = props.getProperty("serverUrl");
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class MailServiceImpl implements MailService {
 			MailActivityData activity, List<TaggedUser> taggedUsers) {
 		try {
 			List<Recipients> recipientsList = userService.getRecipients(objectType, objectId);
-			observationMailData observation = activity.getMailData().getObservationData();
+			ObservationMailData observation = activity.getMailData().getObservationData();
 			List<UserGroupMailData> groups = activity.getMailData().getUserGroupData();
 			User who = userService.getUser(String.valueOf(userId));
 			RecoVoteActivity reco = null;
@@ -91,13 +91,7 @@ public class MailServiceImpl implements MailService {
 
 			System.out.println("INSIDE MAIL SERVICE IMPL");
 
-			if (groups == null) {
-				System.out.println();
-				System.out.println("NULL IN GROUPS");
-				System.out.println();
-			}
-
-			if (groups != null && groups.size() > 0) {
+			if (groups != null && !groups.isEmpty()) {
 				for (UserGroupMailData mailData : groups) {
 					System.out.println("***** GroupFromAPI *****" + mailData.toString());
 				}
@@ -111,7 +105,7 @@ public class MailServiceImpl implements MailService {
 				linkTaggedUsers = ActivityUtil.linkTaggedUsersProfile(taggedUsers, comment.getBody(), true);
 			}
 			List<Map<String, Object>> mailDataList = new ArrayList<>();
-			if (type == MAIL_TYPE.TAGGED_MAIL && taggedUsers != null && taggedUsers.size() > 0) {
+			if (type == MAIL_TYPE.TAGGED_MAIL && taggedUsers != null && !taggedUsers.isEmpty()) {
 				for (TaggedUser user : taggedUsers) {
 					User follower = userService.getUser(String.valueOf(user.getId()));
 					Recipients recipient = new Recipients();
@@ -140,14 +134,13 @@ public class MailServiceImpl implements MailService {
 			producer.produceMail(RabbitMqConnection.EXCHANGE, RabbitMqConnection.ROUTING_KEY, null,
 					JsonUtil.mapToJSON(mailData));
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			logger.error(ex.getMessage());
 		}
 	}
 
 	private Map<String, Object> prepareMailData(MAIL_TYPE type, Recipients recipient, User follower, User who,
 			RecoVoteActivity reco, UserGroupActivity userGroup, MailActivityData activity, CommentLoggingData comment,
-			String name, observationMailData observation, List<UserGroupMailData> groups, String modifiedComment) {
+			String name, ObservationMailData observation, List<UserGroupMailData> groups, String modifiedComment) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put(FIELDS.TYPE.getAction(), type.getAction());
 		data.put(FIELDS.TO.getAction(), new String[] { recipient.getEmail() });
@@ -161,8 +154,8 @@ public class MailServiceImpl implements MailService {
 			model.put(COMMENT_POST.COMMENT_BODY.getAction(), modifiedComment);
 		}
 
-		if (type == MAIL_TYPE.FACT_ADDED || type == MAIL_TYPE.FACT_UPDATED || type == MAIL_TYPE.TAG_UPDATED || type == MAIL_TYPE.CUSTOM_FIELD_UPDATED
-				|| type == MAIL_TYPE.OBSERVATION_FLAGGED) {
+		if (type == MAIL_TYPE.FACT_ADDED || type == MAIL_TYPE.FACT_UPDATED || type == MAIL_TYPE.TAG_UPDATED
+				|| type == MAIL_TYPE.CUSTOM_FIELD_UPDATED || type == MAIL_TYPE.OBSERVATION_FLAGGED) {
 			model.put(COMMENT_POST.COMMENT_BODY.getAction(),
 					ActivityUtil.replaceFlaggedMessage(activity.getActivityDescription()));
 		} else if (type == MAIL_TYPE.FEATURED_POST || type == MAIL_TYPE.FEATURED_POST_IBP) {

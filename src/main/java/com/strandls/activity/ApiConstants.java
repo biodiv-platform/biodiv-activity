@@ -9,6 +9,13 @@ package com.strandls.activity;
  */
 public class ApiConstants {
 
+	/**
+	 * 
+	 */
+	private ApiConstants() {
+		super();
+	}
+
 	// -----------------VERSIONING-----------
 	public static final String V1 = "/v1";
 

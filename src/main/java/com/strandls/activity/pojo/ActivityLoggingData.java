@@ -15,7 +15,6 @@ public class ActivityLoggingData extends CoreActivityLoggingData {
 	 * 
 	 */
 	public ActivityLoggingData() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
