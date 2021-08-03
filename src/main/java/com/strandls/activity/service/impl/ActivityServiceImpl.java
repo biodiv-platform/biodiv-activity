@@ -186,9 +186,9 @@ public class ActivityServiceImpl implements ActivityService {
 		else if (objectType.equalsIgnoreCase("usergroup"))
 			objectType = ActivityEnums.USERGROUP.getValue();
 		else if (objectType.equalsIgnoreCase("species"))
-			objectType = ActivityEnums.species.getValue();
+			objectType = ActivityEnums.SPECIES.getValue();
 		else if (objectType.equalsIgnoreCase("datatable"))
-			objectType = ActivityEnums.datatable.getValue();
+			objectType = ActivityEnums.DATATABLE.getValue();
 
 		List<ShowActivityIbp> ibpActivity = new ArrayList<ShowActivityIbp>();
 		Integer commentCount = 0;
@@ -289,13 +289,13 @@ public class ActivityServiceImpl implements ActivityService {
 
 		} else if (observationActivityList.contains(loggingData.getActivityType())) {
 			activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-					ActivityEnums.observation.getValue(), null, loggingData.getActivityType(), userId, new Date(),
-					new Date(), loggingData.getRootObjectId(), ActivityEnums.observation.getValue(),
-					loggingData.getRootObjectId(), ActivityEnums.observation.getValue(), true, null);
+					ActivityEnums.OBSERVATION.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+					new Date(), loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(),
+					loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(), true, null);
 		} else if (dataTableNullActivityList.contains(loggingData.getActivityType())) {
 		    activity = new Activity(null, 0L, null, null, null, null, loggingData.getActivityType(), userId, new Date(),
-					new Date(), loggingData.getRootObjectId(), ActivityEnums.datatable.getValue(),
-					loggingData.getRootObjectId(), ActivityEnums.datatable.getValue(), true, null);
+					new Date(), loggingData.getRootObjectId(), ActivityEnums.DATATABLE.getValue(),
+					loggingData.getRootObjectId(), ActivityEnums.DATATABLE.getValue(), true, null);
 		} 
 		else if (commentActivityList.contains(loggingData.getActivityType())) {
 			activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
@@ -566,7 +566,7 @@ public class ActivityServiceImpl implements ActivityService {
 						loggingData.getSubRootObjectId(), ActivityEnums.SPECIES.getValue(), true, null);
 			} else if (speciesCommonNameActivityList.contains(loggingData.getActivityType())) {
 				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.COMMONNAMES.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+						ActivityEnums.COMMONNAME.getValue(), null, loggingData.getActivityType(), userId, new Date(),
 						new Date(), loggingData.getRootObjectId(), ActivityEnums.SPECIES.getValue(),
 						loggingData.getSubRootObjectId(), ActivityEnums.SPECIES.getValue(), true, null);
 			} else if (speciesFieldActivityList.contains(loggingData.getActivityType())) {
@@ -639,13 +639,13 @@ public class ActivityServiceImpl implements ActivityService {
 			if (speciesNullActivityList.contains(loggingData.getActivityType())) {
 				activity = new Activity(null, 0L, loggingData.getActivityDescription(), null, null, null,
 						loggingData.getActivityType(), userId, new Date(), new Date(), loggingData.getRootObjectId(),
-						ActivityEnums.datatable.getValue(), loggingData.getSubRootObjectId(),
-						ActivityEnums.datatable.getValue(), true, null);
+						ActivityEnums.DATATABLE.getValue(), loggingData.getSubRootObjectId(),
+						ActivityEnums.DATATABLE.getValue(), true, null);
 			}else if (dataTableCommentActivityList.contains(loggingData.getActivityType())) {
 				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.datatable.getValue(), null, loggingData.getActivityType(), userId, new Date(),
-						new Date(), loggingData.getRootObjectId(), ActivityEnums.datatable.getValue(),
-						loggingData.getSubRootObjectId(), ActivityEnums.comments.getValue(), true, null);
+						ActivityEnums.DATATABLE.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+						new Date(), loggingData.getRootObjectId(), ActivityEnums.DATATABLE.getValue(),
+						loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true, null);
 			}
 			
 			if (activity != null)
