@@ -160,12 +160,12 @@ public class ActivityServiceImpl implements ActivityService {
 
 	List<String> speciesUserGroupActivityList = new ArrayList<String>(
 			Arrays.asList("Featured", "UnFeatured", "Posted resource", "Removed resoruce"));
-	
+
 //	DOCUMENT ACTIVITY LIST 
 
 	List<String> dataTableNullActivityList = new ArrayList<String>(
 			Arrays.asList("Datatable created", "Datatable updated", "Datatable Deleted"));
-	
+
 	List<String> dataTableCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment"));
 
 	@Override
@@ -293,11 +293,10 @@ public class ActivityServiceImpl implements ActivityService {
 					new Date(), loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(),
 					loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(), true, null);
 		} else if (dataTableNullActivityList.contains(loggingData.getActivityType())) {
-		    activity = new Activity(null, 0L, null, null, null, null, loggingData.getActivityType(), userId, new Date(),
+			activity = new Activity(null, 0L, null, null, null, null, loggingData.getActivityType(), userId, new Date(),
 					new Date(), loggingData.getRootObjectId(), ActivityEnums.DATATABLE.getValue(),
 					loggingData.getRootObjectId(), ActivityEnums.DATATABLE.getValue(), true, null);
-		} 
-		else if (commentActivityList.contains(loggingData.getActivityType())) {
+		} else if (commentActivityList.contains(loggingData.getActivityType())) {
 			activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
 					ActivityEnums.COMMENTS.getValue(), null, loggingData.getActivityType(), userId, new Date(),
 					new Date(), loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(),
@@ -355,7 +354,8 @@ public class ActivityServiceImpl implements ActivityService {
 			commentData.setSubRootHolderId(commentData.getRootHolderId());
 			commentData.setSubRootHolderType(commentData.getRootHolderType());
 		}
-		commentData.setSubRootHolderType(ActivityEnums.valueOf(commentData.getSubRootHolderType().toUpperCase()).getValue());
+		commentData.setSubRootHolderType(
+				ActivityEnums.valueOf(commentData.getSubRootHolderType().toUpperCase()).getValue());
 		commentData.setRootHolderType(ActivityEnums.valueOf(commentData.getRootHolderType().toUpperCase()).getValue());
 		Comments comment = null;
 		if (commentData.getRootHolderId().equals(commentData.getSubRootHolderId())) {
@@ -386,7 +386,7 @@ public class ActivityServiceImpl implements ActivityService {
 			}
 			activityResult = logActivities(request, userId, activity);
 
-		}else if(commentType.equals("datatable")) {
+		} else if (commentType.equals("datatable")) {
 
 			DatatableActivityLogging loggingData = null;
 			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
@@ -399,8 +399,7 @@ public class ActivityServiceImpl implements ActivityService {
 			}
 
 			activityResult = logDatatableActivities(request, userId, loggingData);
-		}
-		else if (commentType.equals("document")) {
+		} else if (commentType.equals("document")) {
 
 			DocumentActivityLogging loggingData = null;
 			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
@@ -636,21 +635,21 @@ public class ActivityServiceImpl implements ActivityService {
 		try {
 
 			Activity activity = null;
-			if (speciesNullActivityList.contains(loggingData.getActivityType())) {
+			if (dataTableNullActivityList.contains(loggingData.getActivityType())) {
 				activity = new Activity(null, 0L, loggingData.getActivityDescription(), null, null, null,
 						loggingData.getActivityType(), userId, new Date(), new Date(), loggingData.getRootObjectId(),
 						ActivityEnums.DATATABLE.getValue(), loggingData.getSubRootObjectId(),
 						ActivityEnums.DATATABLE.getValue(), true, null);
-			}else if (dataTableCommentActivityList.contains(loggingData.getActivityType())) {
+			} else if (dataTableCommentActivityList.contains(loggingData.getActivityType())) {
 				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
 						ActivityEnums.DATATABLE.getValue(), null, loggingData.getActivityType(), userId, new Date(),
 						new Date(), loggingData.getRootObjectId(), ActivityEnums.DATATABLE.getValue(),
 						loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true, null);
 			}
-			
+
 			if (activity != null)
 				activity = activityDao.save(activity);
-		}catch(Exception e) {
+		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
 		return null;
