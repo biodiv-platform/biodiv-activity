@@ -32,4 +32,5 @@ public class ApiConstants {
 	public static final String COUNT = "/count";
 	public static final String DOCUMENT = "/document";
 	public static final String SPECIES = "/species";
+	public static final String TAXONOMY = "/taxonomy";
 }

@@ -35,6 +35,7 @@ import com.strandls.activity.pojo.RecoVoteActivity;
 import com.strandls.activity.pojo.ShowActivityIbp;
 import com.strandls.activity.pojo.SpeciesActivityLogging;
 import com.strandls.activity.pojo.TaggedUser;
+import com.strandls.activity.pojo.TaxonomyActivityLogging;
 import com.strandls.activity.pojo.UserGroupActivity;
 import com.strandls.activity.pojo.UserGroupActivityLogging;
 import com.strandls.activity.service.ActivityService;
@@ -160,6 +161,19 @@ public class ActivityServiceImpl implements ActivityService {
 	List<String> speciesUserGroupActivityList = new ArrayList<String>(
 			Arrays.asList("Featured", "UnFeatured", "Posted resource", "Removed resoruce"));
 
+//	TAXONOMY ACTIVTY LIST
+
+	List<String> taxonomyNullActivityList = new ArrayList<String>(
+			Arrays.asList("Deleted synonym", "Deleted common name"));
+
+	List<String> taxonomyCommonNameActivityList = new ArrayList<String>(Arrays.asList("Added common name"));
+
+	List<String> taxonomyTaxDefActivityList = new ArrayList<String>(Arrays.asList("Taxon name updated"));
+
+	List<String> taxonomySynonymActivityList = new ArrayList<String>(Arrays.asList("Added synonym"));
+
+	List<String> taxonomyCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment"));
+
 	@Override
 	public Integer activityCount(String objectType, Long objectId) {
 		if (objectType.equalsIgnoreCase("observation"))
@@ -179,6 +193,8 @@ public class ActivityServiceImpl implements ActivityService {
 			objectType = ActivityEnums.USERGROUP.getValue();
 		else if (objectType.equalsIgnoreCase("species"))
 			objectType = ActivityEnums.SPECIES.getValue();
+		else if (objectType.equalsIgnoreCase("taxonomy"))
+			objectType = ActivityEnums.TAXONOMYDEFINITION.getValue();
 
 		List<ShowActivityIbp> ibpActivity = new ArrayList<ShowActivityIbp>();
 		Integer commentCount = 0;
@@ -340,7 +356,8 @@ public class ActivityServiceImpl implements ActivityService {
 			commentData.setSubRootHolderId(commentData.getRootHolderId());
 			commentData.setSubRootHolderType(commentData.getRootHolderType());
 		}
-		commentData.setSubRootHolderType(ActivityEnums.valueOf(commentData.getSubRootHolderType().toUpperCase()).getValue());
+		commentData.setSubRootHolderType(
+				ActivityEnums.valueOf(commentData.getSubRootHolderType().toUpperCase()).getValue());
 		commentData.setRootHolderType(ActivityEnums.valueOf(commentData.getRootHolderType().toUpperCase()).getValue());
 		Comments comment = null;
 		if (commentData.getRootHolderId().equals(commentData.getSubRootHolderId())) {
@@ -394,6 +411,16 @@ public class ActivityServiceImpl implements ActivityService {
 						result.getRootHolderType(), result.getId(), "Added a comment", commentData.getMailData());
 			}
 			activityResult = logSpeciesActivities(request, userId, loggingData);
+		} else if (commentType.equalsIgnoreCase("taxonomy")) {
+			TaxonomyActivityLogging loggingData = null;
+			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
+				loggingData = new TaxonomyActivityLogging(null, result.getRootHolderId(), result.getId(),
+						result.getRootHolderType(), result.getId(), "Added a comment");
+			} else {
+				loggingData = new TaxonomyActivityLogging(null, result.getRootHolderId(), result.getCommentHolderId(),
+						result.getRootHolderType(), result.getId(), "Added a comment");
+			}
+			activityResult = logTaxonomyActivities(request, userId, loggingData);
 		}
 
 		if (activityResult != null && commentData.getMailData() != null) {
@@ -600,4 +627,59 @@ public class ActivityServiceImpl implements ActivityService {
 		return result;
 
 	}
+
+//	TAXONOMY ACTIVITY LOGGING
+
+	@Override
+	public Activity logTaxonomyActivities(HttpServletRequest request, Long userId,
+			TaxonomyActivityLogging loggingData) {
+
+		try {
+			Activity activity = null;
+
+			if (taxonomyNullActivityList.contains(loggingData.getActivityType())) {
+				activity = new Activity(null, 0L, loggingData.getActivityDescription(), null, null, null,
+						loggingData.getActivityType(), userId, new Date(), new Date(), loggingData.getRootObjectId(),
+						ActivityEnums.TAXONOMYDEFINITION.getValue(), loggingData.getSubRootObjectId(),
+						ActivityEnums.TAXONOMYDEFINITION.getValue(), true, null);
+
+			} else if (taxonomyTaxDefActivityList.contains(loggingData.getActivityType())) {
+				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.TAXONOMYDEFINITION.getValue(), null, loggingData.getActivityType(), userId,
+						new Date(), new Date(), loggingData.getRootObjectId(),
+						ActivityEnums.TAXONOMYDEFINITION.getValue(), loggingData.getSubRootObjectId(),
+						ActivityEnums.TAXONOMYDEFINITION.getValue(), true, null);
+
+			} else if (taxonomyCommonNameActivityList.contains(loggingData.getActivityType())) {
+				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.COMMONNAMES.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+						new Date(), loggingData.getRootObjectId(), ActivityEnums.TAXONOMYDEFINITION.getValue(),
+						loggingData.getSubRootObjectId(), ActivityEnums.TAXONOMYDEFINITION.getValue(), true, null);
+
+			} else if (taxonomySynonymActivityList.contains(loggingData.getActivityType())) {
+				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.SYNONYMS.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+						new Date(), loggingData.getRootObjectId(), ActivityEnums.TAXONOMYDEFINITION.getValue(),
+						loggingData.getSubRootObjectId(), ActivityEnums.TAXONOMYDEFINITION.getValue(), true, null);
+
+			} else if (taxonomyCommentActivityList.contains(loggingData.getActivityType())) {
+				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.COMMENTS.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+						new Date(), loggingData.getRootObjectId(), ActivityEnums.TAXONOMYDEFINITION.getValue(),
+						loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true, null);
+			}
+
+			if (activity != null)
+				activity = activityDao.save(activity);
+
+//			TODO mailData integration
+
+			return activity;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
+		return null;
+	}
+
 }
