@@ -161,7 +161,7 @@ public class ActivityServiceImpl implements ActivityService {
 	List<String> speciesUserGroupActivityList = new ArrayList<String>(
 			Arrays.asList("Featured", "UnFeatured", "Posted resource", "Removed resoruce"));
 
-//	DOCUMENT ACTIVITY LIST 
+//	DATATABLE ACTIVITY LIST 
 
 	List<String> dataTableNullActivityList = new ArrayList<String>(
 			Arrays.asList("Datatable created", "Datatable updated", "Datatable Deleted"));
@@ -292,10 +292,6 @@ public class ActivityServiceImpl implements ActivityService {
 					ActivityEnums.OBSERVATION.getValue(), null, loggingData.getActivityType(), userId, new Date(),
 					new Date(), loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(),
 					loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(), true, null);
-		} else if (dataTableNullActivityList.contains(loggingData.getActivityType())) {
-			activity = new Activity(null, 0L, null, null, null, null, loggingData.getActivityType(), userId, new Date(),
-					new Date(), loggingData.getRootObjectId(), ActivityEnums.DATATABLE.getValue(),
-					loggingData.getRootObjectId(), ActivityEnums.DATATABLE.getValue(), true, null);
 		} else if (commentActivityList.contains(loggingData.getActivityType())) {
 			activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
 					ActivityEnums.COMMENTS.getValue(), null, loggingData.getActivityType(), userId, new Date(),
@@ -632,15 +628,15 @@ public class ActivityServiceImpl implements ActivityService {
 	@Override
 	public Activity logDatatableActivities(HttpServletRequest request, Long userId,
 			DatatableActivityLogging loggingData) {
+		Activity activity = null;
 		try {
 
-			Activity activity = null;
 			if (dataTableNullActivityList.contains(loggingData.getActivityType())) {
 				activity = new Activity(null, 0L, loggingData.getActivityDescription(), null, null, null,
 						loggingData.getActivityType(), userId, new Date(), new Date(), loggingData.getRootObjectId(),
 						ActivityEnums.DATATABLE.getValue(), loggingData.getSubRootObjectId(),
 						ActivityEnums.DATATABLE.getValue(), true, null);
-			} else if (dataTableCommentActivityList.contains(loggingData.getActivityType())) {
+			} else if (commentActivityList.contains(loggingData.getActivityType())) {
 				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
 						ActivityEnums.DATATABLE.getValue(), null, loggingData.getActivityType(), userId, new Date(),
 						new Date(), loggingData.getRootObjectId(), ActivityEnums.DATATABLE.getValue(),
@@ -652,6 +648,6 @@ public class ActivityServiceImpl implements ActivityService {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
-		return null;
+		return activity;
 	}
 }
