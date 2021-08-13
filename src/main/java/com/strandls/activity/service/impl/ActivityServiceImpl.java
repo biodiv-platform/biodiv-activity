@@ -26,6 +26,7 @@ import com.strandls.activity.pojo.ActivityIbp;
 import com.strandls.activity.pojo.ActivityLoggingData;
 import com.strandls.activity.pojo.ActivityResult;
 import com.strandls.activity.pojo.CommentLoggingData;
+import com.strandls.activity.pojo.DatatableActivityLogging;
 import com.strandls.activity.pojo.Comments;
 import com.strandls.activity.pojo.CommentsIbp;
 import com.strandls.activity.pojo.DocumentActivityLogging;
@@ -160,6 +161,13 @@ public class ActivityServiceImpl implements ActivityService {
 	List<String> speciesUserGroupActivityList = new ArrayList<String>(
 			Arrays.asList("Featured", "UnFeatured", "Posted resource", "Removed resoruce"));
 
+//	DATATABLE ACTIVITY LIST 
+
+	List<String> dataTableNullActivityList = new ArrayList<String>(
+			Arrays.asList("Datatable created", "Datatable updated", "Datatable Deleted"));
+
+	List<String> dataTableCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment"));
+
 	@Override
 	public Integer activityCount(String objectType, Long objectId) {
 		if (objectType.equalsIgnoreCase("observation"))
@@ -179,6 +187,8 @@ public class ActivityServiceImpl implements ActivityService {
 			objectType = ActivityEnums.USERGROUP.getValue();
 		else if (objectType.equalsIgnoreCase("species"))
 			objectType = ActivityEnums.SPECIES.getValue();
+		else if (objectType.equalsIgnoreCase("datatable"))
+			objectType = ActivityEnums.DATATABLE.getValue();
 
 		List<ShowActivityIbp> ibpActivity = new ArrayList<ShowActivityIbp>();
 		Integer commentCount = 0;
@@ -340,7 +350,8 @@ public class ActivityServiceImpl implements ActivityService {
 			commentData.setSubRootHolderId(commentData.getRootHolderId());
 			commentData.setSubRootHolderType(commentData.getRootHolderType());
 		}
-		commentData.setSubRootHolderType(ActivityEnums.valueOf(commentData.getSubRootHolderType().toUpperCase()).getValue());
+		commentData.setSubRootHolderType(
+				ActivityEnums.valueOf(commentData.getSubRootHolderType().toUpperCase()).getValue());
 		commentData.setRootHolderType(ActivityEnums.valueOf(commentData.getRootHolderType().toUpperCase()).getValue());
 		Comments comment = null;
 		if (commentData.getRootHolderId().equals(commentData.getSubRootHolderId())) {
@@ -371,6 +382,19 @@ public class ActivityServiceImpl implements ActivityService {
 			}
 			activityResult = logActivities(request, userId, activity);
 
+		} else if (commentType.equals("datatable")) {
+
+			DatatableActivityLogging loggingData = null;
+			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
+				loggingData = new DatatableActivityLogging(null, result.getRootHolderId(), result.getId(),
+						result.getRootHolderType(), result.getId(), "Added a comment", commentData.getMailData());
+
+			} else {
+				loggingData = new DatatableActivityLogging(null, result.getRootHolderId(), result.getCommentHolderId(),
+						result.getRootHolderType(), result.getId(), "Added a comment", commentData.getMailData());
+			}
+
+			activityResult = logDatatableActivities(request, userId, loggingData);
 		} else if (commentType.equals("document")) {
 
 			DocumentActivityLogging loggingData = null;
@@ -537,7 +561,7 @@ public class ActivityServiceImpl implements ActivityService {
 						loggingData.getSubRootObjectId(), ActivityEnums.SPECIES.getValue(), true, null);
 			} else if (speciesCommonNameActivityList.contains(loggingData.getActivityType())) {
 				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.COMMONNAMES.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+						ActivityEnums.COMMONNAME.getValue(), null, loggingData.getActivityType(), userId, new Date(),
 						new Date(), loggingData.getRootObjectId(), ActivityEnums.SPECIES.getValue(),
 						loggingData.getSubRootObjectId(), ActivityEnums.SPECIES.getValue(), true, null);
 			} else if (speciesFieldActivityList.contains(loggingData.getActivityType())) {
@@ -599,5 +623,31 @@ public class ActivityServiceImpl implements ActivityService {
 		}
 		return result;
 
+	}
+
+	@Override
+	public Activity logDatatableActivities(HttpServletRequest request, Long userId,
+			DatatableActivityLogging loggingData) {
+		Activity activity = null;
+		try {
+
+			if (dataTableNullActivityList.contains(loggingData.getActivityType())) {
+				activity = new Activity(null, 0L, loggingData.getActivityDescription(), null, null, null,
+						loggingData.getActivityType(), userId, new Date(), new Date(), loggingData.getRootObjectId(),
+						ActivityEnums.DATATABLE.getValue(), loggingData.getSubRootObjectId(),
+						ActivityEnums.DATATABLE.getValue(), true, null);
+			} else if (dataTableCommentActivityList.contains(loggingData.getActivityType())) {
+				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.COMMENTS.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+						new Date(), loggingData.getRootObjectId(), ActivityEnums.COMMENTS.getValue(),
+						loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true, null);
+			}
+
+			if (activity != null)
+				activity = activityDao.save(activity);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return activity;
 	}
 }
