@@ -636,10 +636,10 @@ public class ActivityServiceImpl implements ActivityService {
 						loggingData.getActivityType(), userId, new Date(), new Date(), loggingData.getRootObjectId(),
 						ActivityEnums.DATATABLE.getValue(), loggingData.getSubRootObjectId(),
 						ActivityEnums.DATATABLE.getValue(), true, null);
-			} else if (commentActivityList.contains(loggingData.getActivityType())) {
+			} else if (dataTableCommentActivityList.contains(loggingData.getActivityType())) {
 				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.DATATABLE.getValue(), null, loggingData.getActivityType(), userId, new Date(),
-						new Date(), loggingData.getRootObjectId(), ActivityEnums.DATATABLE.getValue(),
+						ActivityEnums.COMMENTS.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+						new Date(), loggingData.getRootObjectId(), ActivityEnums.COMMENTS.getValue(),
 						loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true, null);
 			}
 
