@@ -9,6 +9,7 @@ import com.strandls.activity.pojo.Activity;
 import com.strandls.activity.pojo.ActivityLoggingData;
 import com.strandls.activity.pojo.ActivityResult;
 import com.strandls.activity.pojo.CommentLoggingData;
+import com.strandls.activity.pojo.DatatableActivityLogging;
 import com.strandls.activity.pojo.DocumentActivityLogging;
 import com.strandls.activity.pojo.SpeciesActivityLogging;
 import com.strandls.activity.pojo.TaxonomyActivityLogging;
@@ -36,6 +37,9 @@ public interface ActivityService {
 	public Activity logSpeciesActivities(HttpServletRequest request, Long userId, SpeciesActivityLogging loggingData);
 
 	public Activity logTaxonomyActivities(HttpServletRequest request, Long userId, TaxonomyActivityLogging loggingData);
+
+	public Activity logDatatableActivities(HttpServletRequest request, Long userId,
+			DatatableActivityLogging loggingData);
 
 	public Integer activityCount(String objectType, Long objectId);
 

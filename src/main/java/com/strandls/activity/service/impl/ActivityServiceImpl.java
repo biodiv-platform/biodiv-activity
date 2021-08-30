@@ -28,6 +28,7 @@ import com.strandls.activity.pojo.ActivityResult;
 import com.strandls.activity.pojo.CommentLoggingData;
 import com.strandls.activity.pojo.Comments;
 import com.strandls.activity.pojo.CommentsIbp;
+import com.strandls.activity.pojo.DatatableActivityLogging;
 import com.strandls.activity.pojo.DocumentActivityLogging;
 import com.strandls.activity.pojo.MailActivityData;
 import com.strandls.activity.pojo.MyJson;
@@ -176,6 +177,13 @@ public class ActivityServiceImpl implements ActivityService {
 
 	List<String> taxonomyCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment"));
 
+//	DATATABLE ACTIVITY LIST 
+
+	List<String> dataTableNullActivityList = new ArrayList<String>(
+			Arrays.asList("Datatable created", "Datatable updated", "Datatable Deleted"));
+
+	List<String> dataTableCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment"));
+
 	@Override
 	public Integer activityCount(String objectType, Long objectId) {
 		if (objectType.equalsIgnoreCase("observation"))
@@ -197,6 +205,8 @@ public class ActivityServiceImpl implements ActivityService {
 			objectType = ActivityEnums.SPECIES.getValue();
 		else if (objectType.equalsIgnoreCase("taxonomy"))
 			objectType = ActivityEnums.TAXONOMYDEFINITION.getValue();
+		else if (objectType.equalsIgnoreCase("datatable"))
+			objectType = ActivityEnums.DATATABLE.getValue();
 
 		List<ShowActivityIbp> ibpActivity = new ArrayList<ShowActivityIbp>();
 		Integer commentCount = 0;
@@ -390,6 +400,19 @@ public class ActivityServiceImpl implements ActivityService {
 			}
 			activityResult = logActivities(request, userId, activity);
 
+		} else if (commentType.equals("datatable")) {
+
+			DatatableActivityLogging loggingData = null;
+			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
+				loggingData = new DatatableActivityLogging(null, result.getRootHolderId(), result.getId(),
+						result.getRootHolderType(), result.getId(), "Added a comment", commentData.getMailData());
+
+			} else {
+				loggingData = new DatatableActivityLogging(null, result.getRootHolderId(), result.getCommentHolderId(),
+						result.getRootHolderType(), result.getId(), "Added a comment", commentData.getMailData());
+			}
+
+			activityResult = logDatatableActivities(request, userId, loggingData);
 		} else if (commentType.equals("document")) {
 
 			DocumentActivityLogging loggingData = null;
@@ -668,6 +691,36 @@ public class ActivityServiceImpl implements ActivityService {
 				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
 						ActivityEnums.COMMENTS.getValue(), null, loggingData.getActivityType(), userId, new Date(),
 						new Date(), loggingData.getRootObjectId(), ActivityEnums.TAXONOMYDEFINITION.getValue(),
+						loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true, null);
+			}
+			if (activity != null)
+				activity = activityDao.save(activity);
+
+//			TODO mailData integration
+
+			return activity;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
+		return null;
+	}
+
+	@Override
+	public Activity logDatatableActivities(HttpServletRequest request, Long userId,
+			DatatableActivityLogging loggingData) {
+		Activity activity = null;
+		try {
+
+			if (dataTableNullActivityList.contains(loggingData.getActivityType())) {
+				activity = new Activity(null, 0L, loggingData.getActivityDescription(), null, null, null,
+						loggingData.getActivityType(), userId, new Date(), new Date(), loggingData.getRootObjectId(),
+						ActivityEnums.DATATABLE.getValue(), loggingData.getSubRootObjectId(),
+						ActivityEnums.DATATABLE.getValue(), true, null);
+			} else if (dataTableCommentActivityList.contains(loggingData.getActivityType())) {
+				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.COMMENTS.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+						new Date(), loggingData.getRootObjectId(), ActivityEnums.DATATABLE.getValue(),
 						loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true, null);
 			}
 
