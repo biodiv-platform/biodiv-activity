@@ -1,20 +1,20 @@
-/**
- * 
- */
 package com.strandls.activity.pojo;
 
 /**
- * @author Abhishek Rudra
+ * 
+ * @author vishnu
  *
  */
-public class ActivityLoggingData extends CoreActivityLoggingData {
+
+public class DatatableActivityLogging extends CoreActivityLoggingData {
 
 	private MailData mailData;
 
 	/**
 	 * 
 	 */
-	public ActivityLoggingData() {
+	public DatatableActivityLogging() {
+		super();
 	}
 
 	/**
@@ -25,7 +25,7 @@ public class ActivityLoggingData extends CoreActivityLoggingData {
 	 * @param activityId
 	 * @param activityType
 	 */
-	public ActivityLoggingData(String activityDescription, Long rootObjectId, Long subRootObjectId,
+	public DatatableActivityLogging(String activityDescription, Long rootObjectId, Long subRootObjectId,
 			String rootObjectType, Long activityId, String activityType, MailData mailData) {
 		super(activityDescription, rootObjectId, subRootObjectId, rootObjectType, activityId, activityType);
 		this.mailData = mailData;

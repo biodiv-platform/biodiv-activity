@@ -20,7 +20,14 @@ import com.strandls.mail_utility.model.EnumModel.MAIL_TYPE;
 
 public class ActivityUtil {
 
-	private final static Logger logger = LoggerFactory.getLogger(ActivityUtil.class);
+	/**
+	 * 
+	 */
+	private ActivityUtil() {
+		super();
+	}
+
+	private static final Logger logger = LoggerFactory.getLogger(ActivityUtil.class);
 
 	private static final String TAGGED_USER_REGEX = "@\\[(.*?)\\]\\(\\d+\\)";
 

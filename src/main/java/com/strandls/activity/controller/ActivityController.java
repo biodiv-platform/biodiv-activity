@@ -25,8 +25,10 @@ import com.strandls.activity.pojo.Activity;
 import com.strandls.activity.pojo.ActivityLoggingData;
 import com.strandls.activity.pojo.ActivityResult;
 import com.strandls.activity.pojo.CommentLoggingData;
+import com.strandls.activity.pojo.DatatableActivityLogging;
 import com.strandls.activity.pojo.DocumentActivityLogging;
 import com.strandls.activity.pojo.SpeciesActivityLogging;
+import com.strandls.activity.pojo.TaxonomyActivityLogging;
 import com.strandls.activity.pojo.UserGroupActivityLogging;
 import com.strandls.activity.service.ActivityService;
 import com.strandls.authentication_utility.filter.ValidateUser;
@@ -217,6 +219,50 @@ public class ActivityController {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Long userId = Long.parseLong(profile.getId());
 			Activity result = service.logSpeciesActivities(request, userId, loggingData);
+			return Response.status(Status.OK).entity(result).build();
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@POST
+	@Path(ApiConstants.LOG + ApiConstants.TAXONOMY)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiOperation(value = "log Taxonomy activities", notes = "Return the activity logged", response = Activity.class)
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to log the activity", response = String.class) })
+
+	public Response logTaxonomyActivities(@Context HttpServletRequest request,
+			@ApiParam(name = "loggingData") TaxonomyActivityLogging loggingData) {
+		try {
+			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+			Long userId = Long.parseLong(profile.getId());
+			Activity result = service.logTaxonomyActivities(request, userId, loggingData);
+			return Response.status(Status.OK).entity(result).build();
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@POST
+	@Path(ApiConstants.LOG + ApiConstants.DATATABLE)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiOperation(value = "log DataTable activities", notes = "Return the activity logged", response = Activity.class)
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to log the activity", response = String.class) })
+
+	public Response logDatatableActivities(@Context HttpServletRequest request,
+			@ApiParam(name = "loggingData") DatatableActivityLogging loggingData) {
+		try {
+			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+			Long userId = Long.parseLong(profile.getId());
+			Activity result = service.logDatatableActivities(request, userId, loggingData);
 			return Response.status(Status.OK).entity(result).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();

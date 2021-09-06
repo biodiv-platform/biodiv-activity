@@ -6,10 +6,13 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.rabbitmq.client.Channel;
 import com.strandls.activity.RabbitMqConnection;
 import com.strandls.activity.pojo.MailActivityData;
-import com.strandls.activity.pojo.observationMailData;
+import com.strandls.activity.pojo.ObservationMailData;
 import com.strandls.activity.service.NotificationService;
 import com.strandls.mail_utility.model.EnumModel.NOTIFICATION_DATA;
 import com.strandls.mail_utility.model.EnumModel.NOTIFICATION_FIELDS;
@@ -19,6 +22,8 @@ import com.strandls.user.controller.UserServiceApi;
 import com.strandls.user.pojo.Recipients;
 
 public class NotificationServiceImpl implements NotificationService {
+
+	private final Logger logger = LoggerFactory.getLogger(NotificationServiceImpl.class);
 
 	@Inject
 	private Channel channel;
@@ -32,7 +37,7 @@ public class NotificationServiceImpl implements NotificationService {
 		try {
 			String resourceUrl = PropertyFileUtil.fetchProperty("config.properties", "pn_resource_url");
 			List<Recipients> recipients = userService.getRecipients(objectType, objectId);
-			observationMailData observation = activity.getMailData().getObservationData();
+			ObservationMailData observation = activity.getMailData().getObservationData();
 			String image = observation.getIconURl() == null ? "" : observation.getIconURl();
 			if (!image.isEmpty()) {
 				int dot = image.lastIndexOf(".");
@@ -60,7 +65,7 @@ public class NotificationServiceImpl implements NotificationService {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage());
 		}
 	}
 

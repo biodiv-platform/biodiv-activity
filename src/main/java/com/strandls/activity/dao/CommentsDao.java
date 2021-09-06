@@ -3,12 +3,12 @@
  */
 package com.strandls.activity.dao;
 
+import javax.inject.Inject;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
 
 import com.strandls.activity.pojo.Comments;
 import com.strandls.activity.util.AbstractDAO;
@@ -27,7 +27,6 @@ public class CommentsDao extends AbstractDAO<Comments, Long> {
 	@Inject
 	protected CommentsDao(SessionFactory sessionFactory) {
 		super(sessionFactory);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
