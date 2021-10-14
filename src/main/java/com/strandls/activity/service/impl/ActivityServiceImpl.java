@@ -182,6 +182,9 @@ public class ActivityServiceImpl implements ActivityService {
 	List<String> dataTableNullActivityList = new ArrayList<String>(
 			Arrays.asList("Datatable created", "Datatable updated", "Datatable Deleted"));
 
+	List<String> dataTableUserGroupActivityList = new ArrayList<String>(
+			Arrays.asList("Posted resource", "Removed resoruce", "Featured", "UnFeatured"));
+
 	List<String> dataTableCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment"));
 
 	@Override
@@ -717,6 +720,11 @@ public class ActivityServiceImpl implements ActivityService {
 						loggingData.getActivityType(), userId, new Date(), new Date(), loggingData.getRootObjectId(),
 						ActivityEnums.DATATABLE.getValue(), loggingData.getSubRootObjectId(),
 						ActivityEnums.DATATABLE.getValue(), true, null);
+			} else if (dataTableUserGroupActivityList.contains(loggingData.getActivityType())) {
+				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.USERGROUP.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+						new Date(), loggingData.getRootObjectId(), ActivityEnums.DATATABLE.getValue(),
+						loggingData.getSubRootObjectId(), ActivityEnums.DATATABLE.getValue(), true, null);
 			} else if (dataTableCommentActivityList.contains(loggingData.getActivityType())) {
 				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
 						ActivityEnums.COMMENTS.getValue(), null, loggingData.getActivityType(), userId, new Date(),
