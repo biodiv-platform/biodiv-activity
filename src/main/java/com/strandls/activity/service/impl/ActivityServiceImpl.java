@@ -31,7 +31,6 @@ import com.strandls.activity.pojo.CommentsIbp;
 import com.strandls.activity.pojo.DatatableActivityLogging;
 import com.strandls.activity.pojo.DocumentActivityLogging;
 import com.strandls.activity.pojo.MailActivityData;
-import com.strandls.activity.pojo.MyJson;
 import com.strandls.activity.pojo.RecoVoteActivity;
 import com.strandls.activity.pojo.ShowActivityIbp;
 import com.strandls.activity.pojo.SpeciesActivityLogging;
@@ -277,47 +276,42 @@ public class ActivityServiceImpl implements ActivityService {
 				loggingData.getActivityDescription());
 
 		if (obvNullActivityList.contains(loggingData.getActivityType())) {
-			activity = new Activity(null, 0L, null, null, null, null, loggingData.getActivityType(), userId, new Date(),
+			activity = new Activity(null, null, null, null, loggingData.getActivityType(), userId, new Date(),
 					new Date(), loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(),
-					loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(), true, null);
+					loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(), true);
 
 		} else if (obvRecommendationActivityList.contains(loggingData.getActivityType())) {
 
-			activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-					ActivityEnums.RECOMMENDATIONVOTE.getValue(), null, loggingData.getActivityType(), userId,
-					new Date(), new Date(), loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(),
-					loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(), true, null);
-		} else if (obvUserGroupActivityList.contains(loggingData.getActivityType()) && isUsergroupFeatured) {
-			activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-					ActivityEnums.USERGROUP.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+			activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+					ActivityEnums.RECOMMENDATIONVOTE.getValue(), loggingData.getActivityType(), userId, new Date(),
 					new Date(), loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(),
-					loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(), true, null);
+					loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(), true);
+		} else if (obvUserGroupActivityList.contains(loggingData.getActivityType()) && isUsergroupFeatured) {
+			activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+					ActivityEnums.USERGROUP.getValue(), loggingData.getActivityType(), userId, new Date(), new Date(),
+					loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(), loggingData.getRootObjectId(),
+					ActivityEnums.OBSERVATION.getValue(), true);
 		} else if (obvTraitsActivityList.contains(loggingData.getActivityType())) {
-			activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-					ActivityEnums.FACTS.getValue(), null, loggingData.getActivityType(), userId, new Date(), new Date(),
+			activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+					ActivityEnums.FACTS.getValue(), loggingData.getActivityType(), userId, new Date(), new Date(),
 					loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(), loggingData.getRootObjectId(),
-					ActivityEnums.OBSERVATION.getValue(), true, null);
+					ActivityEnums.OBSERVATION.getValue(), true);
 		} else if (obvFlagActivityList.contains(loggingData.getActivityType())) {
-			MyJson myJson = new MyJson();
-			String[] description = loggingData.getActivityDescription().split(":");
-			String desc = description[0] + "\n" + description[1];
-			myJson.setAid(loggingData.getActivityId());
-			myJson.setDescription(desc);
-			activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-					ActivityEnums.FLAG.getValue(), null, loggingData.getActivityType(), userId, new Date(), new Date(),
+			activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+					ActivityEnums.FLAG.getValue(), loggingData.getActivityType(), userId, new Date(), new Date(),
 					loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(), loggingData.getRootObjectId(),
-					ActivityEnums.OBSERVATION.getValue(), true, myJson);
+					ActivityEnums.OBSERVATION.getValue(), true);
 
 		} else if (observationActivityList.contains(loggingData.getActivityType())) {
-			activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-					ActivityEnums.OBSERVATION.getValue(), null, loggingData.getActivityType(), userId, new Date(),
-					new Date(), loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(),
-					loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(), true, null);
+			activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+					ActivityEnums.OBSERVATION.getValue(), loggingData.getActivityType(), userId, new Date(), new Date(),
+					loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(), loggingData.getRootObjectId(),
+					ActivityEnums.OBSERVATION.getValue(), true);
 		} else if (commentActivityList.contains(loggingData.getActivityType())) {
-			activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-					ActivityEnums.COMMENTS.getValue(), null, loggingData.getActivityType(), userId, new Date(),
-					new Date(), loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(),
-					loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true, null);
+			activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+					ActivityEnums.COMMENTS.getValue(), loggingData.getActivityType(), userId, new Date(), new Date(),
+					loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(),
+					loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true);
 		}
 
 		if (activity != null) {
@@ -376,16 +370,16 @@ public class ActivityServiceImpl implements ActivityService {
 		commentData.setRootHolderType(ActivityEnums.valueOf(commentData.getRootHolderType().toUpperCase()).getValue());
 		Comments comment = null;
 		if (commentData.getRootHolderId().equals(commentData.getSubRootHolderId())) {
-			comment = new Comments(null, 0L, userId, commentData.getBody(), commentData.getSubRootHolderId(),
+			comment = new Comments(null, userId, commentData.getBody(), commentData.getSubRootHolderId(),
 					commentData.getSubRootHolderType(), new Date(), new Date(), commentData.getRootHolderId(),
-					commentData.getRootHolderType(), null, null, null,
+					commentData.getRootHolderType(), null, null,
 					commentData.getLanguageId() != null ? commentData.getLanguageId() : defaultLanguageId);
 
 		} else {
-			comment = new Comments(null, 0L, userId, commentData.getBody(), commentData.getSubRootHolderId(),
+			comment = new Comments(null, userId, commentData.getBody(), commentData.getSubRootHolderId(),
 					commentData.getSubRootHolderType(), new Date(), new Date(), commentData.getRootHolderId(),
 					commentData.getRootHolderType(), commentData.getSubRootHolderId(), commentData.getSubRootHolderId(),
-					null, commentData.getLanguageId() != null ? commentData.getLanguageId() : defaultLanguageId);
+					commentData.getLanguageId() != null ? commentData.getLanguageId() : defaultLanguageId);
 
 		}
 
@@ -477,33 +471,33 @@ public class ActivityServiceImpl implements ActivityService {
 
 		Activity activity = null;
 		if (ugNullActivityList.contains(loggingData.getActivityType())) {
-			activity = new Activity(null, 0L, null, null, null, null, loggingData.getActivityType(), userId, new Date(),
+			activity = new Activity(null, null, null, null, loggingData.getActivityType(), userId, new Date(),
 					new Date(), loggingData.getRootObjectId(), ActivityEnums.USERGROUP.getValue(),
-					loggingData.getSubRootObjectId(), ActivityEnums.USERGROUP.getValue(), true, null);
+					loggingData.getSubRootObjectId(), ActivityEnums.USERGROUP.getValue(), true);
 
 		} else if (userGroupActivityList.contains(loggingData.getActivityType())) {
-			activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-					ActivityEnums.USERGROUP.getValue(), null, loggingData.getActivityType(), userId, new Date(),
-					new Date(), loggingData.getRootObjectId(), ActivityEnums.USERGROUP.getValue(),
-					loggingData.getSubRootObjectId(), ActivityEnums.USERGROUP.getValue(), true, null);
+			activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+					ActivityEnums.USERGROUP.getValue(), loggingData.getActivityType(), userId, new Date(), new Date(),
+					loggingData.getRootObjectId(), ActivityEnums.USERGROUP.getValue(), loggingData.getSubRootObjectId(),
+					ActivityEnums.USERGROUP.getValue(), true);
 
 		} else if (ugUserActivityList.contains(loggingData.getActivityType())) {
-			activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-					ActivityEnums.USER.getValue(), null, loggingData.getActivityType(), userId, new Date(), new Date(),
+			activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+					ActivityEnums.USER.getValue(), loggingData.getActivityType(), userId, new Date(), new Date(),
 					loggingData.getRootObjectId(), ActivityEnums.USERGROUP.getValue(), loggingData.getSubRootObjectId(),
-					ActivityEnums.USERGROUP.getValue(), true, null);
+					ActivityEnums.USERGROUP.getValue(), true);
 
 		} else if (ugCustomFieldActivityList.contains(loggingData.getActivityType())) {
-			activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-					ActivityEnums.CUSTOMFIELD.getValue(), null, loggingData.getActivityType(), userId, new Date(),
-					new Date(), loggingData.getRootObjectId(), ActivityEnums.USERGROUP.getValue(),
-					loggingData.getSubRootObjectId(), ActivityEnums.USERGROUP.getValue(), true, null);
+			activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+					ActivityEnums.CUSTOMFIELD.getValue(), loggingData.getActivityType(), userId, new Date(), new Date(),
+					loggingData.getRootObjectId(), ActivityEnums.USERGROUP.getValue(), loggingData.getSubRootObjectId(),
+					ActivityEnums.USERGROUP.getValue(), true);
 		} else if (ugFilterRuleActivityList.contains(loggingData.getActivityType())) {
 
-			activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-					ActivityEnums.FILTERRULE.getValue(), null, loggingData.getActivityType(), userId, new Date(),
-					new Date(), loggingData.getRootObjectId(), ActivityEnums.USERGROUP.getValue(),
-					loggingData.getSubRootObjectId(), ActivityEnums.USERGROUP.getValue(), true, null);
+			activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+					ActivityEnums.FILTERRULE.getValue(), loggingData.getActivityType(), userId, new Date(), new Date(),
+					loggingData.getRootObjectId(), ActivityEnums.USERGROUP.getValue(), loggingData.getSubRootObjectId(),
+					ActivityEnums.USERGROUP.getValue(), true);
 		}
 
 		if (activity != null)
@@ -523,34 +517,34 @@ public class ActivityServiceImpl implements ActivityService {
 					loggingData.getActivityDescription());
 
 			if (docNullActivityList.contains(loggingData.getActivityType())) {
-				activity = new Activity(null, 0L, null, null, null, null, loggingData.getActivityType(), userId,
-						new Date(), new Date(), loggingData.getRootObjectId(), ActivityEnums.DOCUMENT.getValue(),
-						loggingData.getSubRootObjectId(), ActivityEnums.DOCUMENT.getValue(), true, null);
+				activity = new Activity(null, null, null, null, loggingData.getActivityType(), userId, new Date(),
+						new Date(), loggingData.getRootObjectId(), ActivityEnums.DOCUMENT.getValue(),
+						loggingData.getSubRootObjectId(), ActivityEnums.DOCUMENT.getValue(), true);
 
 			} else if (docFlagActivityList.contains(loggingData.getActivityType())) {
-				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.FLAG.getValue(), null, loggingData.getActivityType(), userId, new Date(),
-						new Date(), loggingData.getRootObjectId(), ActivityEnums.DOCUMENT.getValue(),
-						loggingData.getSubRootObjectId(), ActivityEnums.DOCUMENT.getValue(), true, null);
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.FLAG.getValue(), loggingData.getActivityType(), userId, new Date(), new Date(),
+						loggingData.getRootObjectId(), ActivityEnums.DOCUMENT.getValue(),
+						loggingData.getSubRootObjectId(), ActivityEnums.DOCUMENT.getValue(), true);
 
 			} else if (docCommentActivityList.contains(loggingData.getActivityType())) {
 
-				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.COMMENTS.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.COMMENTS.getValue(), loggingData.getActivityType(), userId, new Date(),
 						new Date(), loggingData.getRootObjectId(), ActivityEnums.DOCUMENT.getValue(),
-						loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true, null);
+						loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true);
 
 			} else if (docUserGroupActivityList.contains(loggingData.getActivityType()) && isUsergroupFeatured) {
-				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.USERGROUP.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.USERGROUP.getValue(), loggingData.getActivityType(), userId, new Date(),
 						new Date(), loggingData.getRootObjectId(), ActivityEnums.DOCUMENT.getValue(),
-						loggingData.getSubRootObjectId(), ActivityEnums.DOCUMENT.getValue(), true, null);
+						loggingData.getSubRootObjectId(), ActivityEnums.DOCUMENT.getValue(), true);
 
 			} else if (documentActivityList.contains(loggingData.getActivityType())) {
-				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.DOCUMENT.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.DOCUMENT.getValue(), loggingData.getActivityType(), userId, new Date(),
 						new Date(), loggingData.getRootObjectId(), ActivityEnums.DOCUMENT.getValue(),
-						loggingData.getSubRootObjectId(), ActivityEnums.DOCUMENT.getValue(), true, null);
+						loggingData.getSubRootObjectId(), ActivityEnums.DOCUMENT.getValue(), true);
 
 			}
 
@@ -581,50 +575,50 @@ public class ActivityServiceImpl implements ActivityService {
 					loggingData.getActivityDescription());
 
 			if (speciesNullActivityList.contains(loggingData.getActivityType())) {
-				activity = new Activity(null, 0L, loggingData.getActivityDescription(), null, null, null,
+				activity = new Activity(null, loggingData.getActivityDescription(), null, null,
 						loggingData.getActivityType(), userId, new Date(), new Date(), loggingData.getRootObjectId(),
 						ActivityEnums.SPECIES.getValue(), loggingData.getSubRootObjectId(),
-						ActivityEnums.SPECIES.getValue(), true, null);
+						ActivityEnums.SPECIES.getValue(), true);
 			} else if (speciesSynonymActivityList.contains(loggingData.getActivityType())) {
-				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.TAXONOMYDEFINITION.getValue(), null, loggingData.getActivityType(), userId,
-						new Date(), new Date(), loggingData.getRootObjectId(), ActivityEnums.SPECIES.getValue(),
-						loggingData.getSubRootObjectId(), ActivityEnums.SPECIES.getValue(), true, null);
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.TAXONOMYDEFINITION.getValue(), loggingData.getActivityType(), userId, new Date(),
+						new Date(), loggingData.getRootObjectId(), ActivityEnums.SPECIES.getValue(),
+						loggingData.getSubRootObjectId(), ActivityEnums.SPECIES.getValue(), true);
 			} else if (speciesCommonNameActivityList.contains(loggingData.getActivityType())) {
-				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.COMMONNAMES.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.COMMONNAMES.getValue(), loggingData.getActivityType(), userId, new Date(),
 						new Date(), loggingData.getRootObjectId(), ActivityEnums.SPECIES.getValue(),
-						loggingData.getSubRootObjectId(), ActivityEnums.SPECIES.getValue(), true, null);
+						loggingData.getSubRootObjectId(), ActivityEnums.SPECIES.getValue(), true);
 			} else if (speciesFieldActivityList.contains(loggingData.getActivityType())) {
-				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.SPECIESFIELD.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.SPECIESFIELD.getValue(), loggingData.getActivityType(), userId, new Date(),
 						new Date(), loggingData.getRootObjectId(), ActivityEnums.SPECIES.getValue(),
-						loggingData.getSubRootObjectId(), ActivityEnums.SPECIES.getValue(), true, null);
+						loggingData.getSubRootObjectId(), ActivityEnums.SPECIES.getValue(), true);
 			} else if (speciesTaxonomyActivityList.contains(loggingData.getActivityType())) {
-				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.TAXONOMYREGISTRY.getValue(), null, loggingData.getActivityType(), userId,
-						new Date(), new Date(), loggingData.getRootObjectId(), ActivityEnums.SPECIES.getValue(),
-						loggingData.getSubRootObjectId(), ActivityEnums.SPECIES.getValue(), true, null);
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.TAXONOMYREGISTRY.getValue(), loggingData.getActivityType(), userId, new Date(),
+						new Date(), loggingData.getRootObjectId(), ActivityEnums.SPECIES.getValue(),
+						loggingData.getSubRootObjectId(), ActivityEnums.SPECIES.getValue(), true);
 			} else if (speciesUserGroupActivityList.contains(loggingData.getActivityType()) && isUsergroupFeatured) {
-				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.USERGROUP.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.USERGROUP.getValue(), loggingData.getActivityType(), userId, new Date(),
 						new Date(), loggingData.getRootObjectId(), ActivityEnums.SPECIES.getValue(),
-						loggingData.getSubRootObjectId(), ActivityEnums.SPECIES.getValue(), true, null);
+						loggingData.getSubRootObjectId(), ActivityEnums.SPECIES.getValue(), true);
 			} else if (speciesTraitActivityList.contains(loggingData.getActivityType())) {
-				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.FACTS.getValue(), null, loggingData.getActivityType(), userId, new Date(),
-						new Date(), loggingData.getRootObjectId(), ActivityEnums.SPECIES.getValue(),
-						loggingData.getSubRootObjectId(), ActivityEnums.SPECIES.getValue(), true, null);
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.FACTS.getValue(), loggingData.getActivityType(), userId, new Date(), new Date(),
+						loggingData.getRootObjectId(), ActivityEnums.SPECIES.getValue(),
+						loggingData.getSubRootObjectId(), ActivityEnums.SPECIES.getValue(), true);
 			} else if (speciesCommentActivityList.contains(loggingData.getActivityType())) {
-				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.COMMENTS.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.COMMENTS.getValue(), loggingData.getActivityType(), userId, new Date(),
 						new Date(), loggingData.getRootObjectId(), ActivityEnums.SPECIES.getValue(),
-						loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true, null);
+						loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true);
 			} else if (speciesActivityList.contains(loggingData.getActivityType())) {
-				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.SPECIES.getValue(), null, loggingData.getActivityType(), userId, new Date(),
-						new Date(), loggingData.getRootObjectId(), ActivityEnums.SPECIES.getValue(),
-						loggingData.getSubRootObjectId(), ActivityEnums.SPECIES.getValue(), true, null);
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.SPECIES.getValue(), loggingData.getActivityType(), userId, new Date(), new Date(),
+						loggingData.getRootObjectId(), ActivityEnums.SPECIES.getValue(),
+						loggingData.getSubRootObjectId(), ActivityEnums.SPECIES.getValue(), true);
 			}
 
 			if (activity != null)
@@ -666,35 +660,34 @@ public class ActivityServiceImpl implements ActivityService {
 			Activity activity = null;
 
 			if (taxonomyNullActivityList.contains(loggingData.getActivityType())) {
-				activity = new Activity(null, 0L, loggingData.getActivityDescription(), null, null, null,
+				activity = new Activity(null, loggingData.getActivityDescription(), null, null,
 						loggingData.getActivityType(), userId, new Date(), new Date(), loggingData.getRootObjectId(),
 						ActivityEnums.TAXONOMYDEFINITION.getValue(), loggingData.getSubRootObjectId(),
-						ActivityEnums.TAXONOMYDEFINITION.getValue(), true, null);
+						ActivityEnums.TAXONOMYDEFINITION.getValue(), true);
 
 			} else if (taxonomyTaxDefActivityList.contains(loggingData.getActivityType())) {
-				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.TAXONOMYDEFINITION.getValue(), null, loggingData.getActivityType(), userId,
-						new Date(), new Date(), loggingData.getRootObjectId(),
-						ActivityEnums.TAXONOMYDEFINITION.getValue(), loggingData.getSubRootObjectId(),
-						ActivityEnums.TAXONOMYDEFINITION.getValue(), true, null);
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.TAXONOMYDEFINITION.getValue(), loggingData.getActivityType(), userId, new Date(),
+						new Date(), loggingData.getRootObjectId(), ActivityEnums.TAXONOMYDEFINITION.getValue(),
+						loggingData.getSubRootObjectId(), ActivityEnums.TAXONOMYDEFINITION.getValue(), true);
 
 			} else if (taxonomyCommonNameActivityList.contains(loggingData.getActivityType())) {
-				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.COMMONNAMES.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.COMMONNAMES.getValue(), loggingData.getActivityType(), userId, new Date(),
 						new Date(), loggingData.getRootObjectId(), ActivityEnums.TAXONOMYDEFINITION.getValue(),
-						loggingData.getSubRootObjectId(), ActivityEnums.TAXONOMYDEFINITION.getValue(), true, null);
+						loggingData.getSubRootObjectId(), ActivityEnums.TAXONOMYDEFINITION.getValue(), true);
 
 			} else if (taxonomySynonymActivityList.contains(loggingData.getActivityType())) {
-				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.SYNONYMS.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.SYNONYMS.getValue(), loggingData.getActivityType(), userId, new Date(),
 						new Date(), loggingData.getRootObjectId(), ActivityEnums.TAXONOMYDEFINITION.getValue(),
-						loggingData.getSubRootObjectId(), ActivityEnums.TAXONOMYDEFINITION.getValue(), true, null);
+						loggingData.getSubRootObjectId(), ActivityEnums.TAXONOMYDEFINITION.getValue(), true);
 
 			} else if (taxonomyCommentActivityList.contains(loggingData.getActivityType())) {
-				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.COMMENTS.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.COMMENTS.getValue(), loggingData.getActivityType(), userId, new Date(),
 						new Date(), loggingData.getRootObjectId(), ActivityEnums.TAXONOMYDEFINITION.getValue(),
-						loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true, null);
+						loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true);
 			}
 			if (activity != null)
 				activity = activityDao.save(activity);
@@ -716,20 +709,20 @@ public class ActivityServiceImpl implements ActivityService {
 		try {
 
 			if (dataTableNullActivityList.contains(loggingData.getActivityType())) {
-				activity = new Activity(null, 0L, loggingData.getActivityDescription(), null, null, null,
+				activity = new Activity(null, loggingData.getActivityDescription(), null, null,
 						loggingData.getActivityType(), userId, new Date(), new Date(), loggingData.getRootObjectId(),
 						ActivityEnums.DATATABLE.getValue(), loggingData.getSubRootObjectId(),
-						ActivityEnums.DATATABLE.getValue(), true, null);
+						ActivityEnums.DATATABLE.getValue(), true);
 			} else if (dataTableUserGroupActivityList.contains(loggingData.getActivityType())) {
-				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.USERGROUP.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.USERGROUP.getValue(), loggingData.getActivityType(), userId, new Date(),
 						new Date(), loggingData.getRootObjectId(), ActivityEnums.DATATABLE.getValue(),
-						loggingData.getSubRootObjectId(), ActivityEnums.DATATABLE.getValue(), true, null);
+						loggingData.getSubRootObjectId(), ActivityEnums.DATATABLE.getValue(), true);
 			} else if (dataTableCommentActivityList.contains(loggingData.getActivityType())) {
-				activity = new Activity(null, 0L, loggingData.getActivityDescription(), loggingData.getActivityId(),
-						ActivityEnums.COMMENTS.getValue(), null, loggingData.getActivityType(), userId, new Date(),
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.COMMENTS.getValue(), loggingData.getActivityType(), userId, new Date(),
 						new Date(), loggingData.getRootObjectId(), ActivityEnums.DATATABLE.getValue(),
-						loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true, null);
+						loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true);
 			}
 
 			if (activity != null)
