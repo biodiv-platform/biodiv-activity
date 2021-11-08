@@ -30,7 +30,6 @@ public class Comments implements Serializable {
 	private static final long serialVersionUID = -1560748571733072408L;
 
 	private Long id;
-	private Long version;
 	private Long authorId;
 	private String body;
 	private Long commentHolderId;
@@ -41,7 +40,6 @@ public class Comments implements Serializable {
 	private String rootHolderType;
 	private Long mainParentId;
 	private Long parentId;
-	private String subject;
 	private Long languageId;
 
 	/**
@@ -53,7 +51,6 @@ public class Comments implements Serializable {
 
 	/**
 	 * @param id
-	 * @param version
 	 * @param authorId
 	 * @param body
 	 * @param commentHolderId
@@ -64,15 +61,13 @@ public class Comments implements Serializable {
 	 * @param rootHolderType
 	 * @param mainParentId
 	 * @param parentId
-	 * @param subject
 	 * @param languageId
 	 */
-	public Comments(Long id, Long version, Long authorId, String body, Long commentHolderId, String commentHolderType,
+	public Comments(Long id, Long authorId, String body, Long commentHolderId, String commentHolderType,
 			Date dateCreated, Date lastUpdated, Long rootHolderId, String rootHolderType, Long mainParentId,
-			Long parentId, String subject, Long languageId) {
+			Long parentId, Long languageId) {
 		super();
 		this.id = id;
-		this.version = version;
 		this.authorId = authorId;
 		this.body = body;
 		this.commentHolderId = commentHolderId;
@@ -83,7 +78,6 @@ public class Comments implements Serializable {
 		this.rootHolderType = rootHolderType;
 		this.mainParentId = mainParentId;
 		this.parentId = parentId;
-		this.subject = subject;
 		this.languageId = languageId;
 	}
 
@@ -96,15 +90,6 @@ public class Comments implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	@Column(name = "version")
-	public Long getVersion() {
-		return version;
-	}
-
-	public void setVersion(Long version) {
-		this.version = version;
 	}
 
 	@Column(name = "author_id")
@@ -195,15 +180,6 @@ public class Comments implements Serializable {
 
 	public void setParentId(Long parentId) {
 		this.parentId = parentId;
-	}
-
-	@Column(name = "subject")
-	public String getSubject() {
-		return subject;
-	}
-
-	public void setSubject(String subject) {
-		this.subject = subject;
 	}
 
 	@Column(name = "language_id")

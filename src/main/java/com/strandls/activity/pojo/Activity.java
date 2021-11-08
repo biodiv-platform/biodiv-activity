@@ -12,15 +12,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Type;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author Abhishek Rudra
  *
  */
-@org.hibernate.annotations.TypeDef(name = "MyJsonType", typeClass = MyJsonType.class)
 @Entity
 @Table(name = "activity_feed")
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -32,11 +29,9 @@ public class Activity implements Serializable {
 	private static final long serialVersionUID = 7491402738483974055L;
 
 	private Long id;
-	private Long version;
 	private String activityDescription;
 	private Long activityHolderId;
 	private String activityHolderType;
-	private String activityRootType;
 	private String activityType;
 	private Long authorId;
 	private Date dateCreated;
@@ -46,7 +41,6 @@ public class Activity implements Serializable {
 	private Long subRootHolderId;
 	private String subRootHolderType;
 	private Boolean isShowable;
-	private MyJson descriptionJson;
 
 	/**
 	 * 
@@ -57,11 +51,9 @@ public class Activity implements Serializable {
 
 	/**
 	 * @param id
-	 * @param version
 	 * @param activityDescription
 	 * @param activityHolderId
 	 * @param activityHolderType
-	 * @param activityRootType
 	 * @param activityType
 	 * @param authorId
 	 * @param dateCreated
@@ -71,19 +63,15 @@ public class Activity implements Serializable {
 	 * @param subRootHolderId
 	 * @param subRootHolderType
 	 * @param isShowable
-	 * @param descriptionJson
 	 */
-	public Activity(Long id, Long version, String activityDescription, Long activityHolderId, String activityHolderType,
-			String activityRootType, String activityType, Long authorId, Date dateCreated, Date lastUpdated,
-			Long rootHolderId, String rootHolderType, Long subRootHolderId, String subRootHolderType,
-			Boolean isShowable, MyJson descriptionJson) {
+	public Activity(Long id, String activityDescription, Long activityHolderId, String activityHolderType,
+			String activityType, Long authorId, Date dateCreated, Date lastUpdated, Long rootHolderId,
+			String rootHolderType, Long subRootHolderId, String subRootHolderType, Boolean isShowable) {
 		super();
 		this.id = id;
-		this.version = version;
 		this.activityDescription = activityDescription;
 		this.activityHolderId = activityHolderId;
 		this.activityHolderType = activityHolderType;
-		this.activityRootType = activityRootType;
 		this.activityType = activityType;
 		this.authorId = authorId;
 		this.dateCreated = dateCreated;
@@ -93,7 +81,6 @@ public class Activity implements Serializable {
 		this.subRootHolderId = subRootHolderId;
 		this.subRootHolderType = subRootHolderType;
 		this.isShowable = isShowable;
-		this.descriptionJson = descriptionJson;
 	}
 
 	@Id
@@ -105,15 +92,6 @@ public class Activity implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	@Column(name = "version")
-	public Long getVersion() {
-		return version;
-	}
-
-	public void setVersion(Long version) {
-		this.version = version;
 	}
 
 	@Column(name = "activity_descrption")
@@ -141,15 +119,6 @@ public class Activity implements Serializable {
 
 	public void setActivityHolderType(String activityHolderType) {
 		this.activityHolderType = activityHolderType;
-	}
-
-	@Column(name = "activity_root_type")
-	public String getActivityRootType() {
-		return activityRootType;
-	}
-
-	public void setActivityRootType(String activityRootType) {
-		this.activityRootType = activityRootType;
 	}
 
 	@Column(name = "activity_type")
@@ -231,15 +200,5 @@ public class Activity implements Serializable {
 
 	public void setIsShowable(Boolean isShowable) {
 		this.isShowable = isShowable;
-	}
-
-	@Column(name = "description_json")
-	@Type(type = "MyJsonType")
-	public MyJson getDescriptionJson() {
-		return descriptionJson;
-	}
-
-	public void setDescriptionJson(MyJson descriptionJson) {
-		this.descriptionJson = descriptionJson;
 	}
 }
