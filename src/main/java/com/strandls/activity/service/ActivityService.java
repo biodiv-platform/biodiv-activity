@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.strandls.activity.pojo.Activity;
 import com.strandls.activity.pojo.ActivityLoggingData;
 import com.strandls.activity.pojo.ActivityResult;
+import com.strandls.activity.pojo.CCAActivityLogging;
 import com.strandls.activity.pojo.CommentLoggingData;
 import com.strandls.activity.pojo.DatatableActivityLogging;
 import com.strandls.activity.pojo.DocumentActivityLogging;
@@ -42,5 +43,7 @@ public interface ActivityService {
 			DatatableActivityLogging loggingData);
 
 	public Integer activityCount(String objectType, Long objectId);
+
+	public Activity logCCAActivities(HttpServletRequest request, Long userId, CCAActivityLogging ccaActivityLogging);
 
 }

@@ -24,6 +24,7 @@ import com.strandls.activity.ApiConstants;
 import com.strandls.activity.pojo.Activity;
 import com.strandls.activity.pojo.ActivityLoggingData;
 import com.strandls.activity.pojo.ActivityResult;
+import com.strandls.activity.pojo.CCAActivityLogging;
 import com.strandls.activity.pojo.CommentLoggingData;
 import com.strandls.activity.pojo.DatatableActivityLogging;
 import com.strandls.activity.pojo.DocumentActivityLogging;
@@ -247,6 +248,28 @@ public class ActivityController {
 		}
 	}
 
+	@POST
+	@Path(ApiConstants.LOG + ApiConstants.CCA)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiOperation(value = "log cca activities", notes = "Return the activity logged", response = Activity.class)
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to log the activity", response = String.class) })
+
+	public Response logCCAActivities(@Context HttpServletRequest request,
+			@ApiParam(name = "loggingData") CCAActivityLogging loggingData) {
+		try {
+			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+			Long userId = Long.parseLong(profile.getId());
+			Activity result = service.logCCAActivities(request, userId, loggingData);
+			return Response.status(Status.OK).entity(result).build();
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+	
 	@POST
 	@Path(ApiConstants.LOG + ApiConstants.DATATABLE)
 	@Consumes(MediaType.APPLICATION_JSON)

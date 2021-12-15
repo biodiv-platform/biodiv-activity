@@ -34,4 +34,6 @@ public class ApiConstants {
 	public static final String DATATABLE = "/datatable";
 	public static final String SPECIES = "/species";
 	public static final String TAXONOMY = "/taxonomy";
+	public static final String CCA = "/cca";
+
 }

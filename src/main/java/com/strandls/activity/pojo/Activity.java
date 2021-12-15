@@ -30,15 +30,15 @@ public class Activity implements Serializable {
 
 	private Long id;
 	private String activityDescription;
-	private Long activityHolderId;
+	private String activityHolderId;
 	private String activityHolderType;
 	private String activityType;
 	private Long authorId;
 	private Date dateCreated;
 	private Date lastUpdated;
-	private Long rootHolderId;
+	private String rootHolderId;
 	private String rootHolderType;
-	private Long subRootHolderId;
+	private String subRootHolderId;
 	private String subRootHolderType;
 	private Boolean isShowable;
 
@@ -68,6 +68,24 @@ public class Activity implements Serializable {
 			String activityType, Long authorId, Date dateCreated, Date lastUpdated, Long rootHolderId,
 			String rootHolderType, Long subRootHolderId, String subRootHolderType, Boolean isShowable) {
 		super();
+		this.id = id;
+		this.activityDescription = activityDescription;
+		this.activityHolderId = activityHolderId.toString();
+		this.activityHolderType = activityHolderType;
+		this.activityType = activityType;
+		this.authorId = authorId;
+		this.dateCreated = dateCreated;
+		this.lastUpdated = lastUpdated;
+		this.rootHolderId = rootHolderId.toString();
+		this.rootHolderType = rootHolderType;
+		this.subRootHolderId = subRootHolderId.toString();
+		this.subRootHolderType = subRootHolderType;
+		this.isShowable = isShowable;
+	}
+
+	public Activity(Long id, String activityDescription, String activityHolderId, String activityHolderType,
+			String activityType, Long authorId, Date dateCreated, Date lastUpdated, String rootHolderId,
+			String rootHolderType, String subRootHolderId, String subRootHolderType, boolean isShowable) {
 		this.id = id;
 		this.activityDescription = activityDescription;
 		this.activityHolderId = activityHolderId;
@@ -104,11 +122,11 @@ public class Activity implements Serializable {
 	}
 
 	@Column(name = "activity_holder_id")
-	public Long getActivityHolderId() {
+	public String getActivityHolderId() {
 		return activityHolderId;
 	}
 
-	public void setActivityHolderId(Long activityHolderId) {
+	public void setActivityHolderId(String activityHolderId) {
 		this.activityHolderId = activityHolderId;
 	}
 
@@ -158,11 +176,11 @@ public class Activity implements Serializable {
 	}
 
 	@Column(name = "root_holder_id")
-	public Long getRootHolderId() {
+	public String getRootHolderId() {
 		return rootHolderId;
 	}
 
-	public void setRootHolderId(Long rootHolderId) {
+	public void setRootHolderId(String rootHolderId) {
 		this.rootHolderId = rootHolderId;
 	}
 
@@ -176,11 +194,11 @@ public class Activity implements Serializable {
 	}
 
 	@Column(name = "sub_root_holder_id")
-	public Long getSubRootHolderId() {
+	public String getSubRootHolderId() {
 		return subRootHolderId;
 	}
 
-	public void setSubRootHolderId(Long subRootHolderId) {
+	public void setSubRootHolderId(String subRootHolderId) {
 		this.subRootHolderId = subRootHolderId;
 	}
 
