@@ -242,15 +242,12 @@ public class ActivityServiceImpl implements ActivityService {
 				if (commentActivityList.contains(activity.getActivityType())) {
 
 					if (activity.getActivityHolderId().equals(activity.getSubRootHolderId())) {
-						Long activityHolderId = Long.parseLong(activity.getActivityHolderId());
-						comment = commentsDao.findById(activityHolderId);
+						comment = commentsDao.findById(activity.getActivityHolderId());
 						commentIbp = new CommentsIbp(comment.getBody());
 
 					} else {
-						Long subRootHolderId = Long.parseLong(activity.getSubRootHolderId());
-						Long activityHolderId = Long.parseLong(activity.getActivityHolderId());
-						reply = commentsDao.findById(subRootHolderId);
-						comment = commentsDao.findById(activityHolderId);
+						reply = commentsDao.findById(activity.getSubRootHolderId());
+						comment = commentsDao.findById(activity.getActivityHolderId());
 						replyIbp = new CommentsIbp(comment.getBody());
 						commentIbp = new CommentsIbp(reply.getBody());
 					}
@@ -340,11 +337,10 @@ public class ActivityServiceImpl implements ActivityService {
 					if (type != null && type != MAIL_TYPE.COMMENT_POST) {
 						MailActivityData mailActivityData = new MailActivityData(loggingData.getActivityType(),
 								loggingData.getActivityDescription(), loggingData.getMailData());
-						Long rootHolderId = Long.parseLong(activity.getRootHolderId());
-						mailService.sendMail(type, activity.getRootHolderType(), rootHolderId, userId, null,
-								mailActivityData, null);
+						mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId,
+								null, mailActivityData, null);
 						notificationSevice.sendNotification(mailActivityData, activity.getRootHolderType(),
-								rootHolderId, siteName, data.get("text").toString());
+								activity.getRootHolderId(), siteName, data.get("text").toString());
 					}
 				}
 
@@ -466,13 +462,12 @@ public class ActivityServiceImpl implements ActivityService {
 			MailActivityData mailActivityData = new MailActivityData("Added a comment", null,
 					commentData.getMailData());
 			List<TaggedUser> taggedUsers = ActivityUtil.getTaggedUsers(commentData.getBody());
-			Long rootHolderId = Long.parseLong(activityResult.getRootHolderId());
 			if (!taggedUsers.isEmpty()) {
-				mailService.sendMail(MAIL_TYPE.TAGGED_MAIL, activityResult.getRootHolderType(), rootHolderId, userId,
-						commentData, mailActivityData, taggedUsers);
+				mailService.sendMail(MAIL_TYPE.TAGGED_MAIL, activityResult.getRootHolderType(),
+						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
 			}
-			mailService.sendMail(MAIL_TYPE.COMMENT_POST, activityResult.getRootHolderType(), rootHolderId, userId,
-					commentData, mailActivityData, taggedUsers);
+			mailService.sendMail(MAIL_TYPE.COMMENT_POST, activityResult.getRootHolderType(),
+					activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
 			notificationSevice.sendNotification(mailActivityData, result.getRootHolderType(), result.getRootHolderId(),
 					siteName, mailActivityData.getActivityType());
 
