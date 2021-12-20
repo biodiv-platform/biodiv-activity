@@ -25,6 +25,7 @@ import com.strandls.activity.pojo.Activity;
 import com.strandls.activity.pojo.ActivityIbp;
 import com.strandls.activity.pojo.ActivityLoggingData;
 import com.strandls.activity.pojo.ActivityResult;
+import com.strandls.activity.pojo.CCAActivityLogging;
 import com.strandls.activity.pojo.CommentLoggingData;
 import com.strandls.activity.pojo.Comments;
 import com.strandls.activity.pojo.CommentsIbp;
@@ -186,6 +187,11 @@ public class ActivityServiceImpl implements ActivityService {
 
 	List<String> dataTableCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment"));
 
+// CCA ACTIVITY LIST
+	List<String> ccaTemplateActivityList = new ArrayList<>(
+			Arrays.asList("Template created", "Template updated", "Field created", "Field updated", "Field deleted"));
+	List<String> ccaDataActivityList = new ArrayList<>(Arrays.asList("Data created", "Data updated", "Data deleted"));
+
 	@Override
 	public Integer activityCount(String objectType, Long objectId) {
 		if (objectType.equalsIgnoreCase("observation"))
@@ -209,6 +215,10 @@ public class ActivityServiceImpl implements ActivityService {
 			objectType = ActivityEnums.TAXONOMYDEFINITION.getValue();
 		else if (objectType.equalsIgnoreCase("datatable"))
 			objectType = ActivityEnums.DATATABLE.getValue();
+		else if (objectType.equalsIgnoreCase("ccaData"))
+			objectType = ActivityEnums.CCADATA.getValue();
+		else if (objectType.equalsIgnoreCase("ccaTemplate"))
+			objectType = ActivityEnums.CCATEMPLATE.getValue();
 
 		List<ShowActivityIbp> ibpActivity = new ArrayList<ShowActivityIbp>();
 		Integer commentCount = 0;
@@ -688,6 +698,39 @@ public class ActivityServiceImpl implements ActivityService {
 						ActivityEnums.COMMENTS.getValue(), loggingData.getActivityType(), userId, new Date(),
 						new Date(), loggingData.getRootObjectId(), ActivityEnums.TAXONOMYDEFINITION.getValue(),
 						loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true);
+			}
+			if (activity != null)
+				activity = activityDao.save(activity);
+
+//			TODO mailData integration
+
+			return activity;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
+		return null;
+	}
+
+	@Override
+	public Activity logCCAActivities(HttpServletRequest request, Long userId, CCAActivityLogging ccaActivityLogging) {
+		try {
+			Activity activity = null;
+
+			if (ccaTemplateActivityList.contains(ccaActivityLogging.getActivityType())) {
+				activity = new Activity(null, ccaActivityLogging.getActivityDescription(),
+						ccaActivityLogging.getActivityId(), ActivityEnums.CCATEMPLATE.getValue(),
+						ccaActivityLogging.getActivityType(), userId, new Date(), new Date(),
+						ccaActivityLogging.getRootObjectId(), ActivityEnums.CCATEMPLATE.getValue(),
+						ccaActivityLogging.getSubRootObjectId(), ActivityEnums.CCATEMPLATE.getValue(), true);
+
+			} else if (ccaDataActivityList.contains(ccaActivityLogging.getActivityType())) {
+				activity = new Activity(null, ccaActivityLogging.getActivityDescription(),
+						ccaActivityLogging.getActivityId(), ActivityEnums.CCADATA.getValue(),
+						ccaActivityLogging.getActivityType(), userId, new Date(), new Date(),
+						ccaActivityLogging.getRootObjectId(), ActivityEnums.CCADATA.getValue(),
+						ccaActivityLogging.getSubRootObjectId(), ActivityEnums.CCADATA.getValue(), true);
+
 			}
 			if (activity != null)
 				activity = activityDao.save(activity);

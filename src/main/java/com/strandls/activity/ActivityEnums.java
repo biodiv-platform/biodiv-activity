@@ -15,7 +15,7 @@ public enum ActivityEnums {
 	CUSTOMFIELD("CustomField"), FILTERRULE("FilterRule"), DOCUMENT("content.eml.Document"), SPECIES("species.Species"),
 	SPECIESFIELD("species.SpeciesField"), TAXONOMYREGISTRY("species.TaxonomyRegistry"),
 	TAXONOMYDEFINITION("species.TaxonomyDefinition"), COMMONNAMES("species.CommonNames"),
-	SYNONYMS("species.SynonymsMerged");
+	SYNONYMS("species.SynonymsMerged"), CCADATA("cca.Data"), CCATEMPLATE("cca.Template");
 
 	String value;
 

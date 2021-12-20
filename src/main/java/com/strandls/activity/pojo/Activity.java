@@ -94,7 +94,7 @@ public class Activity implements Serializable {
 		this.id = id;
 	}
 
-	@Column(name = "activity_descrption")
+	@Column(name = "activity_descrption", columnDefinition="text")
 	public String getActivityDescription() {
 		return activityDescription;
 	}
