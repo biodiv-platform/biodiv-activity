@@ -188,11 +188,9 @@ public class ActivityServiceImpl implements ActivityService {
 	List<String> dataTableCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment"));
 
 // CCA ACTIVITY LIST
-	List<String> ccaNullActivityList = new ArrayList<>(
-			Arrays.asList("Deleted template", "Deleted template field", "Deleted data"));
 	List<String> ccaTemplateActivityList = new ArrayList<>(
-			Arrays.asList("Template created", "Template updated", "Field created", "Field updated"));
-	List<String> ccaDataActivityList = new ArrayList<>(Arrays.asList("Data created", "Data updated"));
+			Arrays.asList("Template created", "Template updated", "Field created", "Field updated", "Field deleted"));
+	List<String> ccaDataActivityList = new ArrayList<>(Arrays.asList("Data created", "Data updated", "Data deleted"));
 
 	@Override
 	public Integer activityCount(String objectType, Long objectId) {
@@ -719,13 +717,7 @@ public class ActivityServiceImpl implements ActivityService {
 		try {
 			Activity activity = null;
 
-			if (ccaNullActivityList.contains(ccaActivityLogging.getActivityType())) {
-				activity = new Activity(null, ccaActivityLogging.getActivityDescription(), null, null,
-						ccaActivityLogging.getActivityType(), userId, new Date(), new Date(),
-						ccaActivityLogging.getRootObjectId(), ActivityEnums.CCADATA.getValue(),
-						ccaActivityLogging.getSubRootObjectId(), ActivityEnums.CCADATA.getValue(), true);
-
-			} else if (ccaTemplateActivityList.contains(ccaActivityLogging.getActivityType())) {
+			if (ccaTemplateActivityList.contains(ccaActivityLogging.getActivityType())) {
 				activity = new Activity(null, ccaActivityLogging.getActivityDescription(),
 						ccaActivityLogging.getActivityId(), ActivityEnums.CCATEMPLATE.getValue(),
 						ccaActivityLogging.getActivityType(), userId, new Date(), new Date(),
