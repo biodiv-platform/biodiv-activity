@@ -453,26 +453,16 @@ public class ActivityServiceImpl implements ActivityService {
 						result.getRootHolderType(), result.getId(), "Added a comment");
 			}
 			activityResult = logTaxonomyActivities(request, userId, loggingData);
-		} else if (commentType.equalsIgnoreCase("ccaData")) {
-			TaxonomyActivityLogging loggingData = null;
+		} else if (commentType.equalsIgnoreCase("cca")) {
+			CCAActivityLogging loggingData = null;
 			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
-				loggingData = new TaxonomyActivityLogging(null, result.getRootHolderId(), result.getId(),
+				loggingData = new CCAActivityLogging(null, result.getRootHolderId(), result.getId(),
 						result.getRootHolderType(), result.getId(), "Added a comment");
 			} else {
-				loggingData = new TaxonomyActivityLogging(null, result.getRootHolderId(), result.getCommentHolderId(),
+				loggingData = new CCAActivityLogging(null, result.getRootHolderId(), result.getCommentHolderId(),
 						result.getRootHolderType(), result.getId(), "Added a comment");
 			}
-			activityResult = logTaxonomyActivities(request, userId, loggingData);
-		} else if (commentType.equalsIgnoreCase("ccaTemplate")) {
-			TaxonomyActivityLogging loggingData = null;
-			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
-				loggingData = new TaxonomyActivityLogging(null, result.getRootHolderId(), result.getId(),
-						result.getRootHolderType(), result.getId(), "Added a comment");
-			} else {
-				loggingData = new TaxonomyActivityLogging(null, result.getRootHolderId(), result.getCommentHolderId(),
-						result.getRootHolderType(), result.getId(), "Added a comment");
-			}
-			activityResult = logTaxonomyActivities(request, userId, loggingData);
+			activityResult = logCCAActivities(request, userId, loggingData);
 		}
 
 		if (activityResult != null && commentData.getMailData() != null) {
