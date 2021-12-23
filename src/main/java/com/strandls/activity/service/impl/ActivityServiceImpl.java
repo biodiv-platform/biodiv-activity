@@ -191,6 +191,7 @@ public class ActivityServiceImpl implements ActivityService {
 	List<String> ccaTemplateActivityList = new ArrayList<>(
 			Arrays.asList("Template created", "Template updated", "Field created", "Field updated", "Field deleted"));
 	List<String> ccaDataActivityList = new ArrayList<>(Arrays.asList("Data created", "Data updated", "Data deleted"));
+	List<String> ccaCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment"));
 
 	@Override
 	public Integer activityCount(String objectType, Long objectId) {
@@ -741,6 +742,12 @@ public class ActivityServiceImpl implements ActivityService {
 						ccaActivityLogging.getRootObjectId(), ActivityEnums.CCADATA.getValue(),
 						ccaActivityLogging.getSubRootObjectId(), ActivityEnums.CCADATA.getValue(), true);
 
+			} else if (ccaCommentActivityList.contains(ccaActivityLogging.getActivityType())) {
+				activity = new Activity(null, ccaActivityLogging.getActivityDescription(),
+						ccaActivityLogging.getActivityId(), ActivityEnums.COMMENTS.getValue(),
+						ccaActivityLogging.getActivityType(), userId, new Date(), new Date(),
+						ccaActivityLogging.getRootObjectId(), ccaActivityLogging.getRootObjectType(),
+						ccaActivityLogging.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true);
 			}
 			if (activity != null)
 				activity = activityDao.save(activity);
