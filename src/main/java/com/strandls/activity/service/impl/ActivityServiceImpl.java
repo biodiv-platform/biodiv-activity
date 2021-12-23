@@ -453,6 +453,26 @@ public class ActivityServiceImpl implements ActivityService {
 						result.getRootHolderType(), result.getId(), "Added a comment");
 			}
 			activityResult = logTaxonomyActivities(request, userId, loggingData);
+		} else if (commentType.equalsIgnoreCase("ccaData")) {
+			TaxonomyActivityLogging loggingData = null;
+			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
+				loggingData = new TaxonomyActivityLogging(null, result.getRootHolderId(), result.getId(),
+						result.getRootHolderType(), result.getId(), "Added a comment");
+			} else {
+				loggingData = new TaxonomyActivityLogging(null, result.getRootHolderId(), result.getCommentHolderId(),
+						result.getRootHolderType(), result.getId(), "Added a comment");
+			}
+			activityResult = logTaxonomyActivities(request, userId, loggingData);
+		} else if (commentType.equalsIgnoreCase("ccaTemplate")) {
+			TaxonomyActivityLogging loggingData = null;
+			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
+				loggingData = new TaxonomyActivityLogging(null, result.getRootHolderId(), result.getId(),
+						result.getRootHolderType(), result.getId(), "Added a comment");
+			} else {
+				loggingData = new TaxonomyActivityLogging(null, result.getRootHolderId(), result.getCommentHolderId(),
+						result.getRootHolderType(), result.getId(), "Added a comment");
+			}
+			activityResult = logTaxonomyActivities(request, userId, loggingData);
 		}
 
 		if (activityResult != null && commentData.getMailData() != null) {
