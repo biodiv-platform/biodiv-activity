@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.strandls.activity.pojo.ActivityLoggingData;
+import com.strandls.activity.pojo.CCAActivityLogging;
 import com.strandls.activity.pojo.TaggedUser;
 import com.strandls.activity.pojo.UserGroupActivity;
 import com.strandls.activity.service.impl.PropertyFileUtil;
@@ -179,6 +180,59 @@ public class ActivityUtil {
 		case "Rated media resource":
 			data.put("type", MAIL_TYPE.RATED_MEDIA_RESOURCE);
 			data.put("text", "Rated media resource");
+			break;
+
+		default:
+			data.put("type", null);
+			break;
+		}
+		return data;
+	}
+	
+	public static Map<String, Object> getMailType(String activity, CCAActivityLogging loggingData) {
+		boolean featuredToIBP = false;
+		System.out.println("\n\n ***** " + activity + " " + loggingData.getActivityDescription() + " *****\n\n");
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			List<String> ugActivity = Arrays.asList("Featured", "UnFeatured");
+			if (ugActivity.contains(loggingData.getActivityType())) {
+				UserGroupActivity data = mapper.readValue(loggingData.getActivityDescription(),
+						UserGroupActivity.class);
+				featuredToIBP = (data.getUserGroupId() == null);
+			}
+
+		} catch (Exception ex) {
+			logger.error(ex.getMessage());
+		}
+		Map<String, Object> data = new HashMap<String, Object>();
+		switch (activity) {
+		case "CCA created":
+			data.put("type", MAIL_TYPE.CCA_DATA_ADDED);
+			data.put("text", "CCA data created");
+			break;
+		case "CCA Data Update":
+			data.put("type", MAIL_TYPE.CCA_DATA_UPDATED);
+			data.put("text", "CCA data updated");
+			break;
+		case "CCA Data Deleted":
+			data.put("type", MAIL_TYPE.OBSERVATION_ADDED);
+			data.put("text", "CCA data deleted");
+			break;
+		case "CCA Template created":
+			data.put("type", MAIL_TYPE.OBSERVATION_ADDED);
+			data.put("text", "CCA template created");
+			break;
+		case "CCA Template Update":
+			data.put("type", MAIL_TYPE.OBSERVATION_ADDED);
+			data.put("text", "CCA template updated");
+			break;
+		case "CCA Template Deleted":
+			data.put("type", MAIL_TYPE.OBSERVATION_ADDED);
+			data.put("text", "CCA template deleted");
+			break;
+		case "Added a comment":
+			data.put("type", MAIL_TYPE.COMMENT_POST);
+			data.put("text", "Added a comment");
 			break;
 
 		default:
