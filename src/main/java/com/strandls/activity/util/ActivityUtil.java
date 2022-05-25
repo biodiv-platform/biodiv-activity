@@ -117,10 +117,20 @@ public class ActivityUtil {
 			data.put("type", MAIL_TYPE.DOCUMENT_DELETED);
 			data.put("text", "Document removed");
 			break;
-		case "Document flagged":
+		case "Flagged document":
 			data.put("type", MAIL_TYPE.DOCUMENT_FLAGGED);
 			data.put("text", "Document flagged");
 			break;
+
+		case "Posted resource document":
+			data.put("type", MAIL_TYPE.DOCUMENT_POST_TO_GROUP);
+			data.put("text", "Posted resource");
+			break;
+		case "Removed resoruce document":
+			data.put("type", MAIL_TYPE.DOCUMENT_POST_TO_GROUP);
+			data.put("text", "Removed resource");
+			break;
+
 		case "Observation created":
 			data.put("type", MAIL_TYPE.OBSERVATION_ADDED);
 			data.put("text", "Observation created");

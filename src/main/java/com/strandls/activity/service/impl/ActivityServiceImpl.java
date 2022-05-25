@@ -474,11 +474,15 @@ public class ActivityServiceImpl implements ActivityService {
 			if (!taggedUsers.isEmpty()) {
 				mailService.sendMail(MAIL_TYPE.TAGGED_MAIL, activityResult.getRootHolderType(),
 						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
+			} else if (commentType.equals("document")) {
+				mailService.sendMail(MAIL_TYPE.DOCUMENT_COMMENT_POST, activityResult.getRootHolderType(),
+						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
+			} else {
+				mailService.sendMail(MAIL_TYPE.COMMENT_POST, activityResult.getRootHolderType(),
+						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
+				notificationSevice.sendNotification(mailActivityData, result.getRootHolderType(),
+						result.getRootHolderId(), siteName, mailActivityData.getActivityType());
 			}
-			mailService.sendMail(MAIL_TYPE.COMMENT_POST, activityResult.getRootHolderType(),
-					activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
-			notificationSevice.sendNotification(mailActivityData, result.getRootHolderType(), result.getRootHolderId(),
-					siteName, mailActivityData.getActivityType());
 
 		}
 
@@ -577,7 +581,12 @@ public class ActivityServiceImpl implements ActivityService {
 				userService = headers.addUserHeader(userService, request.getHeader(HttpHeaders.AUTHORIZATION));
 				userService.updateFollow("document", loggingData.getRootObjectId().toString());
 				if (loggingData.getMailData() != null) {
-					Map<String, Object> data = ActivityUtil.getMailType(activity.getActivityType(),
+
+					String mailType = docUserGroupActivityList.contains(activity.getActivityType())
+							|| docFlagActivityList.contains(activity.getActivityType())
+									? activity.getActivityType() + " document"
+									: activity.getActivityType();
+					Map<String, Object> data = ActivityUtil.getMailType(mailType,
 							new ActivityLoggingData(loggingData.getActivityDescription(), loggingData.getRootObjectId(),
 									loggingData.getSubRootObjectId(), loggingData.getRootObjectType(),
 									loggingData.getActivityId(), loggingData.getActivityType(),
