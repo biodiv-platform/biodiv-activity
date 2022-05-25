@@ -105,6 +105,22 @@ public class ActivityUtil {
 		}
 		Map<String, Object> data = new HashMap<String, Object>();
 		switch (activity) {
+		case "Document created":
+			data.put("type", MAIL_TYPE.DOCUMENT_ADDED);
+			data.put("text", "Document created");
+			break;
+		case "Document updated":
+			data.put("type", MAIL_TYPE.DOCUMENT_UPDATED);
+			data.put("text", "Document updated");
+			break;
+		case "Document removed":
+			data.put("type", MAIL_TYPE.DOCUMENT_DELETED);
+			data.put("text", "Document removed");
+			break;
+		case "Document flagged":
+			data.put("type", MAIL_TYPE.DOCUMENT_FLAGGED);
+			data.put("text", "Document flagged");
+			break;
 		case "Observation created":
 			data.put("type", MAIL_TYPE.OBSERVATION_ADDED);
 			data.put("text", "Observation created");

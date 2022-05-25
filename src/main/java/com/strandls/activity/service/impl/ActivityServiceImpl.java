@@ -534,6 +534,7 @@ public class ActivityServiceImpl implements ActivityService {
 		try {
 			Activity activity = null;
 			Boolean isUsergroupFeatured = false;
+			MAIL_TYPE type = null;
 			isUsergroupFeatured = checkUserGroupFeatured(loggingData.getActivityType(),
 					loggingData.getActivityDescription());
 
@@ -572,9 +573,27 @@ public class ActivityServiceImpl implements ActivityService {
 			if (activity != null)
 				activity = activityDao.save(activity);
 
-			userService = headers.addUserHeader(userService, request.getHeader(HttpHeaders.AUTHORIZATION));
-			userService.updateFollow("document", loggingData.getRootObjectId().toString());
-//				TODO add mail service for document
+			try {
+				userService = headers.addUserHeader(userService, request.getHeader(HttpHeaders.AUTHORIZATION));
+				userService.updateFollow("document", loggingData.getRootObjectId().toString());
+				if (loggingData.getMailData() != null) {
+					Map<String, Object> data = ActivityUtil.getMailType(activity.getActivityType(),
+							new ActivityLoggingData(loggingData.getActivityDescription(), loggingData.getRootObjectId(),
+									loggingData.getSubRootObjectId(), loggingData.getRootObjectType(),
+									loggingData.getActivityId(), loggingData.getActivityType(),
+									loggingData.getMailData()));
+					type = (MAIL_TYPE) data.get("type");
+					if (type != null && type != MAIL_TYPE.COMMENT_POST) {
+						MailActivityData mailActivityData = new MailActivityData(loggingData.getActivityType(),
+								loggingData.getActivityDescription(), loggingData.getMailData());
+						mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId,
+								null, mailActivityData, null);
+					}
+				}
+
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
 
 			return activity;
 
