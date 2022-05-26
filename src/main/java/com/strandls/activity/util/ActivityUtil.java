@@ -113,9 +113,9 @@ public class ActivityUtil {
 			data.put("type", MAIL_TYPE.DOCUMENT_UPDATED);
 			data.put("text", "Document updated");
 			break;
-		case "Document removed":
+		case "Document Deleted":
 			data.put("type", MAIL_TYPE.DOCUMENT_DELETED);
-			data.put("text", "Document removed");
+			data.put("text", "Document Deleted");
 			break;
 		case "Flagged document":
 			data.put("type", MAIL_TYPE.DOCUMENT_FLAGGED);
