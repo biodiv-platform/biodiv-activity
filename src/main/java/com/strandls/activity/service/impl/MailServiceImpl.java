@@ -198,19 +198,21 @@ public class MailServiceImpl implements MailService {
 										? observation.getCommonName()
 										: "Help Identify");
 
-		model.put(COMMENT_POST.WHAT_POSTED_LOCATION.getAction(),
-				observation.getLocation() == null ? "" : observation.getLocation());
-		SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy");
-		String date = ActivityUtil.getFormattedDate(sdf.format(observation.getObservedOn()));
-		model.put(COMMENT_POST.WHAT_POSTED_OBSERVED_ON.getAction(), date);
-		String image = observation.getIconURl() == null ? "" : observation.getIconURl();
-		if (!image.isEmpty()) {
-			int dot = image.lastIndexOf(".");
-			String fileName = image.substring(0, dot);
-			String extension = image.substring(dot);
-			image = String.join("_th1", fileName, extension);
+		if (observation != null) {
+			model.put(COMMENT_POST.WHAT_POSTED_LOCATION.getAction(),
+					observation.getLocation() == null ? "" : observation.getLocation());
+			SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy");
+			String date = ActivityUtil.getFormattedDate(sdf.format(observation.getObservedOn()));
+			model.put(COMMENT_POST.WHAT_POSTED_OBSERVED_ON.getAction(), date);
+			String image = observation.getIconURl() == null ? "" : observation.getIconURl();
+			if (!image.isEmpty()) {
+				int dot = image.lastIndexOf(".");
+				String fileName = image.substring(0, dot);
+				String extension = image.substring(dot);
+				image = String.join("_th1", fileName, extension);
+			}
+			model.put(COMMENT_POST.WHAT_POSTED_ICON.getAction(), image);
 		}
-		model.put(COMMENT_POST.WHAT_POSTED_ICON.getAction(), image);
 		model.put(COMMENT_POST.WHAT_POSTED_USERGROUPS.getAction(), groups);
 		if (userGroup != null) {
 			model.put(POST_TO_GROUP.WHERE_WEB_ADDRESS.getAction(), userGroup.getWebAddress());
