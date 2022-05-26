@@ -582,8 +582,8 @@ public class ActivityServiceImpl implements ActivityService {
 				userService.updateFollow("document", loggingData.getRootObjectId().toString());
 				if (loggingData.getMailData() != null) {
 
-					String mailType = docUserGroupActivityList.contains(activity.getActivityType())
-							|| docFlagActivityList.contains(activity.getActivityType())
+					String mailType = docUserGroupActivityList.contains(loggingData.getActivityType())
+							|| docFlagActivityList.contains(loggingData.getActivityType())
 									? activity.getActivityType() + " document"
 									: activity.getActivityType();
 					Map<String, Object> data = ActivityUtil.getMailType(mailType,

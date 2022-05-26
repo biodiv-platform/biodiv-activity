@@ -192,9 +192,9 @@ public class MailServiceImpl implements MailService {
 
 		model.put(COMMENT_POST.WHAT_POSTED_NAME.getAction(),
 				(document != null && document.getTitle() != null) ? document.getTitle()
-						: (observation.getScientificName() != null && !observation.getScientificName().isEmpty())
+						: (observation != null  && observation.getScientificName() != null && !observation.getScientificName().isEmpty())
 								? observation.getScientificName()
-								: (observation.getCommonName() != null && !observation.getCommonName().isEmpty())
+								: (observation!= null && observation.getCommonName() != null && !observation.getCommonName().isEmpty())
 										? observation.getCommonName()
 										: "Help Identify");
 
