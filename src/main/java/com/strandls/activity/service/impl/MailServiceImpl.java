@@ -114,7 +114,8 @@ public class MailServiceImpl implements MailService {
 					recipient.setId(follower.getId());
 					recipient.setIsSubscribed(follower.getSendNotification());
 					data = prepareMailData(type, recipient, follower, who, reco, userGroup, activity, comment, name,
-							observation, groups, linkTaggedUsers, document);
+							observation, groups, linkTaggedUsers.isEmpty() ? comment.getBody() : linkTaggedUsers,
+							document);
 					if (follower.getEmail() != null && !follower.getEmail().isEmpty()) {
 						mailDataList.add(data);
 					}
@@ -123,7 +124,8 @@ public class MailServiceImpl implements MailService {
 				for (Recipients recipient : recipientsList) {
 					User follower = userService.getUser(String.valueOf(recipient.getId()));
 					data = prepareMailData(type, recipient, follower, who, reco, userGroup, activity, comment, name,
-							observation, groups, linkTaggedUsers, document);
+							observation, groups, linkTaggedUsers.isEmpty() ? comment.getBody() : linkTaggedUsers,
+							document);
 					if (recipient.getEmail() != null && !recipient.getEmail().isEmpty()) {
 						mailDataList.add(data);
 					}
@@ -185,18 +187,16 @@ public class MailServiceImpl implements MailService {
 
 		model.put(COMMENT_POST.WHAT_POSTED_ID.getAction(),
 				(observation != null && observation.getObservationId() != null) ? observation.getObservationId()
-						: (document != null && document.getDocumentId() != null) ? document.getDocumentId() : null);
-
-		model.put(COMMENT_POST.WHAT_POSTED_TYPE.getAction(),
-				document != null && document.getDocumentId() != null ? document.getType() : "Document");
+						: (document != null && document.getDocumentId() != null) ? document.getDocumentId() : null);	
 
 		model.put(COMMENT_POST.WHAT_POSTED_NAME.getAction(),
 				(document != null && document.getTitle() != null) ? document.getTitle()
-						: (observation != null  && observation.getScientificName() != null && !observation.getScientificName().isEmpty())
-								? observation.getScientificName()
-								: (observation!= null && observation.getCommonName() != null && !observation.getCommonName().isEmpty())
-										? observation.getCommonName()
-										: "Help Identify");
+						: (observation != null && observation.getScientificName() != null
+								&& !observation.getScientificName().isEmpty())
+										? observation.getScientificName()
+										: (observation != null && observation.getCommonName() != null
+												&& !observation.getCommonName().isEmpty()) ? observation.getCommonName()
+														: "Help Identify");
 
 		if (observation != null) {
 			model.put(COMMENT_POST.WHAT_POSTED_LOCATION.getAction(),
