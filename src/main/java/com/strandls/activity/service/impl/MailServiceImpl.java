@@ -114,7 +114,7 @@ public class MailServiceImpl implements MailService {
 					recipient.setId(follower.getId());
 					recipient.setIsSubscribed(follower.getSendNotification());
 					data = prepareMailData(type, recipient, follower, who, reco, userGroup, activity, comment, name,
-							observation, groups, linkTaggedUsers.isEmpty() ? comment.getBody() : linkTaggedUsers,
+							observation, groups, linkTaggedUsers==null && linkTaggedUsers.isEmpty() ? comment.getBody() : linkTaggedUsers,
 							document);
 					if (follower.getEmail() != null && !follower.getEmail().isEmpty()) {
 						mailDataList.add(data);
@@ -124,7 +124,7 @@ public class MailServiceImpl implements MailService {
 				for (Recipients recipient : recipientsList) {
 					User follower = userService.getUser(String.valueOf(recipient.getId()));
 					data = prepareMailData(type, recipient, follower, who, reco, userGroup, activity, comment, name,
-							observation, groups, linkTaggedUsers.isEmpty() ? comment.getBody() : linkTaggedUsers,
+							observation, groups, linkTaggedUsers==null &&linkTaggedUsers.isEmpty() ? comment.getBody() : linkTaggedUsers,
 							document);
 					if (recipient.getEmail() != null && !recipient.getEmail().isEmpty()) {
 						mailDataList.add(data);
@@ -138,6 +138,7 @@ public class MailServiceImpl implements MailService {
 			producer.produceMail(RabbitMqConnection.EXCHANGE, RabbitMqConnection.ROUTING_KEY, null,
 					JsonUtil.mapToJSON(mailData));
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			logger.error(ex.getMessage());
 		}
 	}
