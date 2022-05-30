@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.strandls.activity.RabbitMqConnection;
 import com.strandls.activity.pojo.CommentLoggingData;
+import com.strandls.activity.pojo.DocumentMailData;
 import com.strandls.activity.pojo.MailActivityData;
 import com.strandls.activity.pojo.RecoVoteActivity;
 import com.strandls.activity.pojo.TaggedUser;
@@ -69,6 +70,7 @@ public class MailServiceImpl implements MailService {
 		try {
 			List<Recipients> recipientsList = userService.getRecipients(objectType, objectId);
 			ObservationMailData observation = activity.getMailData().getObservationData();
+			DocumentMailData document = activity.getMailData().getDocumentMailData();
 			List<UserGroupMailData> groups = activity.getMailData().getUserGroupData();
 			User who = userService.getUser(String.valueOf(userId));
 			RecoVoteActivity reco = null;
@@ -112,7 +114,8 @@ public class MailServiceImpl implements MailService {
 					recipient.setId(follower.getId());
 					recipient.setIsSubscribed(follower.getSendNotification());
 					data = prepareMailData(type, recipient, follower, who, reco, userGroup, activity, comment, name,
-							observation, groups, linkTaggedUsers);
+							observation, groups, linkTaggedUsers==null || linkTaggedUsers.isEmpty() ? comment.getBody() : linkTaggedUsers,
+							document);
 					if (follower.getEmail() != null && !follower.getEmail().isEmpty()) {
 						mailDataList.add(data);
 					}
@@ -121,7 +124,8 @@ public class MailServiceImpl implements MailService {
 				for (Recipients recipient : recipientsList) {
 					User follower = userService.getUser(String.valueOf(recipient.getId()));
 					data = prepareMailData(type, recipient, follower, who, reco, userGroup, activity, comment, name,
-							observation, groups, linkTaggedUsers);
+							observation, groups, linkTaggedUsers==null ||linkTaggedUsers.isEmpty() ? comment.getBody() : linkTaggedUsers,
+							document);
 					if (recipient.getEmail() != null && !recipient.getEmail().isEmpty()) {
 						mailDataList.add(data);
 					}
@@ -140,7 +144,8 @@ public class MailServiceImpl implements MailService {
 
 	private Map<String, Object> prepareMailData(MAIL_TYPE type, Recipients recipient, User follower, User who,
 			RecoVoteActivity reco, UserGroupActivity userGroup, MailActivityData activity, CommentLoggingData comment,
-			String name, ObservationMailData observation, List<UserGroupMailData> groups, String modifiedComment) {
+			String name, ObservationMailData observation, List<UserGroupMailData> groups, String modifiedComment,
+			DocumentMailData document) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put(FIELDS.TYPE.getAction(), type.getAction());
 		data.put(FIELDS.TO.getAction(), new String[] { recipient.getEmail() });
@@ -179,26 +184,35 @@ public class MailServiceImpl implements MailService {
 			model.put(SUGGEST_MAIL.GIVEN_NAME_IS_SCIENTIFIC_NAME.getAction(),
 					reco.getScientificName() != null && !reco.getScientificName().isEmpty());
 		}
-		model.put(COMMENT_POST.WHAT_POSTED_ID.getAction(), observation.getObservationId());
+
+		model.put(COMMENT_POST.WHAT_POSTED_ID.getAction(),
+				(observation != null && observation.getObservationId() != null) ? observation.getObservationId()
+						: (document != null && document.getDocumentId() != null) ? document.getDocumentId() : null);	
+
 		model.put(COMMENT_POST.WHAT_POSTED_NAME.getAction(),
-				(observation.getScientificName() != null && !observation.getScientificName().isEmpty())
-						? observation.getScientificName()
-						: (observation.getCommonName() != null && !observation.getCommonName().isEmpty())
-								? observation.getCommonName()
-								: "Help Identify");
-		model.put(COMMENT_POST.WHAT_POSTED_LOCATION.getAction(),
-				observation.getLocation() == null ? "" : observation.getLocation());
-		SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy");
-		String date = ActivityUtil.getFormattedDate(sdf.format(observation.getObservedOn()));
-		model.put(COMMENT_POST.WHAT_POSTED_OBSERVED_ON.getAction(), date);
-		String image = observation.getIconURl() == null ? "" : observation.getIconURl();
-		if (!image.isEmpty()) {
-			int dot = image.lastIndexOf(".");
-			String fileName = image.substring(0, dot);
-			String extension = image.substring(dot);
-			image = String.join("_th1", fileName, extension);
+				(document != null && document.getTitle() != null) ? document.getTitle()
+						: (observation != null && observation.getScientificName() != null
+								&& !observation.getScientificName().isEmpty())
+										? observation.getScientificName()
+										: (observation != null && observation.getCommonName() != null
+												&& !observation.getCommonName().isEmpty()) ? observation.getCommonName()
+														: "Help Identify");
+
+		if (observation != null) {
+			model.put(COMMENT_POST.WHAT_POSTED_LOCATION.getAction(),
+					observation.getLocation() == null ? "" : observation.getLocation());
+			SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy");
+			String date = ActivityUtil.getFormattedDate(sdf.format(observation.getObservedOn()));
+			model.put(COMMENT_POST.WHAT_POSTED_OBSERVED_ON.getAction(), date);
+			String image = observation.getIconURl() == null ? "" : observation.getIconURl();
+			if (!image.isEmpty()) {
+				int dot = image.lastIndexOf(".");
+				String fileName = image.substring(0, dot);
+				String extension = image.substring(dot);
+				image = String.join("_th1", fileName, extension);
+			}
+			model.put(COMMENT_POST.WHAT_POSTED_ICON.getAction(), image);
 		}
-		model.put(COMMENT_POST.WHAT_POSTED_ICON.getAction(), image);
 		model.put(COMMENT_POST.WHAT_POSTED_USERGROUPS.getAction(), groups);
 		if (userGroup != null) {
 			model.put(POST_TO_GROUP.WHERE_WEB_ADDRESS.getAction(), userGroup.getWebAddress());
