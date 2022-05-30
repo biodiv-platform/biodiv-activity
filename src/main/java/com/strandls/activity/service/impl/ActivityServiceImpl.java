@@ -580,7 +580,7 @@ public class ActivityServiceImpl implements ActivityService {
 			try {
 				userService = headers.addUserHeader(userService, request.getHeader(HttpHeaders.AUTHORIZATION));
 				userService.updateFollow("document", loggingData.getRootObjectId().toString());
-				if (loggingData.getMailData() != null) {
+				if (activity!= null && loggingData.getMailData() != null) {
 
 					String mailType = docUserGroupActivityList.contains(loggingData.getActivityType())
 							|| docFlagActivityList.contains(loggingData.getActivityType())

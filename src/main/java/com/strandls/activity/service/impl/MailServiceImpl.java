@@ -138,7 +138,6 @@ public class MailServiceImpl implements MailService {
 			producer.produceMail(RabbitMqConnection.EXCHANGE, RabbitMqConnection.ROUTING_KEY, null,
 					JsonUtil.mapToJSON(mailData));
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			logger.error(ex.getMessage());
 		}
 	}

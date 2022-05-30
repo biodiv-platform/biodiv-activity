@@ -28,7 +28,7 @@ public class DocumentMailData {
 	 * @param createdOn
 	 * @param authorId
 	 */
-	public DocumentMailData(Long documentId, Date createdOn, Long authorId, String type) {
+	public DocumentMailData(Long documentId, Date createdOn, Long authorId, String title) {
 		super();
 		this.documentId = documentId;
 		this.createdOn = createdOn;
