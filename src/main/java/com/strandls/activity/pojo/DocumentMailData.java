@@ -14,6 +14,7 @@ public class DocumentMailData {
 	private Long documentId;
 	private Date createdOn;
 	private Long authorId;
+	private String title;
 
 	/**
 	 * 
@@ -27,11 +28,12 @@ public class DocumentMailData {
 	 * @param createdOn
 	 * @param authorId
 	 */
-	public DocumentMailData(Long documentId, Date createdOn, Long authorId) {
+	public DocumentMailData(Long documentId, Date createdOn, Long authorId, String title) {
 		super();
 		this.documentId = documentId;
 		this.createdOn = createdOn;
 		this.authorId = authorId;
+		this.title = title;
 	}
 
 	public Long getDocumentId() {
@@ -56,6 +58,14 @@ public class DocumentMailData {
 
 	public void setAuthorId(Long authorId) {
 		this.authorId = authorId;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 }
