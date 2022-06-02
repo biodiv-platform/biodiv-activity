@@ -474,11 +474,15 @@ public class ActivityServiceImpl implements ActivityService {
 			if (!taggedUsers.isEmpty()) {
 				mailService.sendMail(MAIL_TYPE.TAGGED_MAIL, activityResult.getRootHolderType(),
 						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
+			} else if (commentType.equals("document")) {
+				mailService.sendMail(MAIL_TYPE.DOCUMENT_COMMENT_POST, activityResult.getRootHolderType(),
+						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
+			} else {
+				mailService.sendMail(MAIL_TYPE.COMMENT_POST, activityResult.getRootHolderType(),
+						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
+				notificationSevice.sendNotification(mailActivityData, result.getRootHolderType(),
+						result.getRootHolderId(), siteName, mailActivityData.getActivityType());
 			}
-			mailService.sendMail(MAIL_TYPE.COMMENT_POST, activityResult.getRootHolderType(),
-					activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
-			notificationSevice.sendNotification(mailActivityData, result.getRootHolderType(), result.getRootHolderId(),
-					siteName, mailActivityData.getActivityType());
 
 		}
 
@@ -534,6 +538,7 @@ public class ActivityServiceImpl implements ActivityService {
 		try {
 			Activity activity = null;
 			Boolean isUsergroupFeatured = false;
+			MAIL_TYPE type = null;
 			isUsergroupFeatured = checkUserGroupFeatured(loggingData.getActivityType(),
 					loggingData.getActivityDescription());
 
@@ -572,9 +577,32 @@ public class ActivityServiceImpl implements ActivityService {
 			if (activity != null)
 				activity = activityDao.save(activity);
 
-			userService = headers.addUserHeader(userService, request.getHeader(HttpHeaders.AUTHORIZATION));
-			userService.updateFollow("document", loggingData.getRootObjectId().toString());
-//				TODO add mail service for document
+			try {
+				userService = headers.addUserHeader(userService, request.getHeader(HttpHeaders.AUTHORIZATION));
+				userService.updateFollow("document", loggingData.getRootObjectId().toString());
+				if (activity!= null && loggingData.getMailData() != null) {
+
+					String mailType = docUserGroupActivityList.contains(loggingData.getActivityType())
+							|| docFlagActivityList.contains(loggingData.getActivityType())
+									? activity.getActivityType() + " document"
+									: activity.getActivityType();
+					Map<String, Object> data = ActivityUtil.getMailType(mailType,
+							new ActivityLoggingData(loggingData.getActivityDescription(), loggingData.getRootObjectId(),
+									loggingData.getSubRootObjectId(), loggingData.getRootObjectType(),
+									loggingData.getActivityId(), loggingData.getActivityType(),
+									loggingData.getMailData()));
+					type = (MAIL_TYPE) data.get("type");
+					if (type != null && type != MAIL_TYPE.COMMENT_POST) {
+						MailActivityData mailActivityData = new MailActivityData(loggingData.getActivityType(),
+								loggingData.getActivityDescription(), loggingData.getMailData());
+						mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId,
+								null, mailActivityData, null);
+					}
+				}
+
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
 
 			return activity;
 
