@@ -105,6 +105,80 @@ public class ActivityUtil {
 		}
 		Map<String, Object> data = new HashMap<String, Object>();
 		switch (activity) {
+
+		case "Created species":
+			data.put("type", MAIL_TYPE.SPECIES_ADDED);
+			data.put("text", "Created species");
+			break;
+
+		case "Remove species":
+			data.put("type", MAIL_TYPE.SPECIES_DELETED);
+			data.put("text", "Remove species");
+			break;
+		case "Added synonym":
+			data.put("type", MAIL_TYPE.SPECIES_SYNONYMS);
+			data.put("text", "Added synonym");
+			break;
+		case "Updated synonym":
+			data.put("type", MAIL_TYPE.SPECIES_SYNONYMS);
+			data.put("text", "Updated synonym");
+			break;
+		case "Deleted synonym":
+			data.put("type", MAIL_TYPE.SPECIES_SYNONYMS);
+			data.put("text", "Deleted synonym");
+			break;
+
+		case "Added common name":
+			data.put("type", MAIL_TYPE.SPECIES_COMMON_NAME);
+			data.put("text", "Added common name");
+			break;
+		case "Deleted common name":
+			data.put("type", MAIL_TYPE.SPECIES_COMMON_NAME);
+			data.put("text", "Deleted common name");
+			break;
+
+		case "Updated common name":
+			data.put("type", MAIL_TYPE.SPECIES_COMMON_NAME);
+			data.put("text", "Updated common name");
+			break;
+
+		case "Updated fact species":
+			data.put("type", MAIL_TYPE.SPECIES_FACT);
+			data.put("text", "Updated fact");
+			break;
+		case "Added a fact species":
+			data.put("type", MAIL_TYPE.SPECIES_FACT);
+			data.put("text", "Added a fact");
+			break;
+		case "Added species field":
+			data.put("type", MAIL_TYPE.SPECIES_FIELD_UPDATED);
+			data.put("text", "Added species field");
+			break;
+
+		case "Updated species gallery":
+			data.put("type", MAIL_TYPE.SPECIES_RESOURCE);
+			data.put("text", "Updated species gallery");
+			break;
+
+		case "Updated species field":
+			data.put("type", MAIL_TYPE.SPECIES_FIELD_UPDATED);
+			data.put("text", "Updated species field");
+			break;
+
+		case "Deleted species field":
+			data.put("type", MAIL_TYPE.SPECIES_FIELD_UPDATED);
+			data.put("text", "Deleted species field");
+			break;
+
+		case "Posted resource species":
+			data.put("type", MAIL_TYPE.SPECIES_POST_TO_GROUP);
+			data.put("text", "Posted resource");
+			break;
+		case "Removed resoruce species":
+			data.put("type", MAIL_TYPE.SPECIES_POST_TO_GROUP);
+			data.put("text", "Removed resource");
+			break;
+
 		case "Document created":
 			data.put("type", MAIL_TYPE.DOCUMENT_ADDED);
 			data.put("text", "Document created");
