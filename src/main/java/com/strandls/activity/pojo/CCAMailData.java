@@ -1,6 +1,7 @@
 package com.strandls.activity.pojo;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @author Guddu Sharma
@@ -12,7 +13,8 @@ public class CCAMailData {
 	private String location;
 	private Date date;
 	private Long authorId;
-	public Activity activity;
+	private Activity activity;
+	private Map<String, Object> data;
 
 	/**
 	 * 
@@ -30,13 +32,14 @@ public class CCAMailData {
 	 * @param commonName
 	 * @param authorId
 	 */
-	public CCAMailData(Long id, String location, Date date, Long authorId, Activity activity) {
+	public CCAMailData(Long id, String location, Date date, Long authorId, Activity activity, Map<String, Object> data) {
 		super();
 		this.id = id;
 		this.location = location;
 		this.date = date;
 		this.authorId = authorId;
 		this.activity = activity;
+		this.data = data;
 	}
 
 	public Long getId() {
@@ -77,5 +80,13 @@ public class CCAMailData {
 	
 	public void setActivity(Activity activity) {
 		this.activity = activity;
+	}
+	
+	public Map<String, Object> getData() {
+		return data;
+	}
+
+	public void setData(Map<String, Object> data) {
+		this.data = data;
 	}
 }

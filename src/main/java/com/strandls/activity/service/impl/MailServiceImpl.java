@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.strandls.activity.RabbitMqConnection;
+import com.strandls.activity.pojo.CCAMailData;
 import com.strandls.activity.pojo.CommentLoggingData;
 import com.strandls.activity.pojo.DocumentMailData;
 import com.strandls.activity.pojo.MailActivityData;
@@ -68,82 +69,167 @@ public class MailServiceImpl implements MailService {
 	public void sendMail(MAIL_TYPE type, String objectType, Long objectId, Long userId, CommentLoggingData comment,
 			MailActivityData activity, List<TaggedUser> taggedUsers) {
 		try {
-			List<Recipients> recipientsList = userService.getRecipients(objectType, objectId);
-			ObservationMailData observation = activity.getMailData().getObservationData();
-			DocumentMailData document = activity.getMailData().getDocumentMailData();
-			List<UserGroupMailData> groups = activity.getMailData().getUserGroupData();
-			User who = userService.getUser(String.valueOf(userId));
-			RecoVoteActivity reco = null;
-			UserGroupActivity userGroup = null;
-			String name = "";
-			if (recommendationActivityList.contains(activity.getActivityType())
-					|| activity.getActivityType().equalsIgnoreCase("suggestion removed")) {
-				reco = mapper.readValue(activity.getActivityDescription(), RecoVoteActivity.class);
-
-				name = (reco.getScientificName() != null && !reco.getScientificName().isEmpty())
-						? reco.getScientificName()
-						: (reco.getCommonName() != null && !reco.getCommonName().isEmpty()) ? reco.getCommonName()
-								: (reco.getGivenName() != null && !reco.getGivenName().isEmpty()) ? reco.getGivenName()
-										: "";
-			}
-			if (userGroupActivityList.contains(activity.getActivityType())) {
-				userGroup = mapper.readValue(activity.getActivityDescription(), UserGroupActivity.class);
-				System.out.println("***** UserGroup ***** " + userGroup.getUserGroupName());
-			}
-
-			System.out.println("INSIDE MAIL SERVICE IMPL");
-
-			if (groups != null && !groups.isEmpty()) {
-				for (UserGroupMailData mailData : groups) {
-					System.out.println("***** GroupFromAPI *****" + mailData.toString());
-				}
+			if(type.toString().startsWith("CCA")) {
+				
+				User who = userService.getUser(String.valueOf(userId));
+				
+				List<Map<String, Object>> mailDataList = new ArrayList<>();
+				mailDataList.add(prepareCCAMailData(type));
+				
+				Map<String, Object> mailData = new HashMap<String, Object>();
+				
+				mailData.put(INFO_FIELDS.TYPE.getAction(), type.getAction());
+				mailData.put(INFO_FIELDS.RECIPIENTS.getAction(), mailDataList);
+				System.out.println("\n\n ***** \n\n" + mailData + "\n\n ***** \n\n");
+				producer.produceMail(RabbitMqConnection.EXCHANGE, RabbitMqConnection.ROUTING_KEY, null,
+						JsonUtil.mapToJSON(mailData));
 			} else {
-				System.out.println("***** Groups Empty *****");
-			}
+				List<Recipients> recipientsList = userService.getRecipients(objectType, objectId);
+				ObservationMailData observation = activity.getMailData().getObservationData();
+				DocumentMailData document = activity.getMailData().getDocumentMailData();
+				List<UserGroupMailData> groups = activity.getMailData().getUserGroupData();
+				User who = userService.getUser(String.valueOf(userId));
+				RecoVoteActivity reco = null;
+				UserGroupActivity userGroup = null;
+				String name = "";
+				if (recommendationActivityList.contains(activity.getActivityType())
+						|| activity.getActivityType().equalsIgnoreCase("suggestion removed")) {
+					reco = mapper.readValue(activity.getActivityDescription(), RecoVoteActivity.class);
 
-			Map<String, Object> data = null;
-			String linkTaggedUsers = "";
-			if (type == MAIL_TYPE.COMMENT_POST && taggedUsers != null) {
-				linkTaggedUsers = ActivityUtil.linkTaggedUsersProfile(taggedUsers, comment.getBody(), true);
-			}
-			List<Map<String, Object>> mailDataList = new ArrayList<>();
-			if (type == MAIL_TYPE.TAGGED_MAIL && taggedUsers != null && !taggedUsers.isEmpty()) {
-				for (TaggedUser user : taggedUsers) {
-					User follower = userService.getUser(String.valueOf(user.getId()));
-					Recipients recipient = new Recipients();
-					recipient.setId(follower.getId());
-					recipient.setIsSubscribed(follower.getSendNotification());
-					data = prepareMailData(type, recipient, follower, who, reco, userGroup, activity, comment, name,
-							observation, groups, linkTaggedUsers!=null && !linkTaggedUsers.isEmpty() ?linkTaggedUsers:
-								comment!= null && !comment.getBody().isEmpty()?comment.getBody():"",
-							document);
-					if (follower.getEmail() != null && !follower.getEmail().isEmpty()) {
-						mailDataList.add(data);
+					name = (reco.getScientificName() != null && !reco.getScientificName().isEmpty())
+							? reco.getScientificName()
+							: (reco.getCommonName() != null && !reco.getCommonName().isEmpty()) ? reco.getCommonName()
+									: (reco.getGivenName() != null && !reco.getGivenName().isEmpty()) ? reco.getGivenName()
+											: "";
+				}
+				if (userGroupActivityList.contains(activity.getActivityType())) {
+					userGroup = mapper.readValue(activity.getActivityDescription(), UserGroupActivity.class);
+					System.out.println("***** UserGroup ***** " + userGroup.getUserGroupName());
+				}
+
+				System.out.println("INSIDE MAIL SERVICE IMPL");
+
+				if (groups != null && !groups.isEmpty()) {
+					for (UserGroupMailData mailData : groups) {
+						System.out.println("***** GroupFromAPI *****" + mailData.toString());
+					}
+				} else {
+					System.out.println("***** Groups Empty *****");
+				}
+
+				Map<String, Object> data = null;
+				String linkTaggedUsers = "";
+				if (type == MAIL_TYPE.COMMENT_POST && taggedUsers != null) {
+					linkTaggedUsers = ActivityUtil.linkTaggedUsersProfile(taggedUsers, comment.getBody(), true);
+				}
+				List<Map<String, Object>> mailDataList = new ArrayList<>();
+				if (type == MAIL_TYPE.TAGGED_MAIL && taggedUsers != null && !taggedUsers.isEmpty()) {
+					for (TaggedUser user : taggedUsers) {
+						User follower = userService.getUser(String.valueOf(user.getId()));
+						Recipients recipient = new Recipients();
+						recipient.setId(follower.getId());
+						recipient.setIsSubscribed(follower.getSendNotification());
+						data = prepareMailData(type, recipient, follower, who, reco, userGroup, activity, comment, name,
+								observation, groups, linkTaggedUsers!=null && !linkTaggedUsers.isEmpty() ?linkTaggedUsers:
+									comment!= null && !comment.getBody().isEmpty()?comment.getBody():"",
+								document);
+						if (follower.getEmail() != null && !follower.getEmail().isEmpty()) {
+							mailDataList.add(data);
+						}
+					}
+				} else {
+					for (Recipients recipient : recipientsList) {
+						User follower = userService.getUser(String.valueOf(recipient.getId()));
+						data = prepareMailData(type, recipient, follower, who, reco, userGroup, activity, comment, name,
+								observation, groups, linkTaggedUsers!=null && !linkTaggedUsers.isEmpty() ?linkTaggedUsers:
+									comment!= null && !comment.getBody().isEmpty()?comment.getBody():"",
+								document);
+						if (recipient.getEmail() != null && !recipient.getEmail().isEmpty()) {
+							mailDataList.add(data);
+						}
 					}
 				}
-			} else {
-				for (Recipients recipient : recipientsList) {
-					User follower = userService.getUser(String.valueOf(recipient.getId()));
-					data = prepareMailData(type, recipient, follower, who, reco, userGroup, activity, comment, name,
-							observation, groups, linkTaggedUsers!=null && !linkTaggedUsers.isEmpty() ?linkTaggedUsers:
-								comment!= null && !comment.getBody().isEmpty()?comment.getBody():"",
-							document);
-					if (recipient.getEmail() != null && !recipient.getEmail().isEmpty()) {
-						mailDataList.add(data);
-					}
-				}
+				Map<String, Object> mailData = new HashMap<String, Object>();
+				mailData.put(INFO_FIELDS.TYPE.getAction(), type.getAction());
+				mailData.put(INFO_FIELDS.RECIPIENTS.getAction(), mailDataList);
+				System.out.println("\n\n ***** \n\n" + mailData + "\n\n ***** \n\n");
+				producer.produceMail(RabbitMqConnection.EXCHANGE, RabbitMqConnection.ROUTING_KEY, null,
+						JsonUtil.mapToJSON(mailData));
+
 			}
-			Map<String, Object> mailData = new HashMap<String, Object>();
-			mailData.put(INFO_FIELDS.TYPE.getAction(), type.getAction());
-			mailData.put(INFO_FIELDS.RECIPIENTS.getAction(), mailDataList);
-			System.out.println("\n\n ***** \n\n" + mailData + "\n\n ***** \n\n");
-			producer.produceMail(RabbitMqConnection.EXCHANGE, RabbitMqConnection.ROUTING_KEY, null,
-					JsonUtil.mapToJSON(mailData));
 		} catch (Exception ex) {
 			logger.error(ex.getMessage());
 		}
 	}
 
+	private Map<String, Object> prepareCCAMailData(MAIL_TYPE type) {
+//			MAIL_TYPE type, Recipients recipient, User follower, User who, 
+//			UserGroupActivity userGroup, MailActivityData activity, CommentLoggingData comment,
+//			String name, CCAMailData ccaMailData, List<UserGroupMailData> groups) {
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put(FIELDS.TYPE.getAction(), type.getAction());
+		data.put(FIELDS.TO.getAction(), new String[] {"admin@communityconservedareas.org"});
+		// data.put(FIELDS.SUBSCRIPTION.getAction(), recipient.getIsSubscribed());
+		
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put(COMMENT_POST.TYPE.getAction(), type.getAction());
+		model.put(COMMENT_POST.SITENAME.getAction(), siteName);
+		model.put(COMMENT_POST.SERVER_URL.getAction(), serverUrl);
+		
+		Map<String, String> template = new HashMap<String, String>();
+		template.put("short_name", "Long");
+		template.put("url", "template_url");
+		template.put("time", "3 hour ago");
+		template.put("label", "template label");
+		template.put("value", "value");
+		
+		Map<String, Object> user = new HashMap<String, Object>();
+		user.put("id", 2);
+		user.put("name", "Administrator");
+		user.put("icon", "/c73dce40-c9a5-4e48-9036-c3e6b73dbe49/resources/893.JPG?w=50");
+		
+		Map<String, Object> follower = new HashMap<String, Object>();
+		follower.put("id", 2);
+		follower.put("name", "harsh");
+		
+		model.put("user", user);
+		model.put("template", template);
+		model.put("follower", follower);
+		
+//		model.put(SUGGEST_MAIL.RECO_VOTE.getAction(), name);
+//		if (type == MAIL_TYPE.FACT_ADDED || type == MAIL_TYPE.FACT_UPDATED || type == MAIL_TYPE.TAG_UPDATED
+//				|| type == MAIL_TYPE.CUSTOM_FIELD_UPDATED || type == MAIL_TYPE.OBSERVATION_FLAGGED) {
+//			model.put(COMMENT_POST.COMMENT_BODY.getAction(),
+//					ActivityUtil.replaceFlaggedMessage(activity.getActivityDescription()));
+//		} else if (type == MAIL_TYPE.FEATURED_POST || type == MAIL_TYPE.FEATURED_POST_IBP) {
+//			model.put(COMMENT_POST.COMMENT_BODY.getAction(), userGroup.getFeatured());
+//		}
+//		model.put(COMMENT_POST.FOLLOWER_ID.getAction(), follower.getId());
+//		model.put(COMMENT_POST.FOLLOWER_NAME.getAction(), follower.getName());
+//		model.put(COMMENT_POST.WHO_POSTED_ID.getAction(), who.getId());
+//		
+//		String icon = who.getIcon() != null ? who.getIcon() : "";
+//		if (!icon.isEmpty()) {
+//			int dot = icon.lastIndexOf(".");
+//			String fileName = icon.substring(0, dot);
+//			icon = String.join("_gall_th", fileName, ".jpg");
+//		}
+//		
+//		model.put(COMMENT_POST.WHO_POSTED_ICON.getAction(), icon.isEmpty() ? "/user_large.png" : icon);
+//		model.put(COMMENT_POST.WHO_POSTED_NAME.getAction(),
+//				recipient.getId().equals(who.getId()) ? "You" : who.getName());
+//
+//		model.put(COMMENT_POST.WHAT_POSTED_USERGROUPS.getAction(), groups);
+//		if (userGroup != null) {
+//			model.put(POST_TO_GROUP.WHERE_WEB_ADDRESS.getAction(), userGroup.getWebAddress());
+//			model.put(POST_TO_GROUP.WHERE_USER_GROUPNAME.getAction(), userGroup.getUserGroupName());
+//		}
+//		model.put(POST_TO_GROUP.SUBMIT_TYPE.getAction(),
+//				activity.getActivityType().toLowerCase().contains("post") ? "post" : "");
+		data.put(FIELDS.DATA.getAction(), JsonUtil.unflattenJSON(model));
+		return data;
+	}
+	
 	private Map<String, Object> prepareMailData(MAIL_TYPE type, Recipients recipient, User follower, User who,
 			RecoVoteActivity reco, UserGroupActivity userGroup, MailActivityData activity, CommentLoggingData comment,
 			String name, ObservationMailData observation, List<UserGroupMailData> groups, String modifiedComment,

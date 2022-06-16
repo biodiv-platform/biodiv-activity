@@ -108,7 +108,7 @@ public class ActivityController {
 	}
 
 	@POST
-	@Path(ApiConstants.CCA + ApiConstants.SENDMAIL)
+	@Path(ApiConstants.SENDMAIL)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
 
@@ -131,7 +131,7 @@ public class ActivityController {
 	}
 
 	@POST
-	@Path(ApiConstants.SENDMAIL)
+	@Path(ApiConstants.CCA + ApiConstants.SENDMAIL)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
 
