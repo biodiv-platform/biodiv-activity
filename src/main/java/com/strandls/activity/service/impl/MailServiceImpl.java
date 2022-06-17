@@ -64,6 +64,7 @@ public class MailServiceImpl implements MailService {
 		Properties props = PropertyFileUtil.fetchProperty("config.properties");
 		siteName = props.getProperty("siteName");
 		serverUrl = props.getProperty("serverUrl");
+		serverUrl = props.getProperty("serverUrl");
 	}
 
 	@Override
@@ -71,11 +72,23 @@ public class MailServiceImpl implements MailService {
 			MailActivityData activity, List<TaggedUser> taggedUsers) {
 		try {
 			List<Recipients> recipientsList = userService.getRecipients(objectType, objectId);
+			System.out.println("*******The object type and object id *********"+objectType+"   "+objectId);
+			System.out.println("*******Recipient Data ********"+recipientsList.size()+"   "+recipientsList.get(0).getName());
 			List<UserGroupMailData> groups = activity.getMailData().getUserGroupData();
 			User who = userService.getUser(String.valueOf(userId));
 			RecoVoteActivity reco = null;
 			UserGroupActivity userGroup = null;
 			String name = "";
+			
+			if(recipientsList.isEmpty()) {
+				Recipients recipient = new Recipients();
+				recipient.setEmail(who.getEmail());
+				recipient.setIsSubscribed(who.getSendNotification());
+				recipient.setId(who.getId());
+				recipient.setName(who.getName());
+				recipient.setTokens(null);
+				recipientsList.add(recipient);
+			}
 			if (recommendationActivityList.contains(activity.getActivityType())
 					|| activity.getActivityType().equalsIgnoreCase("suggestion removed")) {
 				reco = mapper.readValue(activity.getActivityDescription(), RecoVoteActivity.class);
@@ -252,8 +265,7 @@ public class MailServiceImpl implements MailService {
 		}
 
 		model.put(POST_TO_GROUP.SUBMIT_TYPE.getAction(),
-				activity.getActivityType().toLowerCase().contains(
-						"post")
+				activity.getActivityType().toLowerCase().contains("post")
 						|| activity.getActivityType().toLowerCase().contains("Added synonym")
 						|| activity.getActivityType().toLowerCase().contains("Updated synonym")
 						|| activity.getActivityType().toLowerCase().contains("Added common name")
