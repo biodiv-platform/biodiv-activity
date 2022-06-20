@@ -150,24 +150,27 @@ public class ActivityUtil {
 			data.put("type", MAIL_TYPE.SPECIES_FACT);
 			data.put("text", "Added a fact");
 			break;
+
 		case "Added species field":
-			data.put("type", MAIL_TYPE.SPECIES_FIELD_UPDATED);
+			data.put("type", MAIL_TYPE.SPECIES_FIELD_ADDED);
 			data.put("text", "Added species field");
 			break;
 
-		case "Updated species gallery":
-			data.put("type", MAIL_TYPE.SPECIES_RESOURCE);
-			data.put("text", "Updated species gallery");
-			break;
-
+	
 		case "Updated species field":
 			data.put("type", MAIL_TYPE.SPECIES_FIELD_UPDATED);
 			data.put("text", "Updated species field");
 			break;
 
 		case "Deleted species field":
-			data.put("type", MAIL_TYPE.SPECIES_FIELD_UPDATED);
+			data.put("type", MAIL_TYPE.SPECIES_FIELD_DELETED);
 			data.put("text", "Deleted species field");
+			break;
+
+
+	case "Updated species gallery":
+			data.put("type", MAIL_TYPE.SPECIES_RESOURCE);
+			data.put("text", "Updated species gallery");
 			break;
 
 		case "Posted resource species":
