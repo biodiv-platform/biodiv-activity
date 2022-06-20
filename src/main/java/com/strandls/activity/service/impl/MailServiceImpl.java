@@ -217,7 +217,7 @@ public class MailServiceImpl implements MailService {
 					(species != null && species.getSpeciesName() != null) ? species.getSpeciesName() : "Help Identify");
 
 			String image = species.getIconUrl() != null ? species.getIconUrl()
-					: species.getGroup() != null && species.getGroup().isEmpty() ? species.getGroup() : null;
+					: species.getGroup() != null && !species.getGroup().isEmpty() ? species.getGroup() : null;
 			model.put(COMMENT_POST.WHAT_POSTED_ICON.getAction(), image);
 
 		}
