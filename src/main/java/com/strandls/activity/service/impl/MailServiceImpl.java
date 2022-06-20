@@ -72,15 +72,15 @@ public class MailServiceImpl implements MailService {
 			MailActivityData activity, List<TaggedUser> taggedUsers) {
 		try {
 			List<Recipients> recipientsList = userService.getRecipients(objectType, objectId);
-			System.out.println("*******The object type and object id *********"+objectType+"   "+objectId);
-			System.out.println("*******Recipient Data ********"+recipientsList.size());
+			System.out.println("*******The object type and object id *********" + objectType + "   " + objectId);
+			System.out.println("*******Recipient Data ********" + recipientsList.size());
 			List<UserGroupMailData> groups = activity.getMailData().getUserGroupData();
 			User who = userService.getUser(String.valueOf(userId));
 			RecoVoteActivity reco = null;
 			UserGroupActivity userGroup = null;
 			String name = "";
-			
-			if(recipientsList.isEmpty()) {
+
+			if (recipientsList.isEmpty()) {
 				Recipients recipient = new Recipients();
 				recipient.setEmail(who.getEmail());
 				recipient.setIsSubscribed(who.getSendNotification());
@@ -216,9 +216,11 @@ public class MailServiceImpl implements MailService {
 			model.put(COMMENT_POST.WHAT_POSTED_NAME.getAction(),
 					(species != null && species.getSpeciesName() != null) ? species.getSpeciesName() : "Help Identify");
 
-			String image = species.getIconUrl() != null ? species.getIconUrl()
-					: species.getGroup() != null && !species.getGroup().isEmpty() ? species.getGroup() : null;
-			model.put(COMMENT_POST.WHAT_POSTED_ICON.getAction(), image);
+			model.put(COMMENT_POST.WHAT_POSTED_ICON.getAction(),
+					(species.getIconUrl() != null && !species.getIconUrl().isEmpty()) ? species.getIconUrl() : null);
+
+			model.put(COMMENT_POST.WHAT_POSTED_SPECIES.getAction(),
+					species.getGroup() != null && !species.getGroup().isEmpty() ? species.getGroup() : null);
 
 		}
 
