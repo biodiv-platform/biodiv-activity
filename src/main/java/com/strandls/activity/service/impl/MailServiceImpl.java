@@ -74,6 +74,8 @@ public class MailServiceImpl implements MailService {
 			List<Recipients> recipientsList = userService.getRecipients(objectType, objectId);
 			System.out.println("*******The object type and object id *********" + objectType + "   " + objectId);
 			System.out.println("*******Recipient Data ********" + recipientsList.size());
+			ObservationMailData observation = activity.getMailData().getObservationData();
+			DocumentMailData document = activity.getMailData().getDocumentMailData();
 			List<UserGroupMailData> groups = activity.getMailData().getUserGroupData();
 			User who = userService.getUser(String.valueOf(userId));
 			RecoVoteActivity reco = null;
@@ -127,9 +129,9 @@ public class MailServiceImpl implements MailService {
 					recipient.setId(follower.getId());
 					recipient.setIsSubscribed(follower.getSendNotification());
 					data = prepareMailData(type, recipient, follower, who, reco, userGroup, activity, comment, name,
-							activity.getMailData(), groups,
-							linkTaggedUsers != null && !linkTaggedUsers.isEmpty() ? linkTaggedUsers
-									: comment != null && !comment.getBody().isEmpty() ? comment.getBody() : "");
+							observation, groups, linkTaggedUsers!=null && !linkTaggedUsers.isEmpty() ?linkTaggedUsers:
+								comment!= null && !comment.getBody().isEmpty()?comment.getBody():"",
+							document);
 					if (follower.getEmail() != null && !follower.getEmail().isEmpty()) {
 						mailDataList.add(data);
 					}
@@ -138,9 +140,9 @@ public class MailServiceImpl implements MailService {
 				for (Recipients recipient : recipientsList) {
 					User follower = userService.getUser(String.valueOf(recipient.getId()));
 					data = prepareMailData(type, recipient, follower, who, reco, userGroup, activity, comment, name,
-							activity.getMailData(), groups,
-							linkTaggedUsers != null && !linkTaggedUsers.isEmpty() ? linkTaggedUsers
-									: comment != null && !comment.getBody().isEmpty() ? comment.getBody() : "");
+							observation, groups, linkTaggedUsers!=null && !linkTaggedUsers.isEmpty() ?linkTaggedUsers:
+								comment!= null && !comment.getBody().isEmpty()?comment.getBody():"",
+							document);
 					if (recipient.getEmail() != null && !recipient.getEmail().isEmpty()) {
 						mailDataList.add(data);
 					}
@@ -159,7 +161,8 @@ public class MailServiceImpl implements MailService {
 
 	private Map<String, Object> prepareMailData(MAIL_TYPE type, Recipients recipient, User follower, User who,
 			RecoVoteActivity reco, UserGroupActivity userGroup, MailActivityData activity, CommentLoggingData comment,
-			String name, MailData mailData, List<UserGroupMailData> groups, String modifiedComment) {
+			String name, ObservationMailData observation, List<UserGroupMailData> groups, String modifiedComment,
+			DocumentMailData document) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		ObservationMailData observation = mailData.getObservationData();
 		DocumentMailData document = mailData.getDocumentMailData();
