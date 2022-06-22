@@ -477,6 +477,9 @@ public class ActivityServiceImpl implements ActivityService {
 			} else if (commentType.equals("document")) {
 				mailService.sendMail(MAIL_TYPE.DOCUMENT_COMMENT_POST, activityResult.getRootHolderType(),
 						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
+			} else if (commentType.equals("species")) {
+				mailService.sendMail(MAIL_TYPE.SPECIES_COMMENT_POST, activityResult.getRootHolderType(),
+						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
 			} else {
 				mailService.sendMail(MAIL_TYPE.COMMENT_POST, activityResult.getRootHolderType(),
 						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
@@ -619,7 +622,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 			Activity activity = null;
 			Boolean isUsergroupFeatured = false;
-
+			MAIL_TYPE type = null;
 			isUsergroupFeatured = checkUserGroupFeatured(loggingData.getActivityType(),
 					loggingData.getActivityDescription());
 
@@ -673,7 +676,25 @@ public class ActivityServiceImpl implements ActivityService {
 			if (activity != null)
 				activity = activityDao.save(activity);
 
-//			TODO mailData integration
+			if (activity!= null && loggingData.getMailData() != null) {
+
+				String mailType = speciesUserGroupActivityList.contains(loggingData.getActivityType())
+						|| speciesTraitActivityList.contains(loggingData.getActivityType())
+								? activity.getActivityType() + " species"
+								: activity.getActivityType();
+				Map<String, Object> data = ActivityUtil.getMailType(mailType,
+						new ActivityLoggingData(loggingData.getActivityDescription(), loggingData.getRootObjectId(),
+								loggingData.getSubRootObjectId(), loggingData.getRootObjectType(),
+								loggingData.getActivityId(), loggingData.getActivityType(),
+								loggingData.getMailData()));
+				type = (MAIL_TYPE) data.get("type");
+				if (type != null && type != MAIL_TYPE.COMMENT_POST) {
+					MailActivityData mailActivityData = new MailActivityData(loggingData.getActivityType(),
+							loggingData.getActivityDescription(), loggingData.getMailData());
+					mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId,
+							null, mailActivityData, null);
+				}
+			}
 
 			return activity;
 		} catch (Exception e) {
