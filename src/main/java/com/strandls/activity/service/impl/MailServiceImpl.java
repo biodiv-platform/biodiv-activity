@@ -18,7 +18,9 @@ import com.strandls.activity.RabbitMqConnection;
 import com.strandls.activity.pojo.CommentLoggingData;
 import com.strandls.activity.pojo.DocumentMailData;
 import com.strandls.activity.pojo.MailActivityData;
+import com.strandls.activity.pojo.MailData;
 import com.strandls.activity.pojo.RecoVoteActivity;
+import com.strandls.activity.pojo.SpeciesMailData;
 import com.strandls.activity.pojo.TaggedUser;
 import com.strandls.activity.pojo.UserGroupActivity;
 import com.strandls.activity.pojo.UserGroupMailData;
@@ -62,6 +64,7 @@ public class MailServiceImpl implements MailService {
 		Properties props = PropertyFileUtil.fetchProperty("config.properties");
 		siteName = props.getProperty("siteName");
 		serverUrl = props.getProperty("serverUrl");
+		serverUrl = props.getProperty("serverUrl");
 	}
 
 	@Override
@@ -69,6 +72,8 @@ public class MailServiceImpl implements MailService {
 			MailActivityData activity, List<TaggedUser> taggedUsers) {
 		try {
 			List<Recipients> recipientsList = userService.getRecipients(objectType, objectId);
+			System.out.println("*******The object type and object id *********" + objectType + "   " + objectId);
+			System.out.println("*******Recipient Data ********" + recipientsList.size());
 			ObservationMailData observation = activity.getMailData().getObservationData();
 			DocumentMailData document = activity.getMailData().getDocumentMailData();
 			List<UserGroupMailData> groups = activity.getMailData().getUserGroupData();
@@ -76,6 +81,16 @@ public class MailServiceImpl implements MailService {
 			RecoVoteActivity reco = null;
 			UserGroupActivity userGroup = null;
 			String name = "";
+
+			if (recipientsList.isEmpty()) {
+				Recipients recipient = new Recipients();
+				recipient.setEmail(who.getEmail());
+				recipient.setIsSubscribed(who.getSendNotification());
+				recipient.setId(who.getId());
+				recipient.setName(who.getName());
+				recipient.setTokens(null);
+				recipientsList.add(recipient);
+			}
 			if (recommendationActivityList.contains(activity.getActivityType())
 					|| activity.getActivityType().equalsIgnoreCase("suggestion removed")) {
 				reco = mapper.readValue(activity.getActivityDescription(), RecoVoteActivity.class);
@@ -149,6 +164,9 @@ public class MailServiceImpl implements MailService {
 			String name, ObservationMailData observation, List<UserGroupMailData> groups, String modifiedComment,
 			DocumentMailData document) {
 		Map<String, Object> data = new HashMap<String, Object>();
+		ObservationMailData observation = mailData.getObservationData();
+		DocumentMailData document = mailData.getDocumentMailData();
+		SpeciesMailData species = mailData.getSpeciesData();
 		data.put(FIELDS.TYPE.getAction(), type.getAction());
 		data.put(FIELDS.TO.getAction(), new String[] { recipient.getEmail() });
 		data.put(FIELDS.SUBSCRIPTION.getAction(), recipient.getIsSubscribed());
@@ -157,17 +175,23 @@ public class MailServiceImpl implements MailService {
 		model.put(COMMENT_POST.SITENAME.getAction(), siteName);
 		model.put(COMMENT_POST.SERVER_URL.getAction(), serverUrl);
 		model.put(SUGGEST_MAIL.RECO_VOTE.getAction(), name);
+
 		if (comment != null) {
 			model.put(COMMENT_POST.COMMENT_BODY.getAction(), modifiedComment);
 		}
 
 		if (type == MAIL_TYPE.FACT_ADDED || type == MAIL_TYPE.FACT_UPDATED || type == MAIL_TYPE.TAG_UPDATED
-				|| type == MAIL_TYPE.CUSTOM_FIELD_UPDATED || type == MAIL_TYPE.OBSERVATION_FLAGGED) {
+				|| type == MAIL_TYPE.SPECIES_FIELD_DELETED || type == MAIL_TYPE.SPECIES_FIELD_ADDED
+				|| type == MAIL_TYPE.CUSTOM_FIELD_UPDATED ||
+				type == MAIL_TYPE.OBSERVATION_FLAGGED || type == MAIL_TYPE.SPECIES_FACT
+				|| type == MAIL_TYPE.SPECIES_SYNONYMS || type == MAIL_TYPE.SPECIES_COMMON_NAME
+				|| type == MAIL_TYPE.SPECIES_FIELD_UPDATED || type == MAIL_TYPE.SPECIES_RESOURCE) {
 			model.put(COMMENT_POST.COMMENT_BODY.getAction(),
 					ActivityUtil.replaceFlaggedMessage(activity.getActivityDescription()));
 		} else if (type == MAIL_TYPE.FEATURED_POST || type == MAIL_TYPE.FEATURED_POST_IBP) {
 			model.put(COMMENT_POST.COMMENT_BODY.getAction(), userGroup.getFeatured());
 		}
+
 		model.put(COMMENT_POST.FOLLOWER_ID.getAction(), follower.getId());
 		model.put(COMMENT_POST.FOLLOWER_NAME.getAction(), follower.getName());
 		model.put(COMMENT_POST.WHO_POSTED_ID.getAction(), who.getId());
@@ -177,9 +201,11 @@ public class MailServiceImpl implements MailService {
 			String fileName = icon.substring(0, dot);
 			icon = String.join("_gall_th", fileName, ".jpg");
 		}
+
 		model.put(COMMENT_POST.WHO_POSTED_ICON.getAction(), icon.isEmpty() ? "/user_large.png" : icon);
 		model.put(COMMENT_POST.WHO_POSTED_NAME.getAction(),
 				recipient.getId().equals(who.getId()) ? "You" : who.getName());
+
 		if (reco != null) {
 			model.put(SUGGEST_MAIL.GIVEN_NAME_ID.getAction(), reco.getSpeciesId() == null ? 0 : reco.getSpeciesId());
 			model.put(SUGGEST_MAIL.GIVEN_NAME_NAME.getAction(), name);
@@ -187,20 +213,41 @@ public class MailServiceImpl implements MailService {
 					reco.getScientificName() != null && !reco.getScientificName().isEmpty());
 		}
 
-		model.put(COMMENT_POST.WHAT_POSTED_ID.getAction(),
-				(observation != null && observation.getObservationId() != null) ? observation.getObservationId()
-						: (document != null && document.getDocumentId() != null) ? document.getDocumentId() : null);	
+		if (species != null) {
+			model.put(COMMENT_POST.WHAT_POSTED_ID.getAction(),
+					(species != null && species.getSpeciesId() != null) ? species.getSpeciesId() : null);
 
-		model.put(COMMENT_POST.WHAT_POSTED_NAME.getAction(),
-				(document != null && document.getTitle() != null) ? document.getTitle()
-						: (observation != null && observation.getScientificName() != null
-								&& !observation.getScientificName().isEmpty())
-										? observation.getScientificName()
-										: (observation != null && observation.getCommonName() != null
-												&& !observation.getCommonName().isEmpty()) ? observation.getCommonName()
-														: "Help Identify");
+			model.put(COMMENT_POST.WHAT_POSTED_NAME.getAction(),
+					(species != null && species.getSpeciesName() != null) ? species.getSpeciesName() : "Help Identify");
+
+			model.put(COMMENT_POST.WHAT_POSTED_ICON.getAction(),
+					(species.getIconUrl() != null && !species.getIconUrl().isEmpty()) ? species.getIconUrl() : null);
+
+			model.put(COMMENT_POST.WHAT_POSTED_SPECIES.getAction(),
+					species.getGroup() != null && !species.getGroup().isEmpty() ? species.getGroup() : null);
+
+		}
+
+		if (document != null) {
+			model.put(COMMENT_POST.WHAT_POSTED_ID.getAction(),
+					(document != null && document.getDocumentId() != null) ? document.getDocumentId() : null);
+
+			model.put(COMMENT_POST.WHAT_POSTED_NAME.getAction(),
+					(document != null && document.getTitle() != null) ? document.getTitle() : "Help Identify");
+		}
 
 		if (observation != null) {
+			model.put(COMMENT_POST.WHAT_POSTED_ID.getAction(),
+					(observation != null && observation.getObservationId() != null) ? observation.getObservationId()
+							: null);
+
+			model.put(COMMENT_POST.WHAT_POSTED_NAME.getAction(),
+					(observation != null && observation.getScientificName() != null
+							&& !observation.getScientificName().isEmpty())
+									? observation.getScientificName()
+									: (observation != null && observation.getCommonName() != null
+											&& !observation.getCommonName().isEmpty()) ? observation.getCommonName()
+													: "Help Identify");
 			model.put(COMMENT_POST.WHAT_POSTED_LOCATION.getAction(),
 					observation.getLocation() == null ? "" : observation.getLocation());
 			SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy");
@@ -215,13 +262,20 @@ public class MailServiceImpl implements MailService {
 			}
 			model.put(COMMENT_POST.WHAT_POSTED_ICON.getAction(), image);
 		}
+
 		model.put(COMMENT_POST.WHAT_POSTED_USERGROUPS.getAction(), groups);
+
 		if (userGroup != null) {
 			model.put(POST_TO_GROUP.WHERE_WEB_ADDRESS.getAction(), userGroup.getWebAddress());
 			model.put(POST_TO_GROUP.WHERE_USER_GROUPNAME.getAction(), userGroup.getUserGroupName());
 		}
+
 		model.put(POST_TO_GROUP.SUBMIT_TYPE.getAction(),
-				activity.getActivityType().toLowerCase().contains("post") ? "post" : "");
+				activity.getActivityType().toLowerCase().contains("post")
+						|| activity.getActivityType().toLowerCase().contains("Added synonym")
+						|| activity.getActivityType().toLowerCase().contains("Updated synonym")
+						|| activity.getActivityType().toLowerCase().contains("Added common name")
+						|| activity.getActivityType().toLowerCase().contains("Updated common name") ? "post" : "");
 		data.put(FIELDS.DATA.getAction(), JsonUtil.unflattenJSON(model));
 		return data;
 	}
