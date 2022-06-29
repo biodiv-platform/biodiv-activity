@@ -70,11 +70,13 @@ public class MailServiceImpl implements MailService {
 			MailActivityData activity, List<TaggedUser> taggedUsers) {
 		try {
 			if(type.toString().startsWith("CCA")) {
-				
+				List<Recipients> recipientsList = userService.getRecipients(objectType, objectId);
 				User who = userService.getUser(String.valueOf(userId));
+				CCAMailData ccaMailData = activity.getMailData().getCcaMailData();
 				
+				System.out.println(recipientsList);
 				List<Map<String, Object>> mailDataList = new ArrayList<>();
-				mailDataList.add(prepareCCAMailData(type));
+				mailDataList.add(prepareCCAMailData(type, who, ccaMailData));
 				
 				Map<String, Object> mailData = new HashMap<String, Object>();
 				
@@ -162,70 +164,30 @@ public class MailServiceImpl implements MailService {
 		}
 	}
 
-	private Map<String, Object> prepareCCAMailData(MAIL_TYPE type) {
-//			MAIL_TYPE type, Recipients recipient, User follower, User who, 
-//			UserGroupActivity userGroup, MailActivityData activity, CommentLoggingData comment,
-//			String name, CCAMailData ccaMailData, List<UserGroupMailData> groups) {
+	private Map<String, Object> prepareCCAMailData(MAIL_TYPE type, User who, CCAMailData ccaMailData) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put(FIELDS.TYPE.getAction(), type.getAction());
-		data.put(FIELDS.TO.getAction(), new String[] {"admin@communityconservedareas.org"});
-		// data.put(FIELDS.SUBSCRIPTION.getAction(), recipient.getIsSubscribed());
+		data.put(FIELDS.TO.getAction(), new String[] {who.getEmail()});
+		data.put(FIELDS.SUBSCRIPTION.getAction(), true);
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(COMMENT_POST.TYPE.getAction(), type.getAction());
 		model.put(COMMENT_POST.SITENAME.getAction(), siteName);
 		model.put(COMMENT_POST.SERVER_URL.getAction(), serverUrl);
 		
-		Map<String, String> template = new HashMap<String, String>();
-		template.put("short_name", "Long");
-		template.put("url", "template_url");
-		template.put("time", "3 hour ago");
-		template.put("label", "template label");
-		template.put("value", "value");
-		
 		Map<String, Object> user = new HashMap<String, Object>();
-		user.put("id", 2);
-		user.put("name", "Administrator");
-		user.put("icon", "/c73dce40-c9a5-4e48-9036-c3e6b73dbe49/resources/893.JPG?w=50");
+		user.put("id", who.getId());
+		user.put("name", who.getName());
+		user.put("icon", who.getIcon());
 		
 		Map<String, Object> follower = new HashMap<String, Object>();
-		follower.put("id", 2);
-		follower.put("name", "harsh");
+		follower.put("id", who.getId());
+		follower.put("name", who.getName());
 		
 		model.put("user", user);
-		model.put("template", template);
-		model.put("follower", follower);
+		model.putAll(ccaMailData.getData());
+		model.put("follower", follower);  
 		
-//		model.put(SUGGEST_MAIL.RECO_VOTE.getAction(), name);
-//		if (type == MAIL_TYPE.FACT_ADDED || type == MAIL_TYPE.FACT_UPDATED || type == MAIL_TYPE.TAG_UPDATED
-//				|| type == MAIL_TYPE.CUSTOM_FIELD_UPDATED || type == MAIL_TYPE.OBSERVATION_FLAGGED) {
-//			model.put(COMMENT_POST.COMMENT_BODY.getAction(),
-//					ActivityUtil.replaceFlaggedMessage(activity.getActivityDescription()));
-//		} else if (type == MAIL_TYPE.FEATURED_POST || type == MAIL_TYPE.FEATURED_POST_IBP) {
-//			model.put(COMMENT_POST.COMMENT_BODY.getAction(), userGroup.getFeatured());
-//		}
-//		model.put(COMMENT_POST.FOLLOWER_ID.getAction(), follower.getId());
-//		model.put(COMMENT_POST.FOLLOWER_NAME.getAction(), follower.getName());
-//		model.put(COMMENT_POST.WHO_POSTED_ID.getAction(), who.getId());
-//		
-//		String icon = who.getIcon() != null ? who.getIcon() : "";
-//		if (!icon.isEmpty()) {
-//			int dot = icon.lastIndexOf(".");
-//			String fileName = icon.substring(0, dot);
-//			icon = String.join("_gall_th", fileName, ".jpg");
-//		}
-//		
-//		model.put(COMMENT_POST.WHO_POSTED_ICON.getAction(), icon.isEmpty() ? "/user_large.png" : icon);
-//		model.put(COMMENT_POST.WHO_POSTED_NAME.getAction(),
-//				recipient.getId().equals(who.getId()) ? "You" : who.getName());
-//
-//		model.put(COMMENT_POST.WHAT_POSTED_USERGROUPS.getAction(), groups);
-//		if (userGroup != null) {
-//			model.put(POST_TO_GROUP.WHERE_WEB_ADDRESS.getAction(), userGroup.getWebAddress());
-//			model.put(POST_TO_GROUP.WHERE_USER_GROUPNAME.getAction(), userGroup.getUserGroupName());
-//		}
-//		model.put(POST_TO_GROUP.SUBMIT_TYPE.getAction(),
-//				activity.getActivityType().toLowerCase().contains("post") ? "post" : "");
 		data.put(FIELDS.DATA.getAction(), JsonUtil.unflattenJSON(model));
 		return data;
 	}
@@ -237,7 +199,8 @@ public class MailServiceImpl implements MailService {
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put(FIELDS.TYPE.getAction(), type.getAction());
 		data.put(FIELDS.TO.getAction(), new String[] { recipient.getEmail() });
-		data.put(FIELDS.SUBSCRIPTION.getAction(), recipient.getIsSubscribed());
+		
+
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(COMMENT_POST.TYPE.getAction(), type.getAction());
 		model.put(COMMENT_POST.SITENAME.getAction(), siteName);

@@ -216,44 +216,35 @@ public class ActivityUtil {
 	}
 	
 	public static Map<String, Object> getMailType(String activity, CCAActivityLogging loggingData) {
-		boolean featuredToIBP = false;
-		System.out.println("\n\n ***** " + activity + " " + loggingData.getActivityDescription() + " *****\n\n");
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			List<String> ugActivity = Arrays.asList("Featured", "UnFeatured");
-			if (ugActivity.contains(loggingData.getActivityType())) {
-				UserGroupActivity data = mapper.readValue(loggingData.getActivityDescription(),
-						UserGroupActivity.class);
-				featuredToIBP = (data.getUserGroupId() == null);
-			}
-
-		} catch (Exception ex) {
-			logger.error(ex.getMessage());
-		}
 		Map<String, Object> data = new HashMap<String, Object>();
 		switch (activity) {
 		case "CCA created":
+		case "Data created":
 			data.put("type", MAIL_TYPE.CCA_DATA_ADDED);
 			data.put("text", "CCA data created");
 			break;
 		case "CCA Data Update":
+		case "Data updated":
 			data.put("type", MAIL_TYPE.CCA_DATA_UPDATED);
 			data.put("text", "CCA data updated");
 			break;
 		case "CCA Data Deleted":
-			data.put("type", MAIL_TYPE.OBSERVATION_ADDED);
+			data.put("type", MAIL_TYPE.CCA_DATA_DELETED);
 			data.put("text", "CCA data deleted");
 			break;
-		case "CCA Template created":
-			data.put("type", MAIL_TYPE.OBSERVATION_ADDED);
+		case "Template created":
+			data.put("type", MAIL_TYPE.CCA_TEMPLATE_ADDED);
 			data.put("text", "CCA template created");
 			break;
 		case "CCA Template Update":
-			data.put("type", MAIL_TYPE.OBSERVATION_ADDED);
+		case "Field updated":
+		case "Field deleted":
+		case "Field created":
+			data.put("type", MAIL_TYPE.CCA_TEMPLATE_UPDATED);
 			data.put("text", "CCA template updated");
 			break;
 		case "CCA Template Deleted":
-			data.put("type", MAIL_TYPE.OBSERVATION_ADDED);
+			data.put("type", MAIL_TYPE.CCA_TEMPLATE_DELETED);
 			data.put("text", "CCA template deleted");
 			break;
 		case "Added a comment":
