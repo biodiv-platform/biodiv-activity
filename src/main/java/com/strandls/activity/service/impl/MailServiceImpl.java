@@ -72,13 +72,16 @@ public class MailServiceImpl implements MailService {
 			if(type.toString().startsWith("CCA")) {
 				List<Recipients> recipientsList = userService.getRecipients(objectType, objectId);
 				User who = userService.getUser(String.valueOf(userId));
-				CCAMailData ccaMailData = activity.getMailData().getCcaMailData();
 				
-				System.out.println(recipientsList);
+				CCAMailData ccaMailData = null;
+				if(activity.getMailData() != null) {
+					ccaMailData = activity.getMailData().getCcaMailData();
+				}
+				
 				List<Map<String, Object>> mailDataList = new ArrayList<>();
-				mailDataList.add(prepareCCAMailData(type, who, ccaMailData));
+				mailDataList.add(prepareCCAMailData(type, who, ccaMailData, comment, activity));
 				
-				Map<String, Object> mailData = new HashMap<String, Object>();
+				Map<String, Object> mailData = new HashMap<>();
 				
 				mailData.put(INFO_FIELDS.TYPE.getAction(), type.getAction());
 				mailData.put(INFO_FIELDS.RECIPIENTS.getAction(), mailDataList);
@@ -164,28 +167,32 @@ public class MailServiceImpl implements MailService {
 		}
 	}
 
-	private Map<String, Object> prepareCCAMailData(MAIL_TYPE type, User who, CCAMailData ccaMailData) {
-		Map<String, Object> data = new HashMap<String, Object>();
+	private Map<String, Object> prepareCCAMailData(MAIL_TYPE type, User who, CCAMailData ccaMailData,
+			CommentLoggingData comment, MailActivityData activity) {
+		Map<String, Object> data = new HashMap<>();
 		data.put(FIELDS.TYPE.getAction(), type.getAction());
 		data.put(FIELDS.TO.getAction(), new String[] {who.getEmail()});
 		data.put(FIELDS.SUBSCRIPTION.getAction(), true);
 		
-		Map<String, Object> model = new HashMap<String, Object>();
+		Map<String, Object> model = new HashMap<>();
 		model.put(COMMENT_POST.TYPE.getAction(), type.getAction());
 		model.put(COMMENT_POST.SITENAME.getAction(), siteName);
 		model.put(COMMENT_POST.SERVER_URL.getAction(), serverUrl);
 		
-		Map<String, Object> user = new HashMap<String, Object>();
+		Map<String, Object> user = new HashMap<>();
 		user.put("id", who.getId());
 		user.put("name", who.getName());
 		user.put("icon", who.getIcon());
 		
-		Map<String, Object> follower = new HashMap<String, Object>();
+		Map<String, Object> follower = new HashMap<>();
 		follower.put("id", who.getId());
 		follower.put("name", who.getName());
 		
 		model.put("user", user);
-		model.putAll(ccaMailData.getData());
+		if(ccaMailData != null) {
+			model.putAll(ccaMailData.getData());
+		}
+		
 		model.put("follower", follower);  
 		
 		data.put(FIELDS.DATA.getAction(), JsonUtil.unflattenJSON(model));

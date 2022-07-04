@@ -191,7 +191,7 @@ public class ActivityServiceImpl implements ActivityService {
 	List<String> ccaTemplateActivityList = new ArrayList<>(
 			Arrays.asList("Template created", "Template updated", "Field created", "Field updated", "Field deleted", "CCA Template Deleted"));
 	List<String> ccaDataActivityList = new ArrayList<>(Arrays.asList("Data created", "Data updated", "Data deleted"));
-	List<String> ccaCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment"));
+	List<String> ccaCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment", "Data comment", "Template comment"));
 
 	@Override
 	public Integer activityCount(String objectType, Long objectId) {
@@ -800,9 +800,9 @@ public class ActivityServiceImpl implements ActivityService {
 				try {
 					userService = headers.addUserHeader(userService, request.getHeader(HttpHeaders.AUTHORIZATION));
 					userService.updateFollow("CCA", ccaActivityLogging.getRootObjectId().toString());
+					Map<String, Object> data = ActivityUtil.getMailType(activity.getActivityType(), ccaActivityLogging);
+					type = (MAIL_TYPE) data.get("type");
 					if (ccaActivityLogging.getMailData() != null) {
-						Map<String, Object> data = ActivityUtil.getMailType(activity.getActivityType(), ccaActivityLogging);
-						type = (MAIL_TYPE) data.get("type");
 						if (type != null && type != MAIL_TYPE.COMMENT_POST) {
 							MailActivityData mailActivityData = new MailActivityData(ccaActivityLogging.getActivityType(),
 									ccaActivityLogging.getActivityDescription(), ccaActivityLogging.getMailData());
@@ -812,7 +812,6 @@ public class ActivityServiceImpl implements ActivityService {
 									activity.getRootHolderId(), siteName, data.get("text").toString());
 						}
 					}
-
 				} catch (Exception e) {
 					logger.error(e.getMessage());
 				}

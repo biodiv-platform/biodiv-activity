@@ -168,7 +168,6 @@ public class ActivityController {
 			@ApiParam(name = "commentData") CommentLoggingData commentData,
 			@PathParam("commentType") String commentType) {
 		try {
-
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Long userId = Long.parseLong(profile.getId());
 			if (commentData.getBody().trim().length() > 0) {
