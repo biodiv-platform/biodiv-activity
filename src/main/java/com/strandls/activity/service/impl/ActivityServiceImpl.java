@@ -190,8 +190,8 @@ public class ActivityServiceImpl implements ActivityService {
 // CCA ACTIVITY LIST
 	List<String> ccaTemplateActivityList = new ArrayList<>(
 			Arrays.asList("Template created", "Template updated", "Field created", "Field updated", "Field deleted", "CCA Template Deleted"));
-	List<String> ccaDataActivityList = new ArrayList<>(Arrays.asList("Data created", "Data updated", "Data deleted"));
-	List<String> ccaCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment", "Data comment", "Template comment"));
+	List<String> ccaDataActivityList = new ArrayList<>(Arrays.asList("Data created", "Data updated", "Data deleted", "Permission added", "Follower added"));
+	List<String> ccaCommentActivityList = new ArrayList<>(Arrays.asList("Added a comment", "Data comment", "Template comment"));
 
 	@Override
 	public Integer activityCount(String objectType, Long objectId) {

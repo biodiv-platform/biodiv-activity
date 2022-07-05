@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -34,6 +35,7 @@ import com.strandls.mail_utility.model.EnumModel.POST_TO_GROUP;
 import com.strandls.mail_utility.model.EnumModel.SUGGEST_MAIL;
 import com.strandls.mail_utility.producer.RabbitMQProducer;
 import com.strandls.mail_utility.util.JsonUtil;
+import com.strandls.user.ApiException;
 import com.strandls.user.controller.UserServiceApi;
 import com.strandls.user.pojo.Recipients;
 import com.strandls.user.pojo.User;
@@ -174,6 +176,10 @@ public class MailServiceImpl implements MailService {
 		data.put(FIELDS.TO.getAction(), new String[] {who.getEmail()});
 		data.put(FIELDS.SUBSCRIPTION.getAction(), true);
 		
+//		if(type.getAction().equals(MAIL_TYPE.CCA_DATA_PERMISSION.getAction())) {
+//			data.put(FIELDS.SUBJECT.getAction(), "Added permission to contribute");
+//		}
+		
 		Map<String, Object> model = new HashMap<>();
 		model.put(COMMENT_POST.TYPE.getAction(), type.getAction());
 		model.put(COMMENT_POST.SITENAME.getAction(), siteName);
@@ -190,7 +196,26 @@ public class MailServiceImpl implements MailService {
 		
 		model.put("user", user);
 		if(ccaMailData != null) {
+			Map<String, Object> d = ccaMailData.getData();
 			model.putAll(ccaMailData.getData());
+			if(type.getAction() == MAIL_TYPE.CCA_DATA_PERMISSION.getAction()) {
+				List<Object> pU = new ArrayList<>();
+				List<String> pUsers = new ArrayList<>();
+				pUsers.addAll((List<String>) ((Map<String,Object>)d.get("data")).get("permission"));
+				for(String s : pUsers) {
+					Map<String, Object> obj = new HashMap<>();
+					try {
+						User u = userService.getUser(s);
+						obj.put("id", u.getId());
+						obj.put("icon", u.getIcon());
+						obj.put("name", u.getName());
+						pU.add(obj);
+					} catch (ApiException e) {
+						e.printStackTrace();
+					}
+				}
+				model.put("permissions", pU);
+			}
 		}
 		
 		model.put("follower", follower);  
@@ -206,7 +231,6 @@ public class MailServiceImpl implements MailService {
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put(FIELDS.TYPE.getAction(), type.getAction());
 		data.put(FIELDS.TO.getAction(), new String[] { recipient.getEmail() });
-		
 
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(COMMENT_POST.TYPE.getAction(), type.getAction());

@@ -255,7 +255,14 @@ public class ActivityUtil {
 			data.put("type", MAIL_TYPE.CCA_TEMPLATE_COMMENT);
 			data.put("text", "Added a comment");
 			break;
-			
+		case "Permission added":
+			data.put("type", MAIL_TYPE.CCA_DATA_PERMISSION);
+			data.put("text", "CCA permission added");
+			break;
+		case "Follower added":
+			data.put("type", MAIL_TYPE.CCA_DATA_FOLLOW);
+			data.put("text", "CCA Data follower added");
+			break;	
 		default:
 			data.put("type", null);
 			break;
