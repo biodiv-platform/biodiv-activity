@@ -97,8 +97,7 @@ public class MailServiceImpl implements MailService {
 					mailDataList.add(prepareCCAMailData(type, who, who, ccaMailData, comment, activity));
 				}
 				
-				if(!owner.getId().equals(who.getId()))
-					mailDataList.add(prepareCCAMailData(type, who, owner, ccaMailData, comment, activity));
+				mailDataList.add(prepareCCAMailData(type, who, owner, ccaMailData, comment, activity));
 				
 				Map<String, Object> mailData = new HashMap<>();
 				
