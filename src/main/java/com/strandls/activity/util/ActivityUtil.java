@@ -215,7 +215,7 @@ public class ActivityUtil {
 		return data;
 	}
 	
-	public static Map<String, Object> getMailType(String activity, CCAActivityLogging loggingData) {
+	public static Map<String, Object> getCCAMailType(String activity, CCAActivityLogging loggingData) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		switch (activity) {
 		case "CCA created":

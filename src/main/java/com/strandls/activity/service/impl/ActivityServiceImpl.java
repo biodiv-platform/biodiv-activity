@@ -475,10 +475,13 @@ public class ActivityServiceImpl implements ActivityService {
 			CCAActivityLogging loggingData = null;
 			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
 				loggingData = new CCAActivityLogging(null, result.getRootHolderId(), result.getId(),
-						result.getRootHolderType(), result.getId(), "Data comment", commentData.getMailData());
+						result.getRootHolderType(), result.getId(), 
+						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? "Template comment" : "Data comment", commentData.getMailData());
 			} else {
 				loggingData = new CCAActivityLogging(null, result.getRootHolderId(), result.getCommentHolderId(),
-						result.getRootHolderType(), result.getId(), "Template comment", commentData.getMailData());
+						result.getRootHolderType(), result.getId(), 
+						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? "Template comment" : "Data comment", 
+								commentData.getMailData());
 			}
 			activityResult = logCCAActivities(request, userId, loggingData);
 		}
@@ -800,17 +803,15 @@ public class ActivityServiceImpl implements ActivityService {
 				try {
 					userService = headers.addUserHeader(userService, request.getHeader(HttpHeaders.AUTHORIZATION));
 					userService.updateFollow("CCA", ccaActivityLogging.getRootObjectId().toString());
-					Map<String, Object> data = ActivityUtil.getMailType(activity.getActivityType(), ccaActivityLogging);
+					Map<String, Object> data = ActivityUtil.getCCAMailType(activity.getActivityType(), ccaActivityLogging);
 					type = (MAIL_TYPE) data.get("type");
-					if (ccaActivityLogging.getMailData() != null) {
-						if (type != null && type != MAIL_TYPE.COMMENT_POST) {
+					if (ccaActivityLogging.getMailData() != null && type != null && type != MAIL_TYPE.COMMENT_POST) {
 							MailActivityData mailActivityData = new MailActivityData(ccaActivityLogging.getActivityType(),
 									ccaActivityLogging.getActivityDescription(), ccaActivityLogging.getMailData());
 							mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId,
 									null, mailActivityData, null);
 							notificationSevice.sendNotification(mailActivityData, activity.getRootHolderType(),
 									activity.getRootHolderId(), siteName, data.get("text").toString());
-						}
 					}
 				} catch (Exception e) {
 					logger.error(e.getMessage());
