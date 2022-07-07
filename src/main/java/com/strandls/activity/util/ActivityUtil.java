@@ -229,6 +229,7 @@ public class ActivityUtil {
 			data.put("text", "CCA data updated");
 			break;
 		case "CCA Data Deleted":
+		case "Data deleted":
 			data.put("type", MAIL_TYPE.CCA_DATA_DELETED);
 			data.put("text", "CCA data deleted");
 			break;

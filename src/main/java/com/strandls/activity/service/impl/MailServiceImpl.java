@@ -72,7 +72,6 @@ public class MailServiceImpl implements MailService {
 			MailActivityData activity, List<TaggedUser> taggedUsers) {
 		try {
 			if(type.toString().startsWith("CCA")) {
-				List<Recipients> recipientsList = userService.getRecipients(objectType, objectId);
 				User who = userService.getUser(String.valueOf(userId));
 				
 				CCAMailData ccaMailData = null;
@@ -81,7 +80,26 @@ public class MailServiceImpl implements MailService {
 				}
 				
 				List<Map<String, Object>> mailDataList = new ArrayList<>();
-				mailDataList.add(prepareCCAMailData(type, who, ccaMailData, comment, activity));
+				Map<String, Object> dataInfo = ccaMailData.getData();
+				User owner = userService.getUser(dataInfo.get("owner").toString());
+				
+				if(type.toString().contains("DATA")) {
+					List<String> list = (List<String>) dataInfo.get("recipient");
+					List<String> recipients = list;
+					for(String id : recipients) {
+						try {
+							User user = userService.getUser(id);
+							mailDataList.add(prepareCCAMailData(type, who, user, ccaMailData, comment, activity));
+						} catch(Exception e) {
+							e.printStackTrace();
+						}
+					}
+				} else {
+					mailDataList.add(prepareCCAMailData(type, who, who, ccaMailData, comment, activity));
+				}
+				
+				if(!owner.getId().equals(who.getId()))
+					mailDataList.add(prepareCCAMailData(type, who, owner, ccaMailData, comment, activity));
 				
 				Map<String, Object> mailData = new HashMap<>();
 				
@@ -169,16 +187,12 @@ public class MailServiceImpl implements MailService {
 		}
 	}
 
-	private Map<String, Object> prepareCCAMailData(MAIL_TYPE type, User who, CCAMailData ccaMailData,
+	private Map<String, Object> prepareCCAMailData(MAIL_TYPE type, User who, User usr, CCAMailData ccaMailData,
 			CommentLoggingData comment, MailActivityData activity) {
 		Map<String, Object> data = new HashMap<>();
 		data.put(FIELDS.TYPE.getAction(), type.getAction());
-		data.put(FIELDS.TO.getAction(), new String[] {who.getEmail()});
+		data.put(FIELDS.TO.getAction(), new String[] {usr.getEmail()});
 		data.put(FIELDS.SUBSCRIPTION.getAction(), true);
-		
-//		if(type.getAction().equals(MAIL_TYPE.CCA_DATA_PERMISSION.getAction())) {
-//			data.put(FIELDS.SUBJECT.getAction(), "Added permission to contribute");
-//		}
 		
 		Map<String, Object> model = new HashMap<>();
 		model.put(COMMENT_POST.TYPE.getAction(), type.getAction());
@@ -186,9 +200,9 @@ public class MailServiceImpl implements MailService {
 		model.put(COMMENT_POST.SERVER_URL.getAction(), serverUrl);
 		
 		Map<String, Object> user = new HashMap<>();
-		user.put("id", who.getId());
-		user.put("name", who.getName());
-		user.put("icon", who.getIcon());
+		user.put("id", usr.getId());
+		user.put("name", usr.getName());
+		user.put("icon", usr.getIcon() != null ? usr.getIcon() : "");
 		
 		Map<String, Object> follower = new HashMap<>();
 		follower.put("id", who.getId());
