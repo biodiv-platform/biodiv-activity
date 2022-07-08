@@ -474,11 +474,11 @@ public class ActivityServiceImpl implements ActivityService {
 		} else if (commentType.equalsIgnoreCase("cca")) {
 			CCAActivityLogging loggingData = null;
 			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
-				loggingData = new CCAActivityLogging(null, result.getRootHolderId(), result.getId(),
+				loggingData = new CCAActivityLogging(commentData.getBody(), result.getRootHolderId(), result.getId(),
 						result.getRootHolderType(), result.getId(), 
 						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? "Template comment" : "Data comment", commentData.getMailData());
 			} else {
-				loggingData = new CCAActivityLogging(null, result.getRootHolderId(), result.getCommentHolderId(),
+				loggingData = new CCAActivityLogging(commentData.getBody(), result.getRootHolderId(), result.getCommentHolderId(),
 						result.getRootHolderType(), result.getId(), 
 						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? "Template comment" : "Data comment", 
 								commentData.getMailData());
