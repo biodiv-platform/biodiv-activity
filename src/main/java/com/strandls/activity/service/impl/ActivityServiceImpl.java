@@ -45,6 +45,7 @@ import com.strandls.activity.service.NotificationService;
 import com.strandls.activity.util.ActivityUtil;
 import com.strandls.mail_utility.model.EnumModel.MAIL_TYPE;
 import com.strandls.user.controller.UserServiceApi;
+import com.strandls.user.pojo.User;
 import com.strandls.user.pojo.UserIbp;
 
 /**
@@ -789,7 +790,13 @@ public class ActivityServiceImpl implements ActivityService {
 						ccaActivityLogging.getSubRootObjectId(), ActivityEnums.CCATEMPLATE.getValue(), true);
 
 			} else if (ccaDataActivityList.contains(ccaActivityLogging.getActivityType())) {
-				activity = new Activity(null, ccaActivityLogging.getActivityDescription(),
+				String desc = ccaActivityLogging.getActivityDescription();
+				if(ccaActivityLogging.getActivityType().contains("Follower added")) {
+					User u = userService.getUser(desc.substring(1, desc.length() - 1));
+					desc = u.getName();
+				}
+				
+				activity = new Activity(null, desc,
 						ccaActivityLogging.getActivityId(), ActivityEnums.CCADATA.getValue(),
 						ccaActivityLogging.getActivityType(), userId, new Date(), new Date(),
 						ccaActivityLogging.getRootObjectId(), ActivityEnums.CCADATA.getValue(),
@@ -814,8 +821,6 @@ public class ActivityServiceImpl implements ActivityService {
 									ccaActivityLogging.getActivityDescription(), ccaActivityLogging.getMailData());
 							mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId,
 									null, mailActivityData, null);
-							notificationSevice.sendNotification(mailActivityData, activity.getRootHolderType(),
-									activity.getRootHolderId(), siteName, data.get("text").toString());
 					}
 				} catch (Exception e) {
 					logger.error(e.getMessage());
