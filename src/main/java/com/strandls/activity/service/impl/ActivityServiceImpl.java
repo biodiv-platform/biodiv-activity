@@ -45,6 +45,7 @@ import com.strandls.activity.service.NotificationService;
 import com.strandls.activity.util.ActivityUtil;
 import com.strandls.mail_utility.model.EnumModel.MAIL_TYPE;
 import com.strandls.user.controller.UserServiceApi;
+import com.strandls.user.pojo.User;
 import com.strandls.user.pojo.UserIbp;
 
 /**
@@ -189,9 +190,9 @@ public class ActivityServiceImpl implements ActivityService {
 
 // CCA ACTIVITY LIST
 	List<String> ccaTemplateActivityList = new ArrayList<>(
-			Arrays.asList("Template created", "Template updated", "Field created", "Field updated", "Field deleted"));
-	List<String> ccaDataActivityList = new ArrayList<>(Arrays.asList("Data created", "Data updated", "Data deleted"));
-	List<String> ccaCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment"));
+			Arrays.asList("Template created", "Template updated", "Field created", "Field updated", "Field deleted", "CCA Template Deleted"));
+	List<String> ccaDataActivityList = new ArrayList<>(Arrays.asList("Data created", "Data updated", "Data deleted", "Permission added", "Follower added", "Follower removed"));
+	List<String> ccaCommentActivityList = new ArrayList<>(Arrays.asList("Added a comment", "Data comment", "Template comment"));
 
 	@Override
 	public Integer activityCount(String objectType, Long objectId) {
@@ -457,16 +458,19 @@ public class ActivityServiceImpl implements ActivityService {
 		} else if (commentType.equalsIgnoreCase("cca")) {
 			CCAActivityLogging loggingData = null;
 			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
-				loggingData = new CCAActivityLogging(null, result.getRootHolderId(), result.getId(),
-						result.getRootHolderType(), result.getId(), "Added a comment");
+				loggingData = new CCAActivityLogging(commentData.getBody(), result.getRootHolderId(), result.getId(),
+						result.getRootHolderType(), result.getId(), 
+						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? "Template comment" : "Data comment", commentData.getMailData());
 			} else {
-				loggingData = new CCAActivityLogging(null, result.getRootHolderId(), result.getCommentHolderId(),
-						result.getRootHolderType(), result.getId(), "Added a comment");
+				loggingData = new CCAActivityLogging(commentData.getBody(), result.getRootHolderId(), result.getCommentHolderId(),
+						result.getRootHolderType(), result.getId(), 
+						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? "Template comment" : "Data comment", 
+								commentData.getMailData());
 			}
 			activityResult = logCCAActivities(request, userId, loggingData);
 		}
 
-		if (activityResult != null && commentData.getMailData() != null) {
+		if (activityResult != null && commentData.getMailData() != null && !commentType.equals("cca")) {
 
 			MailActivityData mailActivityData = new MailActivityData("Added a comment", null,
 					commentData.getMailData());
@@ -776,6 +780,7 @@ public class ActivityServiceImpl implements ActivityService {
 	public Activity logCCAActivities(HttpServletRequest request, Long userId, CCAActivityLogging ccaActivityLogging) {
 		try {
 			Activity activity = null;
+			MAIL_TYPE type = null;
 
 			if (ccaTemplateActivityList.contains(ccaActivityLogging.getActivityType())) {
 				activity = new Activity(null, ccaActivityLogging.getActivityDescription(),
@@ -785,7 +790,13 @@ public class ActivityServiceImpl implements ActivityService {
 						ccaActivityLogging.getSubRootObjectId(), ActivityEnums.CCATEMPLATE.getValue(), true);
 
 			} else if (ccaDataActivityList.contains(ccaActivityLogging.getActivityType())) {
-				activity = new Activity(null, ccaActivityLogging.getActivityDescription(),
+				String desc = ccaActivityLogging.getActivityDescription();
+				if(ccaActivityLogging.getActivityType().contains("Follower added")) {
+					User u = userService.getUser(desc.substring(1, desc.length() - 1));
+					desc = u.getName();
+				}
+				
+				activity = new Activity(null, desc,
 						ccaActivityLogging.getActivityId(), ActivityEnums.CCADATA.getValue(),
 						ccaActivityLogging.getActivityType(), userId, new Date(), new Date(),
 						ccaActivityLogging.getRootObjectId(), ActivityEnums.CCADATA.getValue(),
@@ -798,11 +809,24 @@ public class ActivityServiceImpl implements ActivityService {
 						ccaActivityLogging.getRootObjectId(), ccaActivityLogging.getRootObjectType(),
 						ccaActivityLogging.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true);
 			}
-			if (activity != null)
+			if (activity != null) {
 				activity = activityDao.save(activity);
-
-//			TODO mailData integration
-
+				try {
+					userService = headers.addUserHeader(userService, request.getHeader(HttpHeaders.AUTHORIZATION));
+					userService.updateFollow("CCA", ccaActivityLogging.getRootObjectId().toString());
+					Map<String, Object> data = ActivityUtil.getCCAMailType(activity.getActivityType(), ccaActivityLogging);
+					type = (MAIL_TYPE) data.get("type");
+					if (ccaActivityLogging.getMailData() != null && type != null && type != MAIL_TYPE.COMMENT_POST) {
+							MailActivityData mailActivityData = new MailActivityData(ccaActivityLogging.getActivityType(),
+									ccaActivityLogging.getActivityDescription(), ccaActivityLogging.getMailData());
+							mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId,
+									null, mailActivityData, null);
+					}
+				} catch (Exception e) {
+					logger.error(e.getMessage());
+				}
+			}
+			
 			return activity;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -846,5 +870,4 @@ public class ActivityServiceImpl implements ActivityService {
 
 		return null;
 	}
-
 }
