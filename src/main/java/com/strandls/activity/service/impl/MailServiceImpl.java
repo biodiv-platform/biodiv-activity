@@ -93,7 +93,7 @@ public class MailServiceImpl implements MailService {
 							User user = userService.getUser(id);
 							mailDataList.add(prepareCCAMailData(type, who, user, ccaMailData, comment, activity));
 						} catch(Exception e) {
-							e.printStackTrace();
+							logger.error(e.getMessage());
 						}
 					}
 				} else {
@@ -235,7 +235,7 @@ public class MailServiceImpl implements MailService {
 						obj.put("name", u.getName());
 						pU.add(obj);
 					} catch (ApiException e) {
-						e.printStackTrace();
+						logger.error(e.getMessage());
 					}
 				}
 				model.put("permissions", pU);
