@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.strandls.activity.pojo.ActivityLoggingData;
+import com.strandls.activity.pojo.CCAActivityLogging;
 import com.strandls.activity.pojo.TaggedUser;
 import com.strandls.activity.pojo.UserGroupActivity;
 import com.strandls.activity.service.impl.PropertyFileUtil;
@@ -284,6 +285,66 @@ public class ActivityUtil {
 			data.put("text", "Rated media resource");
 			break;
 
+		default:
+			data.put("type", null);
+			break;
+		}
+		return data;
+	}
+	
+	public static Map<String, Object> getCCAMailType(String activity, CCAActivityLogging loggingData) {
+		Map<String, Object> data = new HashMap<String, Object>();
+		switch (activity) {
+		case "CCA created":
+		case "Data created":
+			data.put("type", MAIL_TYPE.CCA_DATA_ADDED);
+			data.put("text", "CCA data created");
+			break;
+		case "CCA Data Update":
+		case "Data updated":
+			data.put("type", MAIL_TYPE.CCA_DATA_UPDATED);
+			data.put("text", "CCA data updated");
+			break;
+		case "CCA Data Deleted":
+		case "Data deleted":
+			data.put("type", MAIL_TYPE.CCA_DATA_DELETED);
+			data.put("text", "CCA data deleted");
+			break;
+		case "Template created":
+			data.put("type", MAIL_TYPE.CCA_TEMPLATE_ADDED);
+			data.put("text", "CCA template created");
+			break;
+		case "CCA Template Update":
+		case "Field updated":
+		case "Field deleted":
+		case "Field created":
+			data.put("type", MAIL_TYPE.CCA_TEMPLATE_UPDATED);
+			data.put("text", "CCA template updated");
+			break;
+		case "CCA Template Deleted":
+			data.put("type", MAIL_TYPE.CCA_TEMPLATE_DELETED);
+			data.put("text", "CCA template deleted");
+			break;
+		case "Data comment":
+			data.put("type", MAIL_TYPE.CCA_DATA_COMMENT);
+			data.put("text", "Added a comment");
+			break;
+		case "Template comment":
+			data.put("type", MAIL_TYPE.CCA_TEMPLATE_COMMENT);
+			data.put("text", "Added a comment");
+			break;
+		case "Permission added":
+			data.put("type", MAIL_TYPE.CCA_DATA_PERMISSION);
+			data.put("text", "CCA permission added");
+			break;
+		case "Follower added":
+			data.put("type", MAIL_TYPE.CCA_DATA_FOLLOW);
+			data.put("text", "CCA Data follower added");
+			break;
+		case "Follower removed":
+			data.put("type", MAIL_TYPE.CCA_DATA_UNFOLLOW);
+			data.put("text", "CCA Data follower added");
+			break;
 		default:
 			data.put("type", null);
 			break;
