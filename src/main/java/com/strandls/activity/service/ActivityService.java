@@ -31,8 +31,6 @@ public interface ActivityService {
 
 	public String sendObvCreateMail(Long userid, ActivityLoggingData loggingData);
 
-	public String sendCCATemplateCreateMail(Long userid, CCAActivityLogging ccaActivityLogging);
-
 	public Activity logUGActivities(Long userId, UserGroupActivityLogging loggingData);
 
 	public Activity logDocActivities(HttpServletRequest request, Long userId, DocumentActivityLogging loggingData);

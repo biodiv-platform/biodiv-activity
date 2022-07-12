@@ -369,23 +369,6 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
-	public String sendCCATemplateCreateMail(Long userId, CCAActivityLogging ccaActivityLogging) {
-		// TODO Auto-generated method stub
-		try {
-			MailActivityData mailActivityData = new MailActivityData(ccaActivityLogging.getActivityType(),
-					ccaActivityLogging.getActivityDescription(), ccaActivityLogging.getMailData());
-			mailService.sendMail(MAIL_TYPE.CCA_TEMPLATE_ADDED, ActivityEnums.CCATEMPLATE.getValue(),
-					ccaActivityLogging.getRootObjectId(), userId, null, mailActivityData, null);
-			notificationSevice.sendNotification(mailActivityData, ActivityEnums.CCATEMPLATE.getValue(),
-					ccaActivityLogging.getRootObjectId(), siteName, "Template created");
-			return "Mail Sent";
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
-		return "Mail not sent";
-	}
-
-	@Override
 	public Activity addComment(HttpServletRequest request, Long userId, String commentType,
 			CommentLoggingData commentData) {
 
