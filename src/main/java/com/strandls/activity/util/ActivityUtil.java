@@ -340,7 +340,11 @@ public class ActivityUtil {
 		case "Follower added":
 			data.put("type", MAIL_TYPE.CCA_DATA_FOLLOW);
 			data.put("text", "CCA Data follower added");
-			break;	
+			break;
+		case "Follower removed":
+			data.put("type", MAIL_TYPE.CCA_DATA_UNFOLLOW);
+			data.put("text", "CCA Data follower added");
+			break;
 		default:
 			data.put("type", null);
 			break;

@@ -190,7 +190,7 @@ public class ActivityServiceImpl implements ActivityService {
 // CCA ACTIVITY LIST
 	List<String> ccaTemplateActivityList = new ArrayList<>(
 			Arrays.asList("Template created", "Template updated", "Field created", "Field updated", "Field deleted", "CCA Template Deleted"));
-	List<String> ccaDataActivityList = new ArrayList<>(Arrays.asList("Data created", "Data updated", "Data deleted", "Permission added", "Follower added"));
+	List<String> ccaDataActivityList = new ArrayList<>(Arrays.asList("Data created", "Data updated", "Data deleted", "Permission added", "Follower added", "Follower removed"));
 	List<String> ccaCommentActivityList = new ArrayList<>(Arrays.asList("Added a comment", "Data comment", "Template comment"));
 
 	@Override
@@ -486,7 +486,7 @@ public class ActivityServiceImpl implements ActivityService {
 			activityResult = logCCAActivities(request, userId, loggingData);
 		}
 
-		if (activityResult != null && commentData.getMailData() != null) {
+		if (activityResult != null && commentData.getMailData() != null && !commentType.equals("cca")) {
 
 			MailActivityData mailActivityData = new MailActivityData("Added a comment", null,
 					commentData.getMailData());
