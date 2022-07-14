@@ -791,7 +791,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 			} else if (ccaDataActivityList.contains(ccaActivityLogging.getActivityType())) {
 				String desc = ccaActivityLogging.getActivityDescription();
-				if(ccaActivityLogging.getActivityType().contains("Follower added")) {
+				if(ccaActivityLogging.getActivityType().contains("Follower")) {
 					User u = userService.getUser(desc.substring(1, desc.length() - 1));
 					desc = u.getName();
 				}
