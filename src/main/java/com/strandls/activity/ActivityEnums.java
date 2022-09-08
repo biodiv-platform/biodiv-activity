@@ -10,7 +10,7 @@ package com.strandls.activity;
 public enum ActivityEnums {
 
 	OBSERVATION("species.participation.Observation"), RECOMMENDATIONVOTE("species.participation.RecommendationVote"),
-	DATATABLE("content.eml.Datatable"), USERGROUP("species.groups.UserGroup"), FACTS("species.trait.Fact"),
+	DATATABLE("content.eml.Datatable"),PAGE("content.eml.Page"), USERGROUP("species.groups.UserGroup"), FACTS("species.trait.Fact"),
 	COMMENTS("species.participation.Comment"), FLAG("species.participation.Flag"), USER("species.auth.SUser"),
 	CUSTOMFIELD("CustomField"), FILTERRULE("FilterRule"), DOCUMENT("content.eml.Document"), SPECIES("species.Species"),
 	SPECIESFIELD("species.SpeciesField"), TAXONOMYREGISTRY("species.TaxonomyRegistry"),
