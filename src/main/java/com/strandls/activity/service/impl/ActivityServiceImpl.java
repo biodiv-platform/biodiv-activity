@@ -32,6 +32,7 @@ import com.strandls.activity.pojo.CommentsIbp;
 import com.strandls.activity.pojo.DatatableActivityLogging;
 import com.strandls.activity.pojo.DocumentActivityLogging;
 import com.strandls.activity.pojo.MailActivityData;
+import com.strandls.activity.pojo.PageAcitvityLogging;
 import com.strandls.activity.pojo.RecoVoteActivity;
 import com.strandls.activity.pojo.ShowActivityIbp;
 import com.strandls.activity.pojo.SpeciesActivityLogging;
@@ -188,11 +189,15 @@ public class ActivityServiceImpl implements ActivityService {
 
 	List<String> dataTableCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment"));
 
+	List<String> pageCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment"));
+
 // CCA ACTIVITY LIST
-	List<String> ccaTemplateActivityList = new ArrayList<>(
-			Arrays.asList("Template created", "Template updated", "Field created", "Field updated", "Field deleted", "CCA Template Deleted"));
-	List<String> ccaDataActivityList = new ArrayList<>(Arrays.asList("Data created", "Data updated", "Data deleted", "Permission added", "Follower added", "Follower removed"));
-	List<String> ccaCommentActivityList = new ArrayList<>(Arrays.asList("Added a comment", "Data comment", "Template comment"));
+	List<String> ccaTemplateActivityList = new ArrayList<>(Arrays.asList("Template created", "Template updated",
+			"Field created", "Field updated", "Field deleted", "CCA Template Deleted"));
+	List<String> ccaDataActivityList = new ArrayList<>(Arrays.asList("Data created", "Data updated", "Data deleted",
+			"Permission added", "Follower added", "Follower removed"));
+	List<String> ccaCommentActivityList = new ArrayList<>(
+			Arrays.asList("Added a comment", "Data comment", "Template comment"));
 
 	@Override
 	public Integer activityCount(String objectType, Long objectId) {
@@ -219,6 +224,8 @@ public class ActivityServiceImpl implements ActivityService {
 			objectType = ActivityEnums.DATATABLE.getValue();
 		else if (objectType.equalsIgnoreCase("ccaData"))
 			objectType = ActivityEnums.CCADATA.getValue();
+		else if (objectType.equalsIgnoreCase("page"))
+			objectType = ActivityEnums.PAGE.getValue();
 		else if (objectType.equalsIgnoreCase("ccaTemplate"))
 			objectType = ActivityEnums.CCATEMPLATE.getValue();
 
@@ -422,7 +429,24 @@ public class ActivityServiceImpl implements ActivityService {
 			}
 
 			activityResult = logDatatableActivities(request, userId, loggingData);
-		} else if (commentType.equals("document")) {
+		} else if (commentType.equals("page")) {
+
+			PageAcitvityLogging loggingData = null;
+
+			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
+				loggingData = new PageAcitvityLogging(null, result.getRootHolderId(), result.getId(),
+						result.getRootHolderType(), result.getId(), "Added a comment", commentData.getMailData());
+
+			} else {
+				loggingData = new PageAcitvityLogging(null, result.getRootHolderId(), result.getCommentHolderId(),
+						result.getRootHolderType(), result.getId(), "Added a comment", commentData.getMailData());
+			}
+
+			activityResult = logPageActivities(request, userId, loggingData);
+
+		}
+
+		else if (commentType.equals("document")) {
 
 			DocumentActivityLogging loggingData = null;
 			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
@@ -459,13 +483,16 @@ public class ActivityServiceImpl implements ActivityService {
 			CCAActivityLogging loggingData = null;
 			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
 				loggingData = new CCAActivityLogging(commentData.getBody(), result.getRootHolderId(), result.getId(),
-						result.getRootHolderType(), result.getId(), 
-						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? "Template comment" : "Data comment", commentData.getMailData());
+						result.getRootHolderType(), result.getId(),
+						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? "Template comment"
+								: "Data comment",
+						commentData.getMailData());
 			} else {
-				loggingData = new CCAActivityLogging(commentData.getBody(), result.getRootHolderId(), result.getCommentHolderId(),
-						result.getRootHolderType(), result.getId(), 
-						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? "Template comment" : "Data comment", 
-								commentData.getMailData());
+				loggingData = new CCAActivityLogging(commentData.getBody(), result.getRootHolderId(),
+						result.getCommentHolderId(), result.getRootHolderType(), result.getId(),
+						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? "Template comment"
+								: "Data comment",
+						commentData.getMailData());
 			}
 			activityResult = logCCAActivities(request, userId, loggingData);
 		}
@@ -587,7 +614,7 @@ public class ActivityServiceImpl implements ActivityService {
 			try {
 				userService = headers.addUserHeader(userService, request.getHeader(HttpHeaders.AUTHORIZATION));
 				userService.updateFollow("document", loggingData.getRootObjectId().toString());
-				if (activity!= null && loggingData.getMailData() != null) {
+				if (activity != null && loggingData.getMailData() != null) {
 
 					String mailType = docUserGroupActivityList.contains(loggingData.getActivityType())
 							|| docFlagActivityList.contains(loggingData.getActivityType())
@@ -680,7 +707,7 @@ public class ActivityServiceImpl implements ActivityService {
 			if (activity != null)
 				activity = activityDao.save(activity);
 
-			if (activity!= null && loggingData.getMailData() != null) {
+			if (activity != null && loggingData.getMailData() != null) {
 
 				String mailType = speciesUserGroupActivityList.contains(loggingData.getActivityType())
 						|| speciesTraitActivityList.contains(loggingData.getActivityType())
@@ -689,14 +716,13 @@ public class ActivityServiceImpl implements ActivityService {
 				Map<String, Object> data = ActivityUtil.getMailType(mailType,
 						new ActivityLoggingData(loggingData.getActivityDescription(), loggingData.getRootObjectId(),
 								loggingData.getSubRootObjectId(), loggingData.getRootObjectType(),
-								loggingData.getActivityId(), loggingData.getActivityType(),
-								loggingData.getMailData()));
+								loggingData.getActivityId(), loggingData.getActivityType(), loggingData.getMailData()));
 				type = (MAIL_TYPE) data.get("type");
 				if (type != null && type != MAIL_TYPE.COMMENT_POST) {
 					MailActivityData mailActivityData = new MailActivityData(loggingData.getActivityType(),
 							loggingData.getActivityDescription(), loggingData.getMailData());
-					mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId,
-							null, mailActivityData, null);
+					mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId, null,
+							mailActivityData, null);
 				}
 			}
 
@@ -791,15 +817,14 @@ public class ActivityServiceImpl implements ActivityService {
 
 			} else if (ccaDataActivityList.contains(ccaActivityLogging.getActivityType())) {
 				String desc = ccaActivityLogging.getActivityDescription();
-				if(ccaActivityLogging.getActivityType().contains("Follower")) {
+				if (ccaActivityLogging.getActivityType().contains("Follower")) {
 					User u = userService.getUser(desc.substring(1, desc.length() - 1));
 					desc = u.getName();
 				}
-				
-				activity = new Activity(null, desc,
-						ccaActivityLogging.getActivityId(), ActivityEnums.CCADATA.getValue(),
-						ccaActivityLogging.getActivityType(), userId, new Date(), new Date(),
-						ccaActivityLogging.getRootObjectId(), ActivityEnums.CCADATA.getValue(),
+
+				activity = new Activity(null, desc, ccaActivityLogging.getActivityId(),
+						ActivityEnums.CCADATA.getValue(), ccaActivityLogging.getActivityType(), userId, new Date(),
+						new Date(), ccaActivityLogging.getRootObjectId(), ActivityEnums.CCADATA.getValue(),
 						ccaActivityLogging.getSubRootObjectId(), ActivityEnums.CCADATA.getValue(), true);
 
 			} else if (ccaCommentActivityList.contains(ccaActivityLogging.getActivityType())) {
@@ -814,19 +839,20 @@ public class ActivityServiceImpl implements ActivityService {
 				try {
 					userService = headers.addUserHeader(userService, request.getHeader(HttpHeaders.AUTHORIZATION));
 					userService.updateFollow("CCA", ccaActivityLogging.getRootObjectId().toString());
-					Map<String, Object> data = ActivityUtil.getCCAMailType(activity.getActivityType(), ccaActivityLogging);
+					Map<String, Object> data = ActivityUtil.getCCAMailType(activity.getActivityType(),
+							ccaActivityLogging);
 					type = (MAIL_TYPE) data.get("type");
 					if (ccaActivityLogging.getMailData() != null && type != null && type != MAIL_TYPE.COMMENT_POST) {
-							MailActivityData mailActivityData = new MailActivityData(ccaActivityLogging.getActivityType(),
-									ccaActivityLogging.getActivityDescription(), ccaActivityLogging.getMailData());
-							mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId,
-									null, mailActivityData, null);
+						MailActivityData mailActivityData = new MailActivityData(ccaActivityLogging.getActivityType(),
+								ccaActivityLogging.getActivityDescription(), ccaActivityLogging.getMailData());
+						mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId,
+								null, mailActivityData, null);
 					}
 				} catch (Exception e) {
 					logger.error(e.getMessage());
 				}
 			}
-			
+
 			return activity;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -870,4 +896,31 @@ public class ActivityServiceImpl implements ActivityService {
 
 		return null;
 	}
+
+	@Override
+	public Activity logPageActivities(HttpServletRequest request, Long userId, PageAcitvityLogging loggingData) {
+
+		Activity activity = null;
+		try {
+			if (pageCommentActivityList.contains(loggingData.getActivityType())) {
+
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.COMMENTS.getValue(), loggingData.getActivityType(), userId, new Date(),
+						new Date(), loggingData.getRootObjectId(), ActivityEnums.PAGE.getValue(),
+						loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true);
+			}
+
+			if (activity != null)
+				activity = activityDao.save(activity);
+
+//			TODO mailData integration
+
+			return activity;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
+		return null;
+	}
+
 }
