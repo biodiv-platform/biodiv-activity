@@ -28,6 +28,7 @@ import com.strandls.activity.pojo.CCAActivityLogging;
 import com.strandls.activity.pojo.CommentLoggingData;
 import com.strandls.activity.pojo.DatatableActivityLogging;
 import com.strandls.activity.pojo.DocumentActivityLogging;
+import com.strandls.activity.pojo.PageAcitvityLogging;
 import com.strandls.activity.pojo.SpeciesActivityLogging;
 import com.strandls.activity.pojo.TaxonomyActivityLogging;
 import com.strandls.activity.pojo.UserGroupActivityLogging;
@@ -203,6 +204,28 @@ public class ActivityController {
 	}
 
 	@POST
+	@Path(ApiConstants.LOG + ApiConstants.PAGE)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiOperation(value = "log page activities", notes = "Return the activity logged", response = Activity.class)
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to log the activity", response = String.class) })
+
+	public Response logPageActivity(@Context HttpServletRequest request,
+			@ApiParam(name = "loggingData") PageAcitvityLogging loggingData) {
+		try {
+			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+			Long userId = Long.parseLong(profile.getId());
+			Activity result = service.logPageActivities(request, userId, loggingData);
+			return Response.status(Status.OK).entity(result).build();
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@POST
 	@Path(ApiConstants.LOG + ApiConstants.SPECIES)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -267,7 +290,7 @@ public class ActivityController {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
-	
+
 	@POST
 	@Path(ApiConstants.LOG + ApiConstants.DATATABLE)
 	@Consumes(MediaType.APPLICATION_JSON)
