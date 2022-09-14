@@ -284,7 +284,20 @@ public class ActivityUtil {
 			data.put("type", MAIL_TYPE.RATED_MEDIA_RESOURCE);
 			data.put("text", "Rated media resource");
 			break;
+			
+		case "Page created":
+			data.put("type", MAIL_TYPE.PAGE_CREATE);
+			data.put("text", "Page created");
+			break;
 
+		case "Page updated":
+			data.put("type", MAIL_TYPE.PAGE_UPDATE);
+			data.put("text", "Page updated");
+			break;
+		case "Page Deleted":
+			data.put("type", MAIL_TYPE.PAGE_DELETED);
+			data.put("text", "Page Deleted");
+			break;
 		default:
 			data.put("type", null);
 			break;
