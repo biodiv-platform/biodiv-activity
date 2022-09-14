@@ -115,7 +115,6 @@ public class ActivityServeletContextListener extends GuiceServletContextListener
 
 			for (Annotation annotation : annotations) {
 				if (annotation instanceof javax.persistence.Entity) {
-					System.out.println("Mapping entity :" + cls.getCanonicalName());
 					classes.add(cls);
 				}
 			}

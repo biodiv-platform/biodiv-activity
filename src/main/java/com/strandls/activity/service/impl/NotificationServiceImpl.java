@@ -45,7 +45,6 @@ public class NotificationServiceImpl implements NotificationService {
 				String extension = image.substring(dot);
 				image = String.join("_th1", fileName, extension);
 			}
-			System.out.println("\n\n***** Log Recipients: " + recipients + " *****\n\n");
 			Map<String, Object> data = new HashMap<String, Object>();
 			Map<String, Object> notification = new HashMap<String, Object>();
 			notification.put(NOTIFICATION_DATA.TITLE.getAction(), title);
