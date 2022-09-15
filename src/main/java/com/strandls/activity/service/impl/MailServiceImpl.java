@@ -107,13 +107,10 @@ public class MailServiceImpl implements MailService {
 
 				mailData.put(INFO_FIELDS.TYPE.getAction(), type.getAction());
 				mailData.put(INFO_FIELDS.RECIPIENTS.getAction(), mailDataList);
-				System.out.println("\n\n ***** \n\n" + mailData + "\n\n ***** \n\n");
 				producer.produceMail(RabbitMqConnection.EXCHANGE, RabbitMqConnection.ROUTING_KEY, null,
 						JsonUtil.mapToJSON(mailData));
 			} else {
 				List<Recipients> recipientsList = userService.getRecipients(objectType, objectId);
-				System.out.println("*******The object type and object id *********" + objectType + "   " + objectId);
-				System.out.println("*******Recipient Data ********" + recipientsList.size());
 				List<UserGroupMailData> groups = activity.getMailData().getUserGroupData();
 				User who = userService.getUser(String.valueOf(userId));
 				RecoVoteActivity reco = null;
@@ -142,17 +139,6 @@ public class MailServiceImpl implements MailService {
 				}
 				if (userGroupActivityList.contains(activity.getActivityType())) {
 					userGroup = mapper.readValue(activity.getActivityDescription(), UserGroupActivity.class);
-					System.out.println("***** UserGroup ***** " + userGroup.getUserGroupName());
-				}
-
-				System.out.println("INSIDE MAIL SERVICE IMPL");
-
-				if (groups != null && !groups.isEmpty()) {
-					for (UserGroupMailData mailData : groups) {
-						System.out.println("***** GroupFromAPI *****" + mailData.toString());
-					}
-				} else {
-					System.out.println("***** Groups Empty *****");
 				}
 
 				Map<String, Object> data = null;
@@ -190,7 +176,6 @@ public class MailServiceImpl implements MailService {
 				Map<String, Object> mailData = new HashMap<String, Object>();
 				mailData.put(INFO_FIELDS.TYPE.getAction(), type.getAction());
 				mailData.put(INFO_FIELDS.RECIPIENTS.getAction(), mailDataList);
-				System.out.println("\n\n ***** \n\n" + mailData + "\n\n ***** \n\n");
 				producer.produceMail(RabbitMqConnection.EXCHANGE, RabbitMqConnection.ROUTING_KEY, null,
 						JsonUtil.mapToJSON(mailData));
 			}

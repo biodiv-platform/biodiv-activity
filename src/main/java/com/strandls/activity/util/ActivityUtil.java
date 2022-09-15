@@ -91,7 +91,6 @@ public class ActivityUtil {
 
 	public static Map<String, Object> getMailType(String activity, ActivityLoggingData loggingData) {
 		boolean featuredToIBP = false;
-		System.out.println("\n\n ***** " + activity + " " + loggingData.getActivityDescription() + " *****\n\n");
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			List<String> ugActivity = Arrays.asList("Featured", "UnFeatured");
