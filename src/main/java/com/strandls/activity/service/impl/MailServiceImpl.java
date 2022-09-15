@@ -20,12 +20,13 @@ import com.strandls.activity.pojo.CommentLoggingData;
 import com.strandls.activity.pojo.DocumentMailData;
 import com.strandls.activity.pojo.MailActivityData;
 import com.strandls.activity.pojo.MailData;
+import com.strandls.activity.pojo.ObservationMailData;
+import com.strandls.activity.pojo.PageMailData;
 import com.strandls.activity.pojo.RecoVoteActivity;
 import com.strandls.activity.pojo.SpeciesMailData;
 import com.strandls.activity.pojo.TaggedUser;
 import com.strandls.activity.pojo.UserGroupActivity;
 import com.strandls.activity.pojo.UserGroupMailData;
-import com.strandls.activity.pojo.ObservationMailData;
 import com.strandls.activity.service.MailService;
 import com.strandls.activity.util.ActivityUtil;
 import com.strandls.mail_utility.model.EnumModel.COMMENT_POST;
@@ -73,26 +74,26 @@ public class MailServiceImpl implements MailService {
 	public void sendMail(MAIL_TYPE type, String objectType, Long objectId, Long userId, CommentLoggingData comment,
 			MailActivityData activity, List<TaggedUser> taggedUsers) {
 		try {
-			if(type.toString().startsWith("CCA")) {
+			if (type.toString().startsWith("CCA")) {
 				User who = userService.getUser(String.valueOf(userId));
-				
+
 				CCAMailData ccaMailData = null;
-				if(activity.getMailData() != null) {
+				if (activity.getMailData() != null) {
 					ccaMailData = activity.getMailData().getCcaMailData();
 				}
-				
+
 				List<Map<String, Object>> mailDataList = new ArrayList<>();
 				Map<String, Object> dataInfo = ccaMailData.getData();
 				User owner = userService.getUser(dataInfo.get("owner").toString());
-				
-				if(type.toString().contains("DATA")) {
+
+				if (type.toString().contains("DATA")) {
 					List<String> list = (List<String>) dataInfo.get("recipient");
 					List<String> recipients = list;
-					for(String id : recipients) {
+					for (String id : recipients) {
 						try {
 							User user = userService.getUser(id);
 							mailDataList.add(prepareCCAMailData(type, who, user, ccaMailData, comment, activity));
-						} catch(Exception e) {
+						} catch (Exception e) {
 							logger.error(e.getMessage());
 						}
 					}
@@ -132,7 +133,8 @@ public class MailServiceImpl implements MailService {
 					name = (reco.getScientificName() != null && !reco.getScientificName().isEmpty())
 							? reco.getScientificName()
 							: (reco.getCommonName() != null && !reco.getCommonName().isEmpty()) ? reco.getCommonName()
-									: (reco.getGivenName() != null && !reco.getGivenName().isEmpty()) ? reco.getGivenName()
+									: (reco.getGivenName() != null && !reco.getGivenName().isEmpty())
+											? reco.getGivenName()
 											: "";
 				}
 				if (userGroupActivityList.contains(activity.getActivityType())) {
@@ -186,32 +188,32 @@ public class MailServiceImpl implements MailService {
 			CommentLoggingData comment, MailActivityData activity) {
 		Map<String, Object> data = new HashMap<>();
 		data.put(FIELDS.TYPE.getAction(), type.getAction());
-		data.put(FIELDS.TO.getAction(), new String[] {usr.getEmail()});
+		data.put(FIELDS.TO.getAction(), new String[] { usr.getEmail() });
 		data.put(FIELDS.SUBSCRIPTION.getAction(), true);
-		
+
 		Map<String, Object> model = new HashMap<>();
 		model.put(COMMENT_POST.TYPE.getAction(), type.getAction());
 		model.put(COMMENT_POST.SITENAME.getAction(), siteName);
 		model.put(COMMENT_POST.SERVER_URL.getAction(), serverUrl);
-		
+
 		Map<String, Object> user = new HashMap<>();
 		user.put("id", usr.getId());
 		user.put("name", usr.getName());
 		user.put("icon", usr.getIcon() != null ? usr.getIcon() : "");
-		
+
 		Map<String, Object> follower = new HashMap<>();
 		follower.put("id", who.getId());
 		follower.put("name", who.getName());
-		
+
 		model.put("user", user);
-		if(ccaMailData != null) {
+		if (ccaMailData != null) {
 			Map<String, Object> d = ccaMailData.getData();
 			model.putAll(ccaMailData.getData());
-			if(type.getAction() == MAIL_TYPE.CCA_DATA_PERMISSION.getAction()) {
+			if (type.getAction() == MAIL_TYPE.CCA_DATA_PERMISSION.getAction()) {
 				List<Object> pU = new ArrayList<>();
 				List<String> pUsers = new ArrayList<>();
-				pUsers.addAll((List<String>) ((Map<String,Object>)d.get("data")).get("permission"));
-				for(String s : pUsers) {
+				pUsers.addAll((List<String>) ((Map<String, Object>) d.get("data")).get("permission"));
+				for (String s : pUsers) {
 					Map<String, Object> obj = new HashMap<>();
 					try {
 						User u = userService.getUser(s);
@@ -226,13 +228,13 @@ public class MailServiceImpl implements MailService {
 				model.put("permissions", pU);
 			}
 		}
-		
-		model.put("follower", follower);  
-		
+
+		model.put("follower", follower);
+
 		data.put(FIELDS.DATA.getAction(), JsonUtil.unflattenJSON(model));
 		return data;
 	}
-	
+
 	private Map<String, Object> prepareMailData(MAIL_TYPE type, Recipients recipient, User follower, User who,
 			RecoVoteActivity reco, UserGroupActivity userGroup, MailActivityData activity, CommentLoggingData comment,
 			String name, MailData mailData, List<UserGroupMailData> groups, String modifiedComment) {
@@ -240,6 +242,7 @@ public class MailServiceImpl implements MailService {
 		ObservationMailData observation = mailData.getObservationData();
 		DocumentMailData document = mailData.getDocumentMailData();
 		SpeciesMailData species = mailData.getSpeciesData();
+		PageMailData page = mailData.getPageMailData();
 		data.put(FIELDS.TYPE.getAction(), type.getAction());
 		data.put(FIELDS.TO.getAction(), new String[] { recipient.getEmail() });
 		data.put(FIELDS.SUBSCRIPTION.getAction(), recipient.getIsSubscribed());
@@ -255,10 +258,10 @@ public class MailServiceImpl implements MailService {
 
 		if (type == MAIL_TYPE.FACT_ADDED || type == MAIL_TYPE.FACT_UPDATED || type == MAIL_TYPE.TAG_UPDATED
 				|| type == MAIL_TYPE.SPECIES_FIELD_DELETED || type == MAIL_TYPE.SPECIES_FIELD_ADDED
-				|| type == MAIL_TYPE.CUSTOM_FIELD_UPDATED ||
-				type == MAIL_TYPE.OBSERVATION_FLAGGED || type == MAIL_TYPE.SPECIES_FACT
-				|| type == MAIL_TYPE.SPECIES_SYNONYMS || type == MAIL_TYPE.SPECIES_COMMON_NAME
-				|| type == MAIL_TYPE.SPECIES_FIELD_UPDATED || type == MAIL_TYPE.SPECIES_RESOURCE) {
+				|| type == MAIL_TYPE.CUSTOM_FIELD_UPDATED || type == MAIL_TYPE.OBSERVATION_FLAGGED
+				|| type == MAIL_TYPE.SPECIES_FACT || type == MAIL_TYPE.SPECIES_SYNONYMS
+				|| type == MAIL_TYPE.SPECIES_COMMON_NAME || type == MAIL_TYPE.SPECIES_FIELD_UPDATED
+				|| type == MAIL_TYPE.SPECIES_RESOURCE) {
 			model.put(COMMENT_POST.COMMENT_BODY.getAction(),
 					ActivityUtil.replaceFlaggedMessage(activity.getActivityDescription()));
 		} else if (type == MAIL_TYPE.FEATURED_POST || type == MAIL_TYPE.FEATURED_POST_IBP) {
@@ -307,6 +310,15 @@ public class MailServiceImpl implements MailService {
 
 			model.put(COMMENT_POST.WHAT_POSTED_NAME.getAction(),
 					(document != null && document.getTitle() != null) ? document.getTitle() : "Help Identify");
+		}
+
+		if (page != null) {
+			model.put(COMMENT_POST.WHAT_POSTED_ID.getAction(),
+					(page != null && page.getPageId() != null) ? page.getPageId() : null);
+
+			model.put(COMMENT_POST.WHAT_POSTED_NAME.getAction(),
+					(page != null && page.getTitle() != null) ? page.getTitle() : null);
+
 		}
 
 		if (observation != null) {
