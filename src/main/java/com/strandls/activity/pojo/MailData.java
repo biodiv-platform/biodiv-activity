@@ -5,6 +5,7 @@ import java.util.List;
 public class MailData {
 
 	private ObservationMailData observationData;
+	private PageMailData pageMailData;
 	private DocumentMailData documentMailData;
 	private List<UserGroupMailData> userGroupData;
 	private SpeciesMailData speciesData;
@@ -24,13 +25,15 @@ public class MailData {
 	 * @param speciesData
 	 */
 	public MailData(ObservationMailData observationData, DocumentMailData documentMailData,
-			List<UserGroupMailData> userGroupData, SpeciesMailData speciesData, CCAMailData ccaMailData) {
+			List<UserGroupMailData> userGroupData, SpeciesMailData speciesData, PageMailData pageMailData,
+			CCAMailData ccaMailData) {
 		super();
 		this.observationData = observationData;
 		this.documentMailData = documentMailData;
 		this.userGroupData = userGroupData;
 		this.speciesData = speciesData;
 		this.ccaMailData = ccaMailData;
+		this.pageMailData = pageMailData;
 	}
 
 	public ObservationMailData getObservationData() {
@@ -71,5 +74,13 @@ public class MailData {
 
 	public void setCcaMailData(CCAMailData ccaMailData) {
 		this.ccaMailData = ccaMailData;
+	}
+
+	public PageMailData getPageMailData() {
+		return pageMailData;
+	}
+
+	public void setPageMailData(PageMailData pageMailData) {
+		this.pageMailData = pageMailData;
 	}
 }

@@ -189,6 +189,9 @@ public class ActivityServiceImpl implements ActivityService {
 
 	List<String> dataTableCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment"));
 
+	List<String> pageNullActivityList = new ArrayList<String>(
+			Arrays.asList("Page created", "Page updated", "Page Deleted"));
+
 	List<String> pageCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment"));
 
 // CCA ACTIVITY LIST
@@ -507,6 +510,10 @@ public class ActivityServiceImpl implements ActivityService {
 						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
 			} else if (commentType.equals("document")) {
 				mailService.sendMail(MAIL_TYPE.DOCUMENT_COMMENT_POST, activityResult.getRootHolderType(),
+						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
+
+			} else if (commentType.equals("page")) {
+				mailService.sendMail(MAIL_TYPE.PAGE_COMMENT_POST, activityResult.getRootHolderType(),
 						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
 			} else if (commentType.equals("species")) {
 				mailService.sendMail(MAIL_TYPE.SPECIES_COMMENT_POST, activityResult.getRootHolderType(),
@@ -901,8 +908,14 @@ public class ActivityServiceImpl implements ActivityService {
 	public Activity logPageActivities(HttpServletRequest request, Long userId, PageAcitvityLogging loggingData) {
 
 		Activity activity = null;
+		MAIL_TYPE type = null;
 		try {
-			if (pageCommentActivityList.contains(loggingData.getActivityType())) {
+			if (pageNullActivityList.contains(loggingData.getActivityType())) {
+				activity = new Activity(null, loggingData.getActivityDescription(), null, null,
+						loggingData.getActivityType(), userId, new Date(), new Date(), loggingData.getRootObjectId(),
+						ActivityEnums.PAGE.getValue(), loggingData.getSubRootObjectId(), ActivityEnums.PAGE.getValue(),
+						true);
+			} else if (pageCommentActivityList.contains(loggingData.getActivityType())) {
 
 				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
 						ActivityEnums.COMMENTS.getValue(), loggingData.getActivityType(), userId, new Date(),
@@ -913,7 +926,20 @@ public class ActivityServiceImpl implements ActivityService {
 			if (activity != null)
 				activity = activityDao.save(activity);
 
-//			TODO mailData integration
+			if (activity != null && loggingData.getMailData() != null) {
+
+				Map<String, Object> data = ActivityUtil.getMailType(activity.getActivityType(),
+						new ActivityLoggingData(loggingData.getActivityDescription(), loggingData.getRootObjectId(),
+								loggingData.getSubRootObjectId(), loggingData.getRootObjectType(),
+								loggingData.getActivityId(), loggingData.getActivityType(), loggingData.getMailData()));
+				type = (MAIL_TYPE) data.get("type");
+				if (type != null && type != MAIL_TYPE.COMMENT_POST) {
+					MailActivityData mailActivityData = new MailActivityData(loggingData.getActivityType(),
+							loggingData.getActivityDescription(), loggingData.getMailData());
+					mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId, null,
+							mailActivityData, null);
+				}
+			}
 
 			return activity;
 		} catch (Exception e) {

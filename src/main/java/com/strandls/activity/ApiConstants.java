@@ -36,4 +36,6 @@ public class ApiConstants {
 	public static final String TAXONOMY = "/taxonomy";
 	public static final String CCA = "/cca";
 
+	public static final String PAGE = "/page";
+
 }
