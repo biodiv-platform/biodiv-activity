@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.strandls.activity.RabbitMqConnection;
 import com.strandls.activity.pojo.CCAMailData;
 import com.strandls.activity.pojo.CommentLoggingData;
+import com.strandls.activity.pojo.DataTableMailData;
 import com.strandls.activity.pojo.DocumentMailData;
 import com.strandls.activity.pojo.MailActivityData;
 import com.strandls.activity.pojo.MailData;
@@ -243,6 +244,7 @@ public class MailServiceImpl implements MailService {
 		DocumentMailData document = mailData.getDocumentMailData();
 		SpeciesMailData species = mailData.getSpeciesData();
 		PageMailData page = mailData.getPageMailData();
+		DataTableMailData datatable = mailData.getDataTableMailData();
 		data.put(FIELDS.TYPE.getAction(), type.getAction());
 		data.put(FIELDS.TO.getAction(), new String[] { recipient.getEmail() });
 		data.put(FIELDS.SUBSCRIPTION.getAction(), recipient.getIsSubscribed());
@@ -310,6 +312,14 @@ public class MailServiceImpl implements MailService {
 
 			model.put(COMMENT_POST.WHAT_POSTED_NAME.getAction(),
 					(document != null && document.getTitle() != null) ? document.getTitle() : "Help Identify");
+		}
+
+		if (datatable != null) {
+			model.put(COMMENT_POST.WHAT_POSTED_ID.getAction(),
+					(datatable != null && datatable.getDataTableId() != null) ? datatable.getDataTableId(): null);
+
+			model.put(COMMENT_POST.WHAT_POSTED_NAME.getAction(),
+					(datatable != null && datatable.getTitle() != null) ? datatable.getTitle() : "Help Identify");
 		}
 
 		if (page != null) {

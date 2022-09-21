@@ -518,6 +518,9 @@ public class ActivityServiceImpl implements ActivityService {
 			} else if (commentType.equals("species")) {
 				mailService.sendMail(MAIL_TYPE.SPECIES_COMMENT_POST, activityResult.getRootHolderType(),
 						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
+			} else if (commentType.equals("datatable")) {
+			mailService.sendMail(MAIL_TYPE.DATATABLE_COMMENT_POST, activityResult.getRootHolderType(),
+					activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
 			} else {
 				mailService.sendMail(MAIL_TYPE.COMMENT_POST, activityResult.getRootHolderType(),
 						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
@@ -872,6 +875,7 @@ public class ActivityServiceImpl implements ActivityService {
 	public Activity logDatatableActivities(HttpServletRequest request, Long userId,
 			DatatableActivityLogging loggingData) {
 		Activity activity = null;
+		MAIL_TYPE type = null;
 		try {
 
 			if (dataTableNullActivityList.contains(loggingData.getActivityType())) {
@@ -894,7 +898,21 @@ public class ActivityServiceImpl implements ActivityService {
 			if (activity != null)
 				activity = activityDao.save(activity);
 
-//			TODO mailData integration
+
+			if (activity != null && loggingData.getMailData() != null) {
+
+				Map<String, Object> data = ActivityUtil.getMailType(activity.getActivityType(),
+						new ActivityLoggingData(loggingData.getActivityDescription(), loggingData.getRootObjectId(),
+								loggingData.getSubRootObjectId(), loggingData.getRootObjectType(),
+								loggingData.getActivityId(), loggingData.getActivityType(), loggingData.getMailData()));
+				type = (MAIL_TYPE) data.get("type");
+				if (type != null && type != MAIL_TYPE.COMMENT_POST) {
+					MailActivityData mailActivityData = new MailActivityData(loggingData.getActivityType(),
+							loggingData.getActivityDescription(), loggingData.getMailData());
+					mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId, null,
+							mailActivityData, null);
+				}
+			}
 
 			return activity;
 		} catch (Exception e) {
