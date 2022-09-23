@@ -143,7 +143,7 @@ public class MailServiceImpl implements MailService {
 
 				Map<String, Object> data = null;
 				String linkTaggedUsers = "";
-				if (type == MAIL_TYPE.COMMENT_POST && taggedUsers != null) {
+				if (taggedUsers != null) {
 					linkTaggedUsers = ActivityUtil.linkTaggedUsersProfile(taggedUsers, comment.getBody(), true);
 				}
 				List<Map<String, Object>> mailDataList = new ArrayList<>();

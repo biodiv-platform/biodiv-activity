@@ -508,7 +508,9 @@ public class ActivityServiceImpl implements ActivityService {
 			if (!taggedUsers.isEmpty()) {
 				mailService.sendMail(MAIL_TYPE.TAGGED_MAIL, activityResult.getRootHolderType(),
 						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
-			} else if (commentType.equals("document")) {
+			}  
+			
+			if (commentType.equals("document")) {
 				mailService.sendMail(MAIL_TYPE.DOCUMENT_COMMENT_POST, activityResult.getRootHolderType(),
 						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
 
