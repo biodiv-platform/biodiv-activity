@@ -209,12 +209,12 @@ public class ActivityUtil {
 			break;
 
 		case "Datatable created":
-			data.put("type", MAIL_TYPE.DATATABLE_CREATE);
+			data.put("type", MAIL_TYPE.DATATABLE_CREATED);
 			data.put("text", "Datatable created");
 			break;
-		case "Datatable Deleted":
+		case "Datatable deleted":
 			data.put("type", MAIL_TYPE.DATATABLE_DELETED);
-			data.put("text", "Datatable Deleted");
+			data.put("text", "Datatable deleted");
 			break;
 
 		case "Posted resource Datatable":
