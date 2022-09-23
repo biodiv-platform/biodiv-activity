@@ -153,6 +153,7 @@ public class MailServiceImpl implements MailService {
 						Recipients recipient = new Recipients();
 						recipient.setId(follower.getId());
 						recipient.setIsSubscribed(follower.getSendNotification());
+						recipient.setEmail(follower.getEmail());
 						data = prepareMailData(type, recipient, follower, who, reco, userGroup, activity, comment, name,
 								activity.getMailData(), groups,
 								linkTaggedUsers != null && !linkTaggedUsers.isEmpty() ? linkTaggedUsers
