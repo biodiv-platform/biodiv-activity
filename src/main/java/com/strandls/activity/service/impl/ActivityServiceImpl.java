@@ -45,6 +45,7 @@ import com.strandls.activity.service.MailService;
 import com.strandls.activity.service.NotificationService;
 import com.strandls.activity.util.ActivityUtil;
 import com.strandls.mail_utility.model.EnumModel.MAIL_TYPE;
+import com.strandls.mail_utility.model.EnumModel.OBJECT_TYPE;
 import com.strandls.user.controller.UserServiceApi;
 import com.strandls.user.pojo.User;
 import com.strandls.user.pojo.UserIbp;
@@ -348,7 +349,7 @@ public class ActivityServiceImpl implements ActivityService {
 						MailActivityData mailActivityData = new MailActivityData(loggingData.getActivityType(),
 								loggingData.getActivityDescription(), loggingData.getMailData());
 						mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId,
-								null, mailActivityData, null);
+								null, mailActivityData, null, null);
 						notificationSevice.sendNotification(mailActivityData, activity.getRootHolderType(),
 								activity.getRootHolderId(), siteName, data.get("text").toString());
 					}
@@ -369,7 +370,7 @@ public class ActivityServiceImpl implements ActivityService {
 			MailActivityData mailActivityData = new MailActivityData(loggingData.getActivityType(),
 					loggingData.getActivityDescription(), loggingData.getMailData());
 			mailService.sendMail(MAIL_TYPE.OBSERVATION_ADDED, ActivityEnums.OBSERVATION.getValue(),
-					loggingData.getRootObjectId(), userId, null, mailActivityData, null);
+					loggingData.getRootObjectId(), userId, null, mailActivityData, null, null);
 			notificationSevice.sendNotification(mailActivityData, ActivityEnums.OBSERVATION.getValue(),
 					loggingData.getRootObjectId(), siteName, "Observation created");
 			return "Mail Sent";
@@ -406,7 +407,7 @@ public class ActivityServiceImpl implements ActivityService {
 		}
 
 		Comments result = commentsDao.save(comment);
-
+		OBJECT_TYPE objectType = null;
 		Activity activityResult = null;
 		if (commentType.equals("observation")) {
 			ActivityLoggingData activity = null;
@@ -483,6 +484,7 @@ public class ActivityServiceImpl implements ActivityService {
 			}
 			activityResult = logTaxonomyActivities(request, userId, loggingData);
 		} else if (commentType.equalsIgnoreCase("cca")) {
+			objectType = OBJECT_TYPE.CCA;
 			CCAActivityLogging loggingData = null;
 			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
 				loggingData = new CCAActivityLogging(commentData.getBody(), result.getRootHolderId(), result.getId(),
@@ -505,26 +507,36 @@ public class ActivityServiceImpl implements ActivityService {
 			MailActivityData mailActivityData = new MailActivityData("Added a comment", null,
 					commentData.getMailData());
 			List<TaggedUser> taggedUsers = ActivityUtil.getTaggedUsers(commentData.getBody());
-			if (!taggedUsers.isEmpty()) {
-				mailService.sendMail(MAIL_TYPE.TAGGED_MAIL, activityResult.getRootHolderType(),
-						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
-			}  
-			
+
+
 			if (commentType.equals("document")) {
+				objectType = OBJECT_TYPE.DOCUMENT;
 				mailService.sendMail(MAIL_TYPE.DOCUMENT_COMMENT_POST, activityResult.getRootHolderType(),
-						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
+						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers,
+						objectType);
 
 			} else if (commentType.equals("page")) {
 				mailService.sendMail(MAIL_TYPE.PAGE_COMMENT_POST, activityResult.getRootHolderType(),
-						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
+						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers,
+						objectType);
 			} else if (commentType.equals("species")) {
+				objectType = OBJECT_TYPE.SPECIES;
 				mailService.sendMail(MAIL_TYPE.SPECIES_COMMENT_POST, activityResult.getRootHolderType(),
-						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
+						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers,
+						objectType);
 			} else {
+				objectType = OBJECT_TYPE.OBSERVATION;
 				mailService.sendMail(MAIL_TYPE.COMMENT_POST, activityResult.getRootHolderType(),
-						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
+						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers,
+						objectType);
 				notificationSevice.sendNotification(mailActivityData, result.getRootHolderType(),
 						result.getRootHolderId(), siteName, mailActivityData.getActivityType());
+			}
+
+			if (!taggedUsers.isEmpty()) {
+				mailService.sendMail(MAIL_TYPE.TAGGED_MAIL, activityResult.getRootHolderType(),
+						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers,
+						objectType);
 			}
 
 		}
@@ -639,7 +651,7 @@ public class ActivityServiceImpl implements ActivityService {
 						MailActivityData mailActivityData = new MailActivityData(loggingData.getActivityType(),
 								loggingData.getActivityDescription(), loggingData.getMailData());
 						mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId,
-								null, mailActivityData, null);
+								null, mailActivityData, null, null);
 					}
 				}
 
@@ -731,7 +743,7 @@ public class ActivityServiceImpl implements ActivityService {
 					MailActivityData mailActivityData = new MailActivityData(loggingData.getActivityType(),
 							loggingData.getActivityDescription(), loggingData.getMailData());
 					mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId, null,
-							mailActivityData, null);
+							mailActivityData, null, null);
 				}
 			}
 
@@ -855,7 +867,7 @@ public class ActivityServiceImpl implements ActivityService {
 						MailActivityData mailActivityData = new MailActivityData(ccaActivityLogging.getActivityType(),
 								ccaActivityLogging.getActivityDescription(), ccaActivityLogging.getMailData());
 						mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId,
-								null, mailActivityData, null);
+								null, mailActivityData, null,  OBJECT_TYPE.CCA);
 					}
 				} catch (Exception e) {
 					logger.error(e.getMessage());
@@ -939,7 +951,7 @@ public class ActivityServiceImpl implements ActivityService {
 					MailActivityData mailActivityData = new MailActivityData(loggingData.getActivityType(),
 							loggingData.getActivityDescription(), loggingData.getMailData());
 					mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId, null,
-							mailActivityData, null);
+							mailActivityData, null, null);
 				}
 			}
 
