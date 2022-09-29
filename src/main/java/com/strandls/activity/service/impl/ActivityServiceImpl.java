@@ -899,12 +899,11 @@ public class ActivityServiceImpl implements ActivityService {
 
 
 			if (activity != null && loggingData.getMailData() != null) {
-				String mailType = docUserGroupActivityList.contains(loggingData.getActivityType())
-						|| docFlagActivityList.contains(loggingData.getActivityType())
+				String mailType = dataTableUserGroupActivityList.contains(loggingData.getActivityType())
 								? activity.getActivityType() + " Datatable"
 								: activity.getActivityType();
 
-				Map<String, Object> data = ActivityUtil.getMailType(activity.getActivityType(),
+				Map<String, Object> data = ActivityUtil.getMailType(mailType,
 						new ActivityLoggingData(loggingData.getActivityDescription(), loggingData.getRootObjectId(),
 								loggingData.getSubRootObjectId(), loggingData.getRootObjectType(),
 								loggingData.getActivityId(), loggingData.getActivityType(), loggingData.getMailData()));
