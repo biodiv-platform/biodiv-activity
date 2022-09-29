@@ -379,21 +379,6 @@ public class ActivityServiceImpl implements ActivityService {
 		return "Mail not sent";
 	}
 
-	public String sendCommentMail(Long userId, DatatableActivityLogging loggingData) {
-		try {
-			MailActivityData mailActivityData = new MailActivityData(loggingData.getActivityType(),
-					loggingData.getActivityDescription(), loggingData.getMailData());
-			mailService.sendMail(MAIL_TYPE.COMMENT_POST, ActivityEnums.COMMENTS.getValue(),
-					loggingData.getRootObjectId(), userId, null, mailActivityData, null);
-			notificationSevice.sendNotification(mailActivityData, ActivityEnums.OBSERVATION.getValue(),
-					loggingData.getRootObjectId(), siteName, "Datatable comment");
-			return "Mail Sent";
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
-		return "Mail not sent";
-	}
-
 	@Override
 	public Activity addComment(HttpServletRequest request, Long userId, String commentType,
 			CommentLoggingData commentData) {
@@ -445,7 +430,6 @@ public class ActivityServiceImpl implements ActivityService {
 				loggingData = new DatatableActivityLogging(null, result.getRootHolderId(), result.getCommentHolderId(),
 						result.getRootHolderType(), result.getId(), "Added a comment", commentData.getMailData());
 			}
-             sendCommentMail(result.getRootHolderId(), loggingData);
 			activityResult = logDatatableActivities(request, userId, loggingData);
 		} else if (commentType.equals("page")) {
 
