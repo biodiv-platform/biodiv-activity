@@ -182,7 +182,7 @@ public class ActivityServiceImpl implements ActivityService {
 //	DATATABLE ACTIVITY LIST 
 
 	List<String> dataTableNullActivityList = new ArrayList<String>(
-			Arrays.asList("Datatable created", "Datatable updated", "Datatable Deleted"));
+			Arrays.asList("Datatable created", "Datatable updated", "Datatable deleted"));
 
 	List<String> dataTableUserGroupActivityList = new ArrayList<String>(
 			Arrays.asList("Posted resource", "Removed resoruce", "Featured", "UnFeatured"));
@@ -899,6 +899,10 @@ public class ActivityServiceImpl implements ActivityService {
 
 
 			if (activity != null && loggingData.getMailData() != null) {
+				String mailType = docUserGroupActivityList.contains(loggingData.getActivityType())
+						|| docFlagActivityList.contains(loggingData.getActivityType())
+								? activity.getActivityType() + " Datatable"
+								: activity.getActivityType();
 
 				Map<String, Object> data = ActivityUtil.getMailType(activity.getActivityType(),
 						new ActivityLoggingData(loggingData.getActivityDescription(), loggingData.getRootObjectId(),
