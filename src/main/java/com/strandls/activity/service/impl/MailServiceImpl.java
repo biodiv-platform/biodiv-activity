@@ -33,6 +33,7 @@ import com.strandls.mail_utility.model.EnumModel.COMMENT_POST;
 import com.strandls.mail_utility.model.EnumModel.FIELDS;
 import com.strandls.mail_utility.model.EnumModel.INFO_FIELDS;
 import com.strandls.mail_utility.model.EnumModel.MAIL_TYPE;
+import com.strandls.mail_utility.model.EnumModel.OBJECT_TYPE;
 import com.strandls.mail_utility.model.EnumModel.POST_TO_GROUP;
 import com.strandls.mail_utility.model.EnumModel.SUGGEST_MAIL;
 import com.strandls.mail_utility.producer.RabbitMQProducer;
@@ -72,7 +73,7 @@ public class MailServiceImpl implements MailService {
 
 	@Override
 	public void sendMail(MAIL_TYPE type, String objectType, Long objectId, Long userId, CommentLoggingData comment,
-			MailActivityData activity, List<TaggedUser> taggedUsers) {
+			MailActivityData activity, List<TaggedUser> taggedUsers, OBJECT_TYPE recordsType) {
 		try {
 			if (type.toString().startsWith("CCA")) {
 				User who = userService.getUser(String.valueOf(userId));
@@ -106,6 +107,10 @@ public class MailServiceImpl implements MailService {
 				Map<String, Object> mailData = new HashMap<>();
 
 				mailData.put(INFO_FIELDS.TYPE.getAction(), type.getAction());
+				if (recordsType != null) {
+					mailData.put(INFO_FIELDS.OBJECT_TYPE.getAction(), recordsType.getAction());
+
+				}
 				mailData.put(INFO_FIELDS.RECIPIENTS.getAction(), mailDataList);
 				producer.produceMail(RabbitMqConnection.EXCHANGE, RabbitMqConnection.ROUTING_KEY, null,
 						JsonUtil.mapToJSON(mailData));
@@ -143,7 +148,7 @@ public class MailServiceImpl implements MailService {
 
 				Map<String, Object> data = null;
 				String linkTaggedUsers = "";
-				if (type == MAIL_TYPE.COMMENT_POST && taggedUsers != null) {
+				if (taggedUsers != null) {
 					linkTaggedUsers = ActivityUtil.linkTaggedUsersProfile(taggedUsers, comment.getBody(), true);
 				}
 				List<Map<String, Object>> mailDataList = new ArrayList<>();
@@ -153,6 +158,7 @@ public class MailServiceImpl implements MailService {
 						Recipients recipient = new Recipients();
 						recipient.setId(follower.getId());
 						recipient.setIsSubscribed(follower.getSendNotification());
+						recipient.setEmail(follower.getEmail());
 						data = prepareMailData(type, recipient, follower, who, reco, userGroup, activity, comment, name,
 								activity.getMailData(), groups,
 								linkTaggedUsers != null && !linkTaggedUsers.isEmpty() ? linkTaggedUsers
@@ -175,6 +181,10 @@ public class MailServiceImpl implements MailService {
 				}
 				Map<String, Object> mailData = new HashMap<String, Object>();
 				mailData.put(INFO_FIELDS.TYPE.getAction(), type.getAction());
+				if (recordsType != null) {
+					mailData.put(INFO_FIELDS.OBJECT_TYPE.getAction(), recordsType.getAction());
+
+				}
 				mailData.put(INFO_FIELDS.RECIPIENTS.getAction(), mailDataList);
 				producer.produceMail(RabbitMqConnection.EXCHANGE, RabbitMqConnection.ROUTING_KEY, null,
 						JsonUtil.mapToJSON(mailData));
