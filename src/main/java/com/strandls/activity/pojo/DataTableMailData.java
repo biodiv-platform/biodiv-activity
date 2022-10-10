@@ -15,6 +15,7 @@ public class DataTableMailData {
 	private Date createdOn;
 	private Long authorId;
 	private String title;
+	private String location;
 
 	/**
 	 * 
@@ -27,13 +28,16 @@ public class DataTableMailData {
 	 * @param datatableId
 	 * @param createdOn
 	 * @param authorId
+	 * @param location
 	 */
-	public DataTableMailData(Long dataTableId, Date createdOn, Long authorId, String title) {
+	public DataTableMailData(Long dataTableId, Date createdOn, Long authorId, String title,
+			String location) {
 		super();
 		this.dataTableId = dataTableId;
 		this.createdOn = createdOn;
 		this.authorId = authorId;
 		this.title = title;
+		this.location = location;
 	}
 
 	public Long getDataTableId() {
@@ -66,6 +70,14 @@ public class DataTableMailData {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
 	}
 
 }
