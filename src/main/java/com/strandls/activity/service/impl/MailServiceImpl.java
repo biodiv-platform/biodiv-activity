@@ -263,7 +263,8 @@ public class MailServiceImpl implements MailService {
 				|| type == MAIL_TYPE.CUSTOM_FIELD_UPDATED || type == MAIL_TYPE.OBSERVATION_FLAGGED
 				|| type == MAIL_TYPE.SPECIES_FACT || type == MAIL_TYPE.SPECIES_SYNONYMS
 				|| type == MAIL_TYPE.SPECIES_COMMON_NAME || type == MAIL_TYPE.SPECIES_FIELD_UPDATED
-				|| type == MAIL_TYPE.SPECIES_RESOURCE) {
+				|| type == MAIL_TYPE.SPECIES_RESOURCE || type == MAIL_TYPE.DATATABLE_CREATED
+				|| type == MAIL_TYPE.DATATABLE_DELETED) {
 			model.put(COMMENT_POST.COMMENT_BODY.getAction(),
 					ActivityUtil.replaceFlaggedMessage(activity.getActivityDescription()));
 		} else if (type == MAIL_TYPE.FEATURED_POST || type == MAIL_TYPE.FEATURED_POST_IBP) {
