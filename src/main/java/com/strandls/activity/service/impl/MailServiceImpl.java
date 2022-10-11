@@ -320,6 +320,13 @@ public class MailServiceImpl implements MailService {
 
 			model.put(COMMENT_POST.WHAT_POSTED_NAME.getAction(),
 					(datatable != null && datatable.getTitle() != null) ? datatable.getTitle() : "Help Identify");
+
+			model.put(COMMENT_POST.WHAT_POSTED_LOCATION.getAction(),
+					datatable.getLocation() == null ? "" : datatable.getLocation());
+
+			SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy");
+			String date = ActivityUtil.getFormattedDate(sdf.format(datatable.getCreatedOn()));
+			model.put(COMMENT_POST.WHAT_POSTED_OBSERVED_ON.getAction(), date);
 		}
 
 		if (page != null) {
