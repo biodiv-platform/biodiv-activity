@@ -379,7 +379,6 @@ public class MailServiceImpl implements MailService {
 						|| activity.getActivityType().toLowerCase().contains("Added common name")
 						|| activity.getActivityType().toLowerCase().contains("Updated common name") ? "post" : "");
 		data.put(FIELDS.DATA.getAction(), JsonUtil.unflattenJSON(model));
-		System.out.println("###@@@@@"+data);
 		return data;
 	}
 
