@@ -10,6 +10,7 @@ public class MailData {
 	private List<UserGroupMailData> userGroupData;
 	private SpeciesMailData speciesData;
 	private CCAMailData ccaMailData;
+	private DataTableMailData dataTableMailData;
 
 	/**
 	 * 
@@ -26,7 +27,7 @@ public class MailData {
 	 */
 	public MailData(ObservationMailData observationData, DocumentMailData documentMailData,
 			List<UserGroupMailData> userGroupData, SpeciesMailData speciesData, PageMailData pageMailData,
-			CCAMailData ccaMailData) {
+			CCAMailData ccaMailData , DataTableMailData dataTableMailData) {
 		super();
 		this.observationData = observationData;
 		this.documentMailData = documentMailData;
@@ -34,6 +35,7 @@ public class MailData {
 		this.speciesData = speciesData;
 		this.ccaMailData = ccaMailData;
 		this.pageMailData = pageMailData;
+		this.dataTableMailData = dataTableMailData;
 	}
 
 	public ObservationMailData getObservationData() {
@@ -82,5 +84,13 @@ public class MailData {
 
 	public void setPageMailData(PageMailData pageMailData) {
 		this.pageMailData = pageMailData;
+	}
+
+	public DataTableMailData getDataTableMailData() {
+		return dataTableMailData;
+	}
+
+	public void setDataTableMailData(DataTableMailData dataTableMailData) {
+		this.dataTableMailData = dataTableMailData;
 	}
 }

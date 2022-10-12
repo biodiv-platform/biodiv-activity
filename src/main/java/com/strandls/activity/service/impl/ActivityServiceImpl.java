@@ -183,7 +183,7 @@ public class ActivityServiceImpl implements ActivityService {
 //	DATATABLE ACTIVITY LIST 
 
 	List<String> dataTableNullActivityList = new ArrayList<String>(
-			Arrays.asList("Datatable created", "Datatable updated", "Datatable Deleted"));
+			Arrays.asList("Datatable created", "Datatable updated", "Datatable deleted"));
 
 	List<String> dataTableUserGroupActivityList = new ArrayList<String>(
 			Arrays.asList("Posted resource", "Removed resoruce", "Featured", "UnFeatured"));
@@ -524,6 +524,9 @@ public class ActivityServiceImpl implements ActivityService {
 				mailService.sendMail(MAIL_TYPE.SPECIES_COMMENT_POST, activityResult.getRootHolderType(),
 						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers,
 						objectType);
+			} else if (commentType.equals("datatable")) {
+				mailService.sendMail(MAIL_TYPE.DATATABLE_COMMENT_POST, activityResult.getRootHolderType(),
+						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
 			} else {
 				objectType = OBJECT_TYPE.OBSERVATION;
 				mailService.sendMail(MAIL_TYPE.COMMENT_POST, activityResult.getRootHolderType(),
@@ -886,6 +889,7 @@ public class ActivityServiceImpl implements ActivityService {
 	public Activity logDatatableActivities(HttpServletRequest request, Long userId,
 			DatatableActivityLogging loggingData) {
 		Activity activity = null;
+		MAIL_TYPE type = null;
 		try {
 
 			if (dataTableNullActivityList.contains(loggingData.getActivityType())) {
@@ -908,7 +912,24 @@ public class ActivityServiceImpl implements ActivityService {
 			if (activity != null)
 				activity = activityDao.save(activity);
 
-//			TODO mailData integration
+
+			if (activity != null && loggingData.getMailData() != null) {
+				String mailType = dataTableUserGroupActivityList.contains(loggingData.getActivityType())
+								? activity.getActivityType() + " Datatable"
+								: activity.getActivityType();
+
+				Map<String, Object> data = ActivityUtil.getMailType(mailType,
+						new ActivityLoggingData(loggingData.getActivityDescription(), loggingData.getRootObjectId(),
+								loggingData.getSubRootObjectId(), loggingData.getRootObjectType(),
+								loggingData.getActivityId(), loggingData.getActivityType(), loggingData.getMailData()));
+				type = (MAIL_TYPE) data.get("type");
+				if (type != null && type != MAIL_TYPE.COMMENT_POST) {
+					MailActivityData mailActivityData = new MailActivityData(loggingData.getActivityType(),
+							loggingData.getActivityDescription(), loggingData.getMailData());
+					mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId, null,
+							mailActivityData, null);
+				}
+			}
 
 			return activity;
 		} catch (Exception e) {
