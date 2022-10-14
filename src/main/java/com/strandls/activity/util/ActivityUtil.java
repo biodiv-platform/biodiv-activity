@@ -65,7 +65,7 @@ public class ActivityUtil {
 				String taggedUserLink = null;
 				if (withURL) {
 					taggedUserLink = "<a href=\"*$URL$*\" target=\"_blank\">*$NAME$*</a>";
-					String url = PropertyFileUtil.fetchProperty("config.properties", "portalAddress") + "/user/show/"
+					String url = PropertyFileUtil.fetchProperty("config.properties", "serverUrl") + "/user/show/"
 							+ user.getId();
 					taggedUserLink = taggedUserLink.replace("*$URL$*", url);
 				} else {
