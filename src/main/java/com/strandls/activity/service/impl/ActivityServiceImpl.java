@@ -421,7 +421,7 @@ public class ActivityServiceImpl implements ActivityService {
 			activityResult = logActivities(request, userId, activity);
 
 		} else if (commentType.equals("datatable")) {
-
+			objectType = OBJECT_TYPE.DATATABLE;
 			DatatableActivityLogging loggingData = null;
 			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
 				loggingData = new DatatableActivityLogging(null, result.getRootHolderId(), result.getId(),
@@ -526,7 +526,8 @@ public class ActivityServiceImpl implements ActivityService {
 						objectType);
 			} else if (commentType.equals("datatable")) {
 				mailService.sendMail(MAIL_TYPE.DATATABLE_COMMENT_POST, activityResult.getRootHolderType(),
-						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers);
+						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers,
+						null);
 			} else {
 				objectType = OBJECT_TYPE.OBSERVATION;
 				mailService.sendMail(MAIL_TYPE.COMMENT_POST, activityResult.getRootHolderType(),
@@ -927,7 +928,7 @@ public class ActivityServiceImpl implements ActivityService {
 					MailActivityData mailActivityData = new MailActivityData(loggingData.getActivityType(),
 							loggingData.getActivityDescription(), loggingData.getMailData());
 					mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId, null,
-							mailActivityData, null);
+							mailActivityData, null, null);
 				}
 			}
 
