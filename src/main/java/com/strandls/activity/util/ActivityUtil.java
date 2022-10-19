@@ -349,6 +349,10 @@ public class ActivityUtil {
 			data.put("type", MAIL_TYPE.CCA_DATA_PERMISSION);
 			data.put("text", "CCA permission added");
 			break;
+		case "Permission removed":
+			data.put("type", MAIL_TYPE.CCA_DATA_PERMISSION_REMOVED);
+			data.put("text", "CCA permission removed");
+			break;
 		case "Follower added":
 			data.put("type", MAIL_TYPE.CCA_DATA_FOLLOW);
 			data.put("text", "CCA Data follower added");

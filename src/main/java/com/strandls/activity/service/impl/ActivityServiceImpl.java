@@ -199,7 +199,7 @@ public class ActivityServiceImpl implements ActivityService {
 	List<String> ccaTemplateActivityList = new ArrayList<>(Arrays.asList("Template created", "Template updated",
 			"Field created", "Field updated", "Field deleted", "CCA Template Deleted"));
 	List<String> ccaDataActivityList = new ArrayList<>(Arrays.asList("Data created", "Data updated", "Data deleted",
-			"Permission added", "Follower added", "Follower removed"));
+			"Permission added", "Permission removed", "Follower added", "Follower removed"));
 	List<String> ccaCommentActivityList = new ArrayList<>(
 			Arrays.asList("Added a comment", "Data comment", "Template comment"));
 
