@@ -208,6 +208,25 @@ public class ActivityUtil {
 			data.put("text", "Removed resource");
 			break;
 
+
+		case "Datatable created":
+			data.put("type", MAIL_TYPE.DATATABLE_CREATED);
+			data.put("text", "Datatable created");
+			break;
+		case "Datatable deleted":
+			data.put("type", MAIL_TYPE.DATATABLE_DELETED);
+			data.put("text", "Datatable deleted");
+			break;
+
+		case "Posted resource Datatable":
+			data.put("type", MAIL_TYPE.DATATABLE_POST_TO_GROUP);
+			data.put("text", "Posted resource");
+			break;
+		case "Removed resoruce Datatable":
+			data.put("type", MAIL_TYPE.DATATABLE_POST_TO_GROUP);
+			data.put("text", "Removed resource");
+			break;
+
 		case "Observation created":
 			data.put("type", MAIL_TYPE.OBSERVATION_ADDED);
 			data.put("text", "Observation created");
