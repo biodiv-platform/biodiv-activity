@@ -223,10 +223,10 @@ public class MailServiceImpl implements MailService {
 			if(type.getAction().startsWith("CCA_DATA_PERMISSION")) {
 				List<Object> pU = new ArrayList<>();
 				List<String> pUsers = new ArrayList<>();
-				if (type.getAction() == MAIL_TYPE.CCA_DATA_PERMISSION.getAction()) {
+				if (type.getAction().equalsIgnoreCase(MAIL_TYPE.CCA_DATA_PERMISSION.getAction())) {
 					pUsers.addAll((List<String>) ((Map<String, Object>) mailData.get("data")).get("permission"));
 				}
-				else if(type.getAction() == MAIL_TYPE.CCA_DATA_PERMISSION_REMOVED.getAction()){
+				else if(type.getAction().equalsIgnoreCase( MAIL_TYPE.CCA_DATA_PERMISSION_REMOVED.getAction())){
 					pUsers.addAll((List<String>) ((Map<String, Object>) mailData.get("data")).get("permission removed"));
 				}
 				for (String s : pUsers) {
