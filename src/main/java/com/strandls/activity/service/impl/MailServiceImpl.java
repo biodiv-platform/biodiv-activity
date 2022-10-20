@@ -218,12 +218,17 @@ public class MailServiceImpl implements MailService {
 
 		model.put("user", user);
 		if (ccaMailData != null) {
-			Map<String, Object> d = ccaMailData.getData();
+			Map<String, Object> mailData = ccaMailData.getData();
 			model.putAll(ccaMailData.getData());
-			if (type.getAction() == MAIL_TYPE.CCA_DATA_PERMISSION.getAction()) {
+			if(type.getAction().startsWith("CCA_DATA_PERMISSION")) {
 				List<Object> pU = new ArrayList<>();
 				List<String> pUsers = new ArrayList<>();
-				pUsers.addAll((List<String>) ((Map<String, Object>) d.get("data")).get("permission"));
+				if (type.getAction() == MAIL_TYPE.CCA_DATA_PERMISSION.getAction()) {
+					pUsers.addAll((List<String>) ((Map<String, Object>) mailData.get("data")).get("permission"));
+				}
+				else if(type.getAction() == MAIL_TYPE.CCA_DATA_PERMISSION_REMOVED.getAction()){
+					pUsers.addAll((List<String>) ((Map<String, Object>) mailData.get("data")).get("permission removed"));
+				}
 				for (String s : pUsers) {
 					Map<String, Object> obj = new HashMap<>();
 					try {
