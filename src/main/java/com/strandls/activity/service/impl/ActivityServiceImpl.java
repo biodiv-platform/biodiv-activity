@@ -490,13 +490,13 @@ public class ActivityServiceImpl implements ActivityService {
 				loggingData = new CCAActivityLogging(commentData.getBody(), result.getRootHolderId(), result.getId(),
 						result.getRootHolderType(), result.getId(),
 						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? "Template comment"
-								: "Data comment",
+								: "Added a comment",
 						commentData.getMailData());
 			} else {
 				loggingData = new CCAActivityLogging(commentData.getBody(), result.getRootHolderId(),
 						result.getCommentHolderId(), result.getRootHolderType(), result.getId(),
 						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? "Template comment"
-								: "Data comment",
+								: "Added a comment",
 						commentData.getMailData());
 			}
 			activityResult = logCCAActivities(request, userId, loggingData);
