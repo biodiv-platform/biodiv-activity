@@ -356,7 +356,7 @@ public class ActivityUtil {
 			data.put("type", MAIL_TYPE.CCA_TEMPLATE_DELETED);
 			data.put("text", "CCA template deleted");
 			break;
-		case "Data comment":
+		case "Added a comment":
 			data.put("type", MAIL_TYPE.CCA_DATA_COMMENT);
 			data.put("text", "Added a comment");
 			break;

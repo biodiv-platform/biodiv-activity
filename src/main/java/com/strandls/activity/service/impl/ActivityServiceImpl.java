@@ -58,6 +58,8 @@ public class ActivityServiceImpl implements ActivityService {
 
 	private final Logger logger = LoggerFactory.getLogger(ActivityServiceImpl.class);
 
+	private String newComment ="Added a comment";
+
 	@Inject
 	private ObjectMapper objectMapper;
 
@@ -104,7 +106,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 	List<String> obvFlagActivityList = new ArrayList<String>(Arrays.asList("Flag removed", "Flagged"));
 
-	List<String> commentActivityList = new ArrayList<String>(Arrays.asList("Added a comment"));
+	List<String> commentActivityList = new ArrayList<String>(Arrays.asList(newComment));
 
 	List<String> observationActivityList = new ArrayList<String>(Arrays.asList("Featured", "Suggestion removed",
 			"Observation tag updated", "Custom field edited", "UnFeatured", "Observation species group updated"));
@@ -137,7 +139,7 @@ public class ActivityServiceImpl implements ActivityService {
 	List<String> documentActivityList = new ArrayList<String>(
 			Arrays.asList("Document tag updated", "Featured", "UnFeatured"));
 
-	List<String> docCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment"));
+	List<String> docCommentActivityList = new ArrayList<String>(Arrays.asList(newComment));
 
 //	SPECIES ACTIVITY LIST
 
@@ -160,7 +162,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 	List<String> speciesTraitActivityList = new ArrayList<String>(Arrays.asList("Added a fact", "Updated fact"));
 
-	List<String> speciesCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment"));
+	List<String> speciesCommentActivityList = new ArrayList<String>(Arrays.asList(newComment));
 
 	List<String> speciesUserGroupActivityList = new ArrayList<String>(
 			Arrays.asList("Featured", "UnFeatured", "Posted resource", "Removed resoruce"));
@@ -178,7 +180,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 	List<String> taxonomySynonymActivityList = new ArrayList<String>(Arrays.asList("Added synonym", "Updated synonym"));
 
-	List<String> taxonomyCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment"));
+	List<String> taxonomyCommentActivityList = new ArrayList<String>(Arrays.asList(newComment));
 
 //	DATATABLE ACTIVITY LIST 
 
@@ -188,12 +190,12 @@ public class ActivityServiceImpl implements ActivityService {
 	List<String> dataTableUserGroupActivityList = new ArrayList<String>(
 			Arrays.asList("Posted resource", "Removed resoruce", "Featured", "UnFeatured"));
 
-	List<String> dataTableCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment"));
+	List<String> dataTableCommentActivityList = new ArrayList<String>(Arrays.asList(newComment));
 
 	List<String> pageNullActivityList = new ArrayList<String>(
 			Arrays.asList("Page created", "Page updated", "Page Deleted"));
 
-	List<String> pageCommentActivityList = new ArrayList<String>(Arrays.asList("Added a comment"));
+	List<String> pageCommentActivityList = new ArrayList<String>(Arrays.asList(newComment));
 
 // CCA ACTIVITY LIST
 	List<String> ccaTemplateActivityList = new ArrayList<>(Arrays.asList("Template created", "Template updated",
@@ -201,7 +203,7 @@ public class ActivityServiceImpl implements ActivityService {
 	List<String> ccaDataActivityList = new ArrayList<>(Arrays.asList("Data created", "Data updated", "Data deleted",
 			"Permission added", "Permission removed", "Follower added", "Follower removed"));
 	List<String> ccaCommentActivityList = new ArrayList<>(
-			Arrays.asList("Added a comment", "Data comment", "Template comment"));
+			Arrays.asList(newComment, "Data comment", "Template comment"));
 
 	@Override
 	public Integer activityCount(String objectType, Long objectId) {
@@ -413,10 +415,10 @@ public class ActivityServiceImpl implements ActivityService {
 			ActivityLoggingData activity = null;
 			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
 				activity = new ActivityLoggingData(null, result.getRootHolderId(), result.getId(),
-						result.getRootHolderType(), result.getId(), "Added a comment", commentData.getMailData());
+						result.getRootHolderType(), result.getId(), newComment, commentData.getMailData());
 			} else {
 				activity = new ActivityLoggingData(null, result.getRootHolderId(), result.getCommentHolderId(),
-						result.getRootHolderType(), result.getId(), "Added a comment", commentData.getMailData());
+						result.getRootHolderType(), result.getId(), newComment, commentData.getMailData());
 			}
 			activityResult = logActivities(request, userId, activity);
 
@@ -425,11 +427,11 @@ public class ActivityServiceImpl implements ActivityService {
 			DatatableActivityLogging loggingData = null;
 			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
 				loggingData = new DatatableActivityLogging(null, result.getRootHolderId(), result.getId(),
-						result.getRootHolderType(), result.getId(), "Added a comment", commentData.getMailData());
+						result.getRootHolderType(), result.getId(), newComment, commentData.getMailData());
 
 			} else {
 				loggingData = new DatatableActivityLogging(null, result.getRootHolderId(), result.getCommentHolderId(),
-						result.getRootHolderType(), result.getId(), "Added a comment", commentData.getMailData());
+						result.getRootHolderType(), result.getId(), newComment, commentData.getMailData());
 			}
 
 			activityResult = logDatatableActivities(request, userId, loggingData);
@@ -439,11 +441,11 @@ public class ActivityServiceImpl implements ActivityService {
 
 			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
 				loggingData = new PageAcitvityLogging(null, result.getRootHolderId(), result.getId(),
-						result.getRootHolderType(), result.getId(), "Added a comment", commentData.getMailData());
+						result.getRootHolderType(), result.getId(), newComment, commentData.getMailData());
 
 			} else {
 				loggingData = new PageAcitvityLogging(null, result.getRootHolderId(), result.getCommentHolderId(),
-						result.getRootHolderType(), result.getId(), "Added a comment", commentData.getMailData());
+						result.getRootHolderType(), result.getId(), newComment, commentData.getMailData());
 			}
 
 			activityResult = logPageActivities(request, userId, loggingData);
@@ -455,11 +457,11 @@ public class ActivityServiceImpl implements ActivityService {
 			DocumentActivityLogging loggingData = null;
 			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
 				loggingData = new DocumentActivityLogging(null, result.getRootHolderId(), result.getId(),
-						result.getRootHolderType(), result.getId(), "Added a comment", commentData.getMailData());
+						result.getRootHolderType(), result.getId(), newComment, commentData.getMailData());
 
 			} else {
 				loggingData = new DocumentActivityLogging(null, result.getRootHolderId(), result.getCommentHolderId(),
-						result.getRootHolderType(), result.getId(), "Added a comment", commentData.getMailData());
+						result.getRootHolderType(), result.getId(), newComment, commentData.getMailData());
 			}
 
 			activityResult = logDocActivities(request, userId, loggingData);
@@ -467,20 +469,20 @@ public class ActivityServiceImpl implements ActivityService {
 			SpeciesActivityLogging loggingData = null;
 			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
 				loggingData = new SpeciesActivityLogging(null, result.getRootHolderId(), result.getId(),
-						result.getRootHolderType(), result.getId(), "Added a comment", commentData.getMailData());
+						result.getRootHolderType(), result.getId(), newComment, commentData.getMailData());
 			} else {
 				loggingData = new SpeciesActivityLogging(null, result.getRootHolderId(), result.getCommentHolderId(),
-						result.getRootHolderType(), result.getId(), "Added a comment", commentData.getMailData());
+						result.getRootHolderType(), result.getId(), newComment, commentData.getMailData());
 			}
 			activityResult = logSpeciesActivities(request, userId, loggingData);
 		} else if (commentType.equalsIgnoreCase("taxonomy")) {
 			TaxonomyActivityLogging loggingData = null;
 			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
 				loggingData = new TaxonomyActivityLogging(null, result.getRootHolderId(), result.getId(),
-						result.getRootHolderType(), result.getId(), "Added a comment");
+						result.getRootHolderType(), result.getId(), newComment);
 			} else {
 				loggingData = new TaxonomyActivityLogging(null, result.getRootHolderId(), result.getCommentHolderId(),
-						result.getRootHolderType(), result.getId(), "Added a comment");
+						result.getRootHolderType(), result.getId(), newComment);
 			}
 			activityResult = logTaxonomyActivities(request, userId, loggingData);
 		} else if (commentType.equalsIgnoreCase("cca")) {
@@ -490,13 +492,13 @@ public class ActivityServiceImpl implements ActivityService {
 				loggingData = new CCAActivityLogging(commentData.getBody(), result.getRootHolderId(), result.getId(),
 						result.getRootHolderType(), result.getId(),
 						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? "Template comment"
-								: "Added a comment",
+								: newComment,
 						commentData.getMailData());
 			} else {
 				loggingData = new CCAActivityLogging(commentData.getBody(), result.getRootHolderId(),
 						result.getCommentHolderId(), result.getRootHolderType(), result.getId(),
 						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? "Template comment"
-								: "Added a comment",
+								: newComment,
 						commentData.getMailData());
 			}
 			activityResult = logCCAActivities(request, userId, loggingData);
@@ -504,7 +506,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 		if (activityResult != null && commentData.getMailData() != null && !commentType.equals("cca")) {
 
-			MailActivityData mailActivityData = new MailActivityData("Added a comment", null,
+			MailActivityData mailActivityData = new MailActivityData(newComment, null,
 					commentData.getMailData());
 			List<TaggedUser> taggedUsers = ActivityUtil.getTaggedUsers(commentData.getBody());
 
