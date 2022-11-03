@@ -60,6 +60,8 @@ public class ActivityServiceImpl implements ActivityService {
 
 	private String newComment ="Added a comment";
 
+	private String templateComment = "Template comment";
+
 	@Inject
 	private ObjectMapper objectMapper;
 
@@ -106,7 +108,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 	List<String> obvFlagActivityList = new ArrayList<String>(Arrays.asList("Flag removed", "Flagged"));
 
-	List<String> commentActivityList = new ArrayList<String>(Arrays.asList(newComment));
+	List<String> commentActivityList = new ArrayList<>(Arrays.asList(newComment));
 
 	List<String> observationActivityList = new ArrayList<String>(Arrays.asList("Featured", "Suggestion removed",
 			"Observation tag updated", "Custom field edited", "UnFeatured", "Observation species group updated"));
@@ -139,7 +141,7 @@ public class ActivityServiceImpl implements ActivityService {
 	List<String> documentActivityList = new ArrayList<String>(
 			Arrays.asList("Document tag updated", "Featured", "UnFeatured"));
 
-	List<String> docCommentActivityList = new ArrayList<String>(Arrays.asList(newComment));
+	List<String> docCommentActivityList = new ArrayList<>(Arrays.asList(newComment));
 
 //	SPECIES ACTIVITY LIST
 
@@ -162,7 +164,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 	List<String> speciesTraitActivityList = new ArrayList<String>(Arrays.asList("Added a fact", "Updated fact"));
 
-	List<String> speciesCommentActivityList = new ArrayList<String>(Arrays.asList(newComment));
+	List<String> speciesCommentActivityList = new ArrayList<>(Arrays.asList(newComment));
 
 	List<String> speciesUserGroupActivityList = new ArrayList<String>(
 			Arrays.asList("Featured", "UnFeatured", "Posted resource", "Removed resoruce"));
@@ -180,7 +182,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 	List<String> taxonomySynonymActivityList = new ArrayList<String>(Arrays.asList("Added synonym", "Updated synonym"));
 
-	List<String> taxonomyCommentActivityList = new ArrayList<String>(Arrays.asList(newComment));
+	List<String> taxonomyCommentActivityList = new ArrayList<>(Arrays.asList(newComment));
 
 //	DATATABLE ACTIVITY LIST 
 
@@ -190,12 +192,12 @@ public class ActivityServiceImpl implements ActivityService {
 	List<String> dataTableUserGroupActivityList = new ArrayList<String>(
 			Arrays.asList("Posted resource", "Removed resoruce", "Featured", "UnFeatured"));
 
-	List<String> dataTableCommentActivityList = new ArrayList<String>(Arrays.asList(newComment));
+	List<String> dataTableCommentActivityList = new ArrayList<>(Arrays.asList(newComment));
 
 	List<String> pageNullActivityList = new ArrayList<String>(
 			Arrays.asList("Page created", "Page updated", "Page Deleted"));
 
-	List<String> pageCommentActivityList = new ArrayList<String>(Arrays.asList(newComment));
+	List<String> pageCommentActivityList = new ArrayList<>(Arrays.asList(newComment));
 
 // CCA ACTIVITY LIST
 	List<String> ccaTemplateActivityList = new ArrayList<>(Arrays.asList("Template created", "Template updated",
@@ -203,7 +205,7 @@ public class ActivityServiceImpl implements ActivityService {
 	List<String> ccaDataActivityList = new ArrayList<>(Arrays.asList("Data created", "Data updated", "Data deleted",
 			"Permission added", "Permission removed", "Follower added", "Follower removed"));
 	List<String> ccaCommentActivityList = new ArrayList<>(
-			Arrays.asList(newComment, "Data comment", "Template comment"));
+			Arrays.asList(newComment, "Data comment", templateComment));
 
 	@Override
 	public Integer activityCount(String objectType, Long objectId) {
@@ -491,13 +493,13 @@ public class ActivityServiceImpl implements ActivityService {
 			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
 				loggingData = new CCAActivityLogging(commentData.getBody(), result.getRootHolderId(), result.getId(),
 						result.getRootHolderType(), result.getId(),
-						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? "Template comment"
+						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? templateComment
 								: newComment,
 						commentData.getMailData());
 			} else {
 				loggingData = new CCAActivityLogging(commentData.getBody(), result.getRootHolderId(),
 						result.getCommentHolderId(), result.getRootHolderType(), result.getId(),
-						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? "Template comment"
+						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? templateComment
 								: newComment,
 						commentData.getMailData());
 			}
