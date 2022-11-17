@@ -332,4 +332,30 @@ public class ActivityController {
 		}
 	}
 
+	@GET
+	@Path(ApiConstants.CCA + "/{requestorId}/{ccaId}")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ApiOperation(value = "Get activity count per objectid", notes = "Returns the activity count for the object", response = Integer.class)
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "Unable to get the count", response = String.class) })
+
+	public Response ccaPermissionRequest(@PathParam("requestorId") String requestorID,
+			@PathParam("ccaId") String ccaID) {
+		try {
+			Boolean result = null;
+//			Long requestorId = Long.parseLong(requestorID);
+//			Long ccaId = Long.parseLong(ccaID);
+
+			//check db if not present and store request data and return true
+			// check db if present check time stamp if greater than 3 days update time and return true
+			result = true;
+
+			return Response.status(Status.OK).entity(result).build();
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+
+	}
+
 }
