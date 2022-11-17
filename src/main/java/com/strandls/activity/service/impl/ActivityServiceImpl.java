@@ -26,6 +26,8 @@ import com.strandls.activity.pojo.ActivityIbp;
 import com.strandls.activity.pojo.ActivityLoggingData;
 import com.strandls.activity.pojo.ActivityResult;
 import com.strandls.activity.pojo.CCAActivityLogging;
+import com.strandls.activity.pojo.CCAPermission;
+import com.strandls.activity.pojo.CCAPermssionData;
 import com.strandls.activity.pojo.CommentLoggingData;
 import com.strandls.activity.pojo.Comments;
 import com.strandls.activity.pojo.CommentsIbp;
@@ -44,6 +46,7 @@ import com.strandls.activity.service.ActivityService;
 import com.strandls.activity.service.MailService;
 import com.strandls.activity.service.NotificationService;
 import com.strandls.activity.util.ActivityUtil;
+import com.strandls.activity.util.CCAMailUtils;
 import com.strandls.mail_utility.model.EnumModel.MAIL_TYPE;
 import com.strandls.mail_utility.model.EnumModel.OBJECT_TYPE;
 import com.strandls.user.controller.UserServiceApi;
@@ -78,6 +81,9 @@ public class ActivityServiceImpl implements ActivityService {
 
 	@Inject
 	private Headers headers;
+
+	@Inject
+	private CCAMailUtils mailutils;
 
 	private Long defaultLanguageId = Long
 			.parseLong(PropertyFileUtil.fetchProperty("config.properties", "defaultLanguageId"));
@@ -984,5 +990,37 @@ public class ActivityServiceImpl implements ActivityService {
 
 		return null;
 	}
+
+	@Override
+	public Integer sendCCAPermisionMail(CCAPermssionData permissionReq) {
+		String reqText;
+		try {
+//			reqText = om.writeValueAsString(permissionReq);
+
+//			String encryptedKey = encryptUtils.encrypt(reqText);
+			String encryptedKey = "dummy text";
+
+
+			User requestor = userService.getUser(permissionReq.getRequestorId().toString());
+			User owner = userService.getUser(permissionReq.getOwnerId().toString());
+			List<User> requestee = Arrays.asList(owner);
+
+//			Long ccaId = permissionReq.getCCAId();
+			Long ccaId = (long) 2;
+			String ccaName = permissionReq.getShortName();
+//			List requestors = permissionReq.getOwnerId();
+			//Permissions role = Permissions.valueOf(permissionReq.getRole().replace(" ", ""));
+			String role = "dummy";
+
+			mailutils.sendPermissionRequest(requestee, ccaName, ccaId, role, requestor,
+					encryptedKey);
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return null;
+
+	}
+
 
 }
