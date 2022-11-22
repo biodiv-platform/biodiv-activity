@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -20,14 +21,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.strandls.activity.ActivityEnums;
 import com.strandls.activity.Headers;
 import com.strandls.activity.dao.ActivityDao;
+import com.strandls.activity.dao.CcaPermissionRequestDao;
 import com.strandls.activity.dao.CommentsDao;
 import com.strandls.activity.pojo.Activity;
 import com.strandls.activity.pojo.ActivityIbp;
 import com.strandls.activity.pojo.ActivityLoggingData;
 import com.strandls.activity.pojo.ActivityResult;
 import com.strandls.activity.pojo.CCAActivityLogging;
-import com.strandls.activity.pojo.CCAPermission;
-import com.strandls.activity.pojo.CCAPermssionData;
+import com.strandls.activity.pojo.CcaPermission;
 import com.strandls.activity.pojo.CommentLoggingData;
 import com.strandls.activity.pojo.Comments;
 import com.strandls.activity.pojo.CommentsIbp;
@@ -47,6 +48,8 @@ import com.strandls.activity.service.MailService;
 import com.strandls.activity.service.NotificationService;
 import com.strandls.activity.util.ActivityUtil;
 import com.strandls.activity.util.CCAMailUtils;
+import com.strandls.activity.util.CCARoles;
+import com.strandls.activity.util.EncryptionUtils;
 import com.strandls.mail_utility.model.EnumModel.MAIL_TYPE;
 import com.strandls.mail_utility.model.EnumModel.OBJECT_TYPE;
 import com.strandls.user.controller.UserServiceApi;
@@ -84,6 +87,12 @@ public class ActivityServiceImpl implements ActivityService {
 
 	@Inject
 	private CCAMailUtils mailutils;
+
+	@Inject
+	private EncryptionUtils encryptUtils;
+
+	@Inject
+	private CcaPermissionRequestDao ccaPermissionDao;
 
 	private Long defaultLanguageId = Long
 			.parseLong(PropertyFileUtil.fetchProperty("config.properties", "defaultLanguageId"));
@@ -514,7 +523,6 @@ public class ActivityServiceImpl implements ActivityService {
 					commentData.getMailData());
 			List<TaggedUser> taggedUsers = ActivityUtil.getTaggedUsers(commentData.getBody());
 
-
 			if (commentType.equals("document")) {
 				objectType = OBJECT_TYPE.DOCUMENT;
 				mailService.sendMail(MAIL_TYPE.DOCUMENT_COMMENT_POST, activityResult.getRootHolderType(),
@@ -532,8 +540,7 @@ public class ActivityServiceImpl implements ActivityService {
 						objectType);
 			} else if (commentType.equals("datatable")) {
 				mailService.sendMail(MAIL_TYPE.DATATABLE_COMMENT_POST, activityResult.getRootHolderType(),
-						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers,
-						null);
+						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers, null);
 			} else {
 				objectType = OBJECT_TYPE.OBSERVATION;
 				mailService.sendMail(MAIL_TYPE.COMMENT_POST, activityResult.getRootHolderType(),
@@ -877,7 +884,7 @@ public class ActivityServiceImpl implements ActivityService {
 						MailActivityData mailActivityData = new MailActivityData(ccaActivityLogging.getActivityType(),
 								ccaActivityLogging.getActivityDescription(), ccaActivityLogging.getMailData());
 						mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId,
-								null, mailActivityData, null,  OBJECT_TYPE.CCA);
+								null, mailActivityData, null, OBJECT_TYPE.CCA);
 					}
 				} catch (Exception e) {
 					logger.error(e.getMessage());
@@ -919,11 +926,10 @@ public class ActivityServiceImpl implements ActivityService {
 			if (activity != null)
 				activity = activityDao.save(activity);
 
-
 			if (activity != null && loggingData.getMailData() != null) {
 				String mailType = dataTableUserGroupActivityList.contains(loggingData.getActivityType())
-								? activity.getActivityType() + " Datatable"
-								: activity.getActivityType();
+						? activity.getActivityType() + " Datatable"
+						: activity.getActivityType();
 
 				Map<String, Object> data = ActivityUtil.getMailType(mailType,
 						new ActivityLoggingData(loggingData.getActivityDescription(), loggingData.getRootObjectId(),
@@ -992,28 +998,53 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
-	public Integer sendCCAPermisionMail(CCAPermssionData permissionReq) {
+	public Boolean checkCCARequest(CcaPermission permissionReq) {
+		CCARoles role = CCARoles.valueOf(permissionReq.getRole().replace(" ", ""));
+		CcaPermission alreadyExist = ccaPermissionDao.requestPermissionExist(permissionReq.getRequestorId(),
+				permissionReq.getCcaid(), role);
+		// check for already existing request
+		if (alreadyExist == null) {
+			CcaPermission permission = new CcaPermission(null, permissionReq.getRequestorId(),
+					permissionReq.getOwnerId(), permissionReq.getCcaid(), permissionReq.getRole(), new Date(),
+					permissionReq.getShortName());
+			ccaPermissionDao.save(permission);
+			sendCCAPermisionMail(permissionReq);
+		} else {
+
+			// Get the time difference between permissions
+			long daylimit = 3;
+			long timeDifference = new Date().getTime() - permissionReq.getCreatedOn().getTime();
+			long days = TimeUnit.DAYS.convert(timeDifference, TimeUnit.MILLISECONDS);
+
+			System.out.println("timeDifference = " + timeDifference);
+			System.out.println("Days: " + days);
+			if (days >= daylimit) {
+				CcaPermission permission = ccaPermissionDao.findById(alreadyExist.getId());
+				permission.setCreatedOn(new Date());
+				ccaPermissionDao.update(permission);
+				sendCCAPermisionMail(permissionReq);
+			}
+		}
+		return null;
+
+	}
+
+	public Boolean sendCCAPermisionMail(CcaPermission permissionReq) {
 		String reqText;
+
 		try {
-//			reqText = om.writeValueAsString(permissionReq);
 
-//			String encryptedKey = encryptUtils.encrypt(reqText);
-			String encryptedKey = "dummy text";
-
-
+			reqText = objectMapper.writeValueAsString(permissionReq);
+			String encryptedKey = encryptUtils.encrypt(reqText);
 			User requestor = userService.getUser(permissionReq.getRequestorId().toString());
 			User owner = userService.getUser(permissionReq.getOwnerId().toString());
 			List<User> requestee = Arrays.asList(owner);
 
-//			Long ccaId = permissionReq.getCCAId();
-			Long ccaId = (long) 2;
+			Long ccaId = permissionReq.getCcaid();
 			String ccaName = permissionReq.getShortName();
-//			List requestors = permissionReq.getOwnerId();
-			//Permissions role = Permissions.valueOf(permissionReq.getRole().replace(" ", ""));
-			String role = "dummy";
+			String role = permissionReq.getRole();
 
-			mailutils.sendPermissionRequest(requestee, ccaName, ccaId, role, requestor,
-					encryptedKey);
+			mailutils.sendPermissionRequest(requestee, ccaName, ccaId, role, requestor, encryptedKey);
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -1021,6 +1052,5 @@ public class ActivityServiceImpl implements ActivityService {
 		return null;
 
 	}
-
 
 }

@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.strandls.activity.util.CCARoles;
 
 /**
  * @author Arun
@@ -22,42 +23,40 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 @Table(name = "cca_permission_request")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CCAPermission {
+public class CcaPermission {
 
 	private Long id;
 	private Long requestorId;
 	private Long ownerId;
-	private Long ccaId;
+	private Long ccaid;
 	private String role;
 	private Date createdOn;
 	private String shortName;
-	
-	/**
-	 * 
-	 */
-	public CCAPermission() {
+
+	public CcaPermission() {
 		super();
 	}
 
 	/**
-	 * @param id	
+	 * @param id
 	 * @param requestorId
-	 * @param ccaId
 	 * @param ownerId
-	 * @param createdOn
+	 * @param ccaid
 	 * @param role
+	 * @param createdOn
 	 * @param shortName
 	 */
-	public CCAPermission(Long id, Long requestorId,Long ownerId, Long ccaId, Date createdOn,
-			String role , String shortName) {
+
+	public CcaPermission(Long id, Long requestorId, Long ownerId, Long ccaid, String role, Date createdOn,
+			String shortName) {
 		super();
 		this.id = id;
 		this.requestorId = requestorId;
-		this.ownerId=ownerId;
-		this.ccaId = ccaId;
-		this.createdOn = createdOn;
+		this.ownerId = ownerId;
+		this.ccaid = ccaid;
 		this.role = role;
-		this.shortName=shortName;
+		this.createdOn = createdOn;
+		this.shortName = shortName;
 	}
 
 	@Id
@@ -71,15 +70,6 @@ public class CCAPermission {
 		this.id = id;
 	}
 
-	@Column(name = "cca_id")
-	public Long getCCAId() {
-		return ccaId;
-	}
-
-	public void setCCAId(Long ccaId) {
-		this.ccaId = ccaId;
-	}
-	
 	@Column(name = "requestor_id")
 	public Long getRequestorId() {
 		return requestorId;
@@ -88,14 +78,23 @@ public class CCAPermission {
 	public void setRequestorId(Long requestorId) {
 		this.requestorId = requestorId;
 	}
-	
-	@Column(name = "created_on")
-	public Date getCreatedOn() {
-		return createdOn;
+
+	@Column(name = "owner_id")
+	public Long getOwnerId() {
+		return ownerId;
 	}
 
-	public void setCreatedOn(Date createdOn) {
-		this.createdOn = createdOn;
+	public void setOwnerId(Long ownerId) {
+		this.ownerId = ownerId;
+	}
+
+	@Column(name = "cca_id")
+	public Long getCcaid() {
+		return ccaid;
+	}
+
+	public void setCcaid(Long ccaid) {
+		this.ccaid = ccaid;
 	}
 
 	@Column(name = "role")
@@ -106,15 +105,17 @@ public class CCAPermission {
 	public void setRole(String role) {
 		this.role = role;
 	}
-	
-	public Long getOwnerId() {
-		return ownerId;
+
+	@Column(name = "created_on")
+	public Date getCreatedOn() {
+		return createdOn;
 	}
 
-	public void setOwnerId(Long ownerId) {
-		this.ownerId = ownerId;
+	public void setCreatedOn(Date createdOn) {
+		this.createdOn = createdOn;
 	}
-	
+
+	@Column(name = "short_name")
 	public String getShortName() {
 		return shortName;
 	}
@@ -122,6 +123,5 @@ public class CCAPermission {
 	public void setShortName(String shortName) {
 		this.shortName = shortName;
 	}
-
 
 }

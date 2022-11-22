@@ -11,7 +11,7 @@ import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.strandls.activity.pojo.CCAPermission;
+import com.strandls.activity.pojo.CcaPermission;
 import com.strandls.activity.util.AbstractDAO;
 import com.strandls.activity.util.CCARoles;
 
@@ -22,7 +22,7 @@ import com.strandls.activity.util.CCARoles;
  * 
  */
 
-public class CcaPermissionRequestDao extends AbstractDAO<CCAPermission, Long>{
+public class CcaPermissionRequestDao extends AbstractDAO<CcaPermission, Long>{
 
 	private final Logger logger = LoggerFactory.getLogger(CcaPermissionRequestDao.class);
 	
@@ -32,11 +32,11 @@ public class CcaPermissionRequestDao extends AbstractDAO<CCAPermission, Long>{
 	}
 
 	@Override
-	public CCAPermission findById(Long id) {
+	public CcaPermission findById(Long id) {
 		Session session = sessionFactory.openSession();
-		CCAPermission result = null;
+		CcaPermission result = null;
 		try {
-			result = session.get(CCAPermission.class, id);
+			result = session.get(CcaPermission.class, id);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		} finally {
@@ -46,14 +46,14 @@ public class CcaPermissionRequestDao extends AbstractDAO<CCAPermission, Long>{
 	}
 
 	@SuppressWarnings("unchecked")
-	public CCAPermission requestPermissionExist(Long requestorId, Long ccaId, CCARoles roles) {
-		String qry = "from SpeciesPermissionRequest where requestorId = :requestorId and ccaId = :ccaId and role = :role ";
+	public CcaPermission requestPermissionExist(Long requestorId, Long ccaid , CCARoles roles) {
+		String qry = "from CcaPermission where requestorId = :requestorId and ccaid = :ccaid  and role = :role";
 		Session session = sessionFactory.openSession();
-		CCAPermission result = null;
+		CcaPermission result = null;
 		try {
-			Query<CCAPermission> query = session.createQuery(qry);
+			Query<CcaPermission> query = session.createQuery(qry);
 			query.setParameter("requestorId", requestorId);
-			query.setParameter("ccaId", ccaId);
+			query.setParameter("ccaid", ccaid);
 			query.setParameter("role", roles.getValue());
 			result = query.getSingleResult();
 
