@@ -49,7 +49,6 @@ import com.strandls.activity.service.NotificationService;
 import com.strandls.activity.util.ActivityUtil;
 import com.strandls.activity.util.CCAMailUtils;
 import com.strandls.activity.util.CCARoles;
-import com.strandls.activity.util.EncryptionUtils;
 import com.strandls.mail_utility.model.EnumModel.MAIL_TYPE;
 import com.strandls.mail_utility.model.EnumModel.OBJECT_TYPE;
 import com.strandls.user.controller.UserServiceApi;
@@ -87,9 +86,6 @@ public class ActivityServiceImpl implements ActivityService {
 
 	@Inject
 	private CCAMailUtils mailutils;
-
-	@Inject
-	private EncryptionUtils encryptUtils;
 
 	@Inject
 	private CcaPermissionRequestDao ccaPermissionDao;
@@ -1006,34 +1002,34 @@ public class ActivityServiceImpl implements ActivityService {
 		if (alreadyExist == null) {
 			CcaPermission permission = new CcaPermission(null, permissionReq.getRequestorId(),
 					permissionReq.getOwnerId(), permissionReq.getCcaid(), permissionReq.getRole(), new Date(),
-					permissionReq.getShortName());
+					permissionReq.getShortName(), null);
 			ccaPermissionDao.save(permission);
 			sendCCAPermisionMail(permissionReq);
+			return true;
 		} else {
 
 			// Get the time difference between permissions
 			long daylimit = 3;
-			long timeDifference = new Date().getTime() - permissionReq.getCreatedOn().getTime();
+			long timeDifference = new Date().getTime() - permissionReq.getRequestedOn().getTime();
 			long days = TimeUnit.DAYS.convert(timeDifference, TimeUnit.MILLISECONDS);
 
 			if (days >= daylimit) {
 				CcaPermission permission = ccaPermissionDao.findById(alreadyExist.getId());
-				permission.setCreatedOn(new Date());
+				permission.setRequestedOn(new Date());
 				ccaPermissionDao.update(permission);
 				sendCCAPermisionMail(permissionReq);
+				return true;
 			}
+
 		}
-		return null;
+		return false;
 
 	}
 
 	public Boolean sendCCAPermisionMail(CcaPermission permissionReq) {
-		String reqText;
 
 		try {
-
-			reqText = objectMapper.writeValueAsString(permissionReq);
-			String encryptedKey = encryptUtils.encrypt(reqText);
+			String encryptedKey = permissionReq.getEncryptKey();
 			User requestor = userService.getUser(permissionReq.getRequestorId().toString());
 			User owner = userService.getUser(permissionReq.getOwnerId().toString());
 			List<User> requestee = Arrays.asList(owner);

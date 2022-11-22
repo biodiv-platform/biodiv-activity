@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.strandls.activity.util.CCARoles;
 
 /**
  * @author Arun
@@ -30,8 +29,9 @@ public class CcaPermission {
 	private Long ownerId;
 	private Long ccaid;
 	private String role;
-	private Date createdOn;
+	private Date requestedOn;
 	private String shortName;
+	private String encryptKey;
 
 	public CcaPermission() {
 		super();
@@ -43,20 +43,21 @@ public class CcaPermission {
 	 * @param ownerId
 	 * @param ccaid
 	 * @param role
-	 * @param createdOn
+	 * @param requestedOn
 	 * @param shortName
 	 */
 
-	public CcaPermission(Long id, Long requestorId, Long ownerId, Long ccaid, String role, Date createdOn,
-			String shortName) {
+	public CcaPermission(Long id, Long requestorId, Long ownerId, Long ccaid, String role, Date requestedOn,
+			String shortName, String encryptKey) {
 		super();
 		this.id = id;
 		this.requestorId = requestorId;
 		this.ownerId = ownerId;
 		this.ccaid = ccaid;
 		this.role = role;
-		this.createdOn = createdOn;
+		this.requestedOn = requestedOn;
 		this.shortName = shortName;
+		this.encryptKey = encryptKey;
 	}
 
 	@Id
@@ -106,13 +107,13 @@ public class CcaPermission {
 		this.role = role;
 	}
 
-	@Column(name = "created_on")
-	public Date getCreatedOn() {
-		return createdOn;
+	@Column(name = "requested_on")
+	public Date getRequestedOn() {
+		return requestedOn;
 	}
 
-	public void setCreatedOn(Date createdOn) {
-		this.createdOn = createdOn;
+	public void setRequestedOn(Date requestedOn) {
+		this.requestedOn = requestedOn;
 	}
 
 	@Column(name = "short_name")
@@ -122,6 +123,14 @@ public class CcaPermission {
 
 	public void setShortName(String shortName) {
 		this.shortName = shortName;
+	}
+
+	public String getEncryptKey() {
+		return encryptKey;
+	}
+
+	public void setEncryptKey(String encryptKey) {
+		this.encryptKey = encryptKey;
 	}
 
 }

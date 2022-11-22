@@ -333,7 +333,7 @@ public class ActivityController {
 		}
 	}
 
-	@GET
+	@POST
 	@Path(ApiConstants.CCA + ApiConstants.REQUESTMAIL)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -343,13 +343,16 @@ public class ActivityController {
 
 	public Response ccaMailRequest(@Context HttpServletRequest request,
 			@ApiParam(name = "permissionReq") CcaPermission permissionReq) {
-		try {
-			Boolean result = service.checkCCARequest(permissionReq);
 
-			return Response.status(Status.OK).entity(result).build();
+		try {
+			if (!permissionReq.getEncryptKey().isEmpty() || permissionReq.getEncryptKey() != null) {
+				Boolean result = service.checkCCARequest(permissionReq);
+				return Response.status(Status.OK).entity(result).build();
+			}
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
+		return null;
 
 	}
 
