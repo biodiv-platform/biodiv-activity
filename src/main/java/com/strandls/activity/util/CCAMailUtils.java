@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.strandls.mail_utility.model.EnumModel.CCA_DATA_PERMISSION_REQUEST;
 import com.strandls.mail_utility.model.EnumModel.FIELDS;
 import com.strandls.mail_utility.model.EnumModel.INFO_FIELDS;
 import com.strandls.mail_utility.model.EnumModel.MAIL_TYPE;
@@ -31,13 +32,13 @@ import com.strandls.user.pojo.User;
  */
 public class CCAMailUtils {
 
-	private final  Logger logger = LoggerFactory.getLogger(CCAMailUtils.class);
+	private final Logger logger = LoggerFactory.getLogger(CCAMailUtils.class);
 
 	@Inject
-	private  RabbitMQProducer mailProducer;
+	private RabbitMQProducer mailProducer;
 
-	public  void sendPermissionRequest(List<User> requestors, String taxonName, Long taxonId, String role,
-			User requestee, String encryptedKey) {
+	public void sendPermissionRequest(List<User> requestors, String ccaName, Long ccaId, String role, User requestee,
+			String encryptedKey) {
 		List<String> emailList = new ArrayList<String>();
 		for (User requestor : requestors) {
 			if (requestor.getEmail() != null)
@@ -45,22 +46,21 @@ public class CCAMailUtils {
 		}
 		try {
 			Map<String, Object> data = new HashMap<>();
-			data.put(FIELDS.TO.getAction(),  emailList.toArray());
+			data.put(FIELDS.TO.getAction(), emailList.toArray());
 			data.put(FIELDS.SUBSCRIPTION.getAction(), true);
 			Map<String, Object> permissionRequest = new HashMap<>();
 
-			permissionRequest.put(PERMISSION_REQUEST.ENCRYPTED_KEY.getAction(), encryptedKey);
-			permissionRequest.put(PERMISSION_REQUEST.REQUESTEE_ID.getAction(), requestee.getId());
-			permissionRequest.put(PERMISSION_REQUEST.REQUESTEE_NAME.getAction(), requestee.getName());
-			permissionRequest.put(PERMISSION_REQUEST.ROLE.getAction(), role);
-			//
-			permissionRequest.put(PERMISSION_REQUEST.TAXON_ID.getAction(), taxonId);
-			permissionRequest.put(PERMISSION_REQUEST.TAXON_NAME.getAction(), taxonName);
+			permissionRequest.put(CCA_DATA_PERMISSION_REQUEST.ENCRYPTED_KEY.getAction(), encryptedKey);
+			permissionRequest.put(CCA_DATA_PERMISSION_REQUEST.REQUESTEE_ID.getAction(), requestee.getId());
+			permissionRequest.put(CCA_DATA_PERMISSION_REQUEST.REQUESTEE_NAME.getAction(), requestee.getName());
+			permissionRequest.put(CCA_DATA_PERMISSION_REQUEST.ROLE.getAction(), role);
+			permissionRequest.put(CCA_DATA_PERMISSION_REQUEST.CCA_ID.getAction(), ccaId);
+			permissionRequest.put(CCA_DATA_PERMISSION_REQUEST.CCA_NAME.getAction(), ccaName);
 
 			data.put(FIELDS.DATA.getAction(), JsonUtil.unflattenJSON(permissionRequest));
 
 			Map<String, Object> mData = new HashMap<>();
-			mData.put(INFO_FIELDS.TYPE.getAction(), MAIL_TYPE.PERMISSION_REQUEST.getAction());
+			mData.put(INFO_FIELDS.TYPE.getAction(), MAIL_TYPE.CCA_DATA_PERMISSION_REQUEST.getAction());
 			mData.put(INFO_FIELDS.RECIPIENTS.getAction(), Arrays.asList(data));
 
 			mailProducer.produceMail(RabbitMqConnection.EXCHANGE, RabbitMqConnection.ROUTING_KEY, null,

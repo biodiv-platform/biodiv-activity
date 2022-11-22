@@ -1016,8 +1016,6 @@ public class ActivityServiceImpl implements ActivityService {
 			long timeDifference = new Date().getTime() - permissionReq.getCreatedOn().getTime();
 			long days = TimeUnit.DAYS.convert(timeDifference, TimeUnit.MILLISECONDS);
 
-			System.out.println("timeDifference = " + timeDifference);
-			System.out.println("Days: " + days);
 			if (days >= daylimit) {
 				CcaPermission permission = ccaPermissionDao.findById(alreadyExist.getId());
 				permission.setCreatedOn(new Date());
