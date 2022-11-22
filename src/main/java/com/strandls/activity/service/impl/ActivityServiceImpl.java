@@ -998,6 +998,7 @@ public class ActivityServiceImpl implements ActivityService {
 		CCARoles role = CCARoles.valueOf(permissionReq.getRole().replace(" ", ""));
 		CcaPermission alreadyExist = ccaPermissionDao.requestPermissionExist(permissionReq.getRequestorId(),
 				permissionReq.getCcaid(), role);
+
 		// check for already existing request
 		if (alreadyExist == null) {
 			CcaPermission permission = new CcaPermission(null, permissionReq.getRequestorId(),
@@ -1006,9 +1007,9 @@ public class ActivityServiceImpl implements ActivityService {
 			ccaPermissionDao.save(permission);
 			sendCCAPermisionMail(permissionReq);
 			return true;
-		} else {
-
-			// Get the time difference between permissions
+		}
+		// Get the time difference between permissions
+		else {
 			long daylimit = 3;
 			long timeDifference = new Date().getTime() - permissionReq.getRequestedOn().getTime();
 			long days = TimeUnit.DAYS.convert(timeDifference, TimeUnit.MILLISECONDS);

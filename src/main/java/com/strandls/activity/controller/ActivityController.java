@@ -338,21 +338,18 @@ public class ActivityController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 
-	@ApiOperation(value = "Get activity count per objectid", notes = "Returns the activity count for the object", response = Boolean.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Unable to get the count", response = String.class) })
+	@ApiOperation(value = "Send permission request mail for cca", notes = "Generates and sends cca permission email to owner", response = Boolean.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 400, message = "Unable to send cca permssion request mail", response = String.class) })
 
 	public Response ccaMailRequest(@Context HttpServletRequest request,
 			@ApiParam(name = "permissionReq") CcaPermission permissionReq) {
-
 		try {
-			if (!permissionReq.getEncryptKey().isEmpty() || permissionReq.getEncryptKey() != null) {
-				Boolean result = service.checkCCARequest(permissionReq);
-				return Response.status(Status.OK).entity(result).build();
-			}
+			Boolean result = service.checkCCARequest(permissionReq);
+			return Response.status(Status.OK).entity(result).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
-		return null;
 
 	}
 
