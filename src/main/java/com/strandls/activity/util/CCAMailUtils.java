@@ -19,7 +19,6 @@ import com.strandls.mail_utility.model.EnumModel.FIELDS;
 import com.strandls.mail_utility.model.EnumModel.INFO_FIELDS;
 import com.strandls.mail_utility.model.EnumModel.MAIL_TYPE;
 import com.strandls.mail_utility.model.EnumModel.PERMISSION_GRANT;
-import com.strandls.mail_utility.model.EnumModel.PERMISSION_REQUEST;
 import com.strandls.mail_utility.producer.RabbitMQProducer;
 import com.strandls.mail_utility.util.JsonUtil;
 import com.strandls.activity.RabbitMqConnection;
@@ -38,7 +37,7 @@ public class CCAMailUtils {
 	private RabbitMQProducer mailProducer;
 
 	public void sendPermissionRequest(List<User> requestors, String ccaName, Long ccaId, String role, User requestee,
-			String encryptedKey) {
+			String encryptedKey, Map<String, Object> summaryData) {
 		List<String> emailList = new ArrayList<String>();
 		for (User requestor : requestors) {
 			if (requestor.getEmail() != null)
@@ -56,6 +55,8 @@ public class CCAMailUtils {
 			permissionRequest.put(CCA_DATA_PERMISSION_REQUEST.ROLE.getAction(), role);
 			permissionRequest.put(CCA_DATA_PERMISSION_REQUEST.CCA_ID.getAction(), ccaId);
 			permissionRequest.put(CCA_DATA_PERMISSION_REQUEST.CCA_NAME.getAction(), ccaName);
+			if (summaryData != null)
+				permissionRequest.put(CCA_DATA_PERMISSION_REQUEST.SUMMARY.getAction(), summaryData);
 
 			data.put(FIELDS.DATA.getAction(), JsonUtil.unflattenJSON(permissionRequest));
 

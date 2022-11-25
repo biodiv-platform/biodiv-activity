@@ -1038,8 +1038,9 @@ public class ActivityServiceImpl implements ActivityService {
 			Long ccaId = permissionReq.getCcaid();
 			String ccaName = permissionReq.getShortName();
 			String role = permissionReq.getRole();
+			Map<String, Object> summaryData = permissionReq.getData();
 
-			mailutils.sendPermissionRequest(requestee, ccaName, ccaId, role, requestor, encryptedKey);
+			mailutils.sendPermissionRequest(requestee, ccaName, ccaId, role, requestor, encryptedKey, summaryData);
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());

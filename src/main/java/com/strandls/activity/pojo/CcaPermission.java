@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 @Table(name = "cca_permission_request")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CcaPermission {
+public class CcaPermission extends CCAMailData{
 
 	private Long id;
 	private Long requestorId;
