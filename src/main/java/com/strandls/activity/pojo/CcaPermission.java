@@ -32,6 +32,7 @@ public class CcaPermission extends CCAMailData{
 	private Date requestedOn;
 	private String shortName;
 	private String encryptKey;
+	private String requestorMessage;
 
 	public CcaPermission() {
 		super();
@@ -45,10 +46,11 @@ public class CcaPermission extends CCAMailData{
 	 * @param role
 	 * @param requestedOn
 	 * @param shortName
+	 * @param requestorMessage
 	 */
 
 	public CcaPermission(Long id, Long requestorId, Long ownerId, Long ccaid, String role, Date requestedOn,
-			String shortName, String encryptKey) {
+			String shortName, String encryptKey,String requestorMessage) {
 		super();
 		this.id = id;
 		this.requestorId = requestorId;
@@ -58,6 +60,7 @@ public class CcaPermission extends CCAMailData{
 		this.requestedOn = requestedOn;
 		this.shortName = shortName;
 		this.encryptKey = encryptKey;
+		this.requestorMessage = requestorMessage;
 	}
 
 	@Id
@@ -131,6 +134,13 @@ public class CcaPermission extends CCAMailData{
 
 	public void setEncryptKey(String encryptKey) {
 		this.encryptKey = encryptKey;
+	}
+	public String getRequestorMessage() {
+		return requestorMessage;
+	}
+
+	public void setRequestorMessage(String requestorMessage) {
+		this.requestorMessage = requestorMessage;
 	}
 
 }

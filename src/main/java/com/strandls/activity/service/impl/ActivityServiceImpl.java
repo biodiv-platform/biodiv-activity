@@ -1003,7 +1003,7 @@ public class ActivityServiceImpl implements ActivityService {
 		if (alreadyExist == null) {
 			CcaPermission permission = new CcaPermission(null, permissionReq.getRequestorId(),
 					permissionReq.getOwnerId(), permissionReq.getCcaid(), permissionReq.getRole(), new Date(),
-					permissionReq.getShortName(), null);
+					permissionReq.getShortName(), null, null);
 			ccaPermissionDao.save(permission);
 			sendCCAPermisionMail(permissionReq);
 			return true;
@@ -1039,8 +1039,10 @@ public class ActivityServiceImpl implements ActivityService {
 			String ccaName = permissionReq.getShortName();
 			String role = permissionReq.getRole();
 			Map<String, Object> summaryData = permissionReq.getData();
+			String requestorMessage = permissionReq.getRequestorMessage();
 
-			mailutils.sendPermissionRequest(requestee, ccaName, ccaId, role, requestor, encryptedKey, summaryData);
+			mailutils.sendPermissionRequest(requestee, ccaName, ccaId, role, requestor, encryptedKey, summaryData,
+					requestorMessage);
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
