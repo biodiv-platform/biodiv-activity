@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -20,12 +21,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.strandls.activity.ActivityEnums;
 import com.strandls.activity.Headers;
 import com.strandls.activity.dao.ActivityDao;
+import com.strandls.activity.dao.CcaPermissionRequestDao;
 import com.strandls.activity.dao.CommentsDao;
 import com.strandls.activity.pojo.Activity;
 import com.strandls.activity.pojo.ActivityIbp;
 import com.strandls.activity.pojo.ActivityLoggingData;
 import com.strandls.activity.pojo.ActivityResult;
 import com.strandls.activity.pojo.CCAActivityLogging;
+import com.strandls.activity.pojo.CcaPermission;
 import com.strandls.activity.pojo.CommentLoggingData;
 import com.strandls.activity.pojo.Comments;
 import com.strandls.activity.pojo.CommentsIbp;
@@ -44,6 +47,8 @@ import com.strandls.activity.service.ActivityService;
 import com.strandls.activity.service.MailService;
 import com.strandls.activity.service.NotificationService;
 import com.strandls.activity.util.ActivityUtil;
+import com.strandls.activity.util.CCAMailUtils;
+import com.strandls.activity.util.CCARoles;
 import com.strandls.mail_utility.model.EnumModel.MAIL_TYPE;
 import com.strandls.mail_utility.model.EnumModel.OBJECT_TYPE;
 import com.strandls.user.controller.UserServiceApi;
@@ -82,6 +87,12 @@ public class ActivityServiceImpl implements ActivityService {
 
 	@Inject
 	private Headers headers;
+
+	@Inject
+	private CCAMailUtils mailutils;
+
+	@Inject
+	private CcaPermissionRequestDao ccaPermissionDao;
 
 	private Long defaultLanguageId = Long
 			.parseLong(PropertyFileUtil.fetchProperty("config.properties", "defaultLanguageId"));
@@ -512,7 +523,6 @@ public class ActivityServiceImpl implements ActivityService {
 					commentData.getMailData());
 			List<TaggedUser> taggedUsers = ActivityUtil.getTaggedUsers(commentData.getBody());
 
-
 			if (commentType.equals("document")) {
 				objectType = OBJECT_TYPE.DOCUMENT;
 				mailService.sendMail(MAIL_TYPE.DOCUMENT_COMMENT_POST, activityResult.getRootHolderType(),
@@ -530,8 +540,7 @@ public class ActivityServiceImpl implements ActivityService {
 						objectType);
 			} else if (commentType.equals("datatable")) {
 				mailService.sendMail(MAIL_TYPE.DATATABLE_COMMENT_POST, activityResult.getRootHolderType(),
-						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers,
-						null);
+						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers, null);
 			} else {
 				objectType = OBJECT_TYPE.OBSERVATION;
 				mailService.sendMail(MAIL_TYPE.COMMENT_POST, activityResult.getRootHolderType(),
@@ -875,7 +884,7 @@ public class ActivityServiceImpl implements ActivityService {
 						MailActivityData mailActivityData = new MailActivityData(ccaActivityLogging.getActivityType(),
 								ccaActivityLogging.getActivityDescription(), ccaActivityLogging.getMailData());
 						mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId,
-								null, mailActivityData, null,  OBJECT_TYPE.CCA);
+								null, mailActivityData, null, OBJECT_TYPE.CCA);
 					}
 				} catch (Exception e) {
 					logger.error(e.getMessage());
@@ -917,11 +926,10 @@ public class ActivityServiceImpl implements ActivityService {
 			if (activity != null)
 				activity = activityDao.save(activity);
 
-
 			if (activity != null && loggingData.getMailData() != null) {
 				String mailType = dataTableUserGroupActivityList.contains(loggingData.getActivityType())
-								? activity.getActivityType() + " Datatable"
-								: activity.getActivityType();
+						? activity.getActivityType() + " Datatable"
+						: activity.getActivityType();
 
 				Map<String, Object> data = ActivityUtil.getMailType(mailType,
 						new ActivityLoggingData(loggingData.getActivityDescription(), loggingData.getRootObjectId(),
@@ -987,6 +995,64 @@ public class ActivityServiceImpl implements ActivityService {
 		}
 
 		return null;
+	}
+
+	@Override
+	public Boolean checkCCARequest(CcaPermission permissionReq) {
+		CCARoles role = CCARoles.valueOf(permissionReq.getRole().replace(" ", ""));
+		CcaPermission alreadyExist = ccaPermissionDao.requestPermissionExist(permissionReq.getRequestorId(),
+				permissionReq.getCcaid(), role);
+
+		// check for already existing request
+		if (alreadyExist == null) {
+			CcaPermission permission = new CcaPermission(null, permissionReq.getRequestorId(),
+					permissionReq.getOwnerId(), permissionReq.getCcaid(), permissionReq.getRole(), new Date(),
+					permissionReq.getShortName(), null, null);
+			ccaPermissionDao.save(permission);
+			sendCCAPermisionMail(permissionReq);
+			return true;
+		}
+		// Get the time difference between permissions
+		else {
+			long daylimit = 3;
+			long timeDifference = new Date().getTime() - permissionReq.getRequestedOn().getTime();
+			long days = TimeUnit.DAYS.convert(timeDifference, TimeUnit.MILLISECONDS);
+
+			if (days >= daylimit) {
+				CcaPermission permission = ccaPermissionDao.findById(alreadyExist.getId());
+				permission.setRequestedOn(new Date());
+				ccaPermissionDao.update(permission);
+				sendCCAPermisionMail(permissionReq);
+				return true;
+			}
+
+		}
+		return false;
+
+	}
+
+	public Boolean sendCCAPermisionMail(CcaPermission permissionReq) {
+
+		try {
+			String encryptedKey = permissionReq.getEncryptKey();
+			User requestor = userService.getUser(permissionReq.getRequestorId().toString());
+			User owner = userService.getUser(permissionReq.getOwnerId().toString());
+			List<User> requestee = Arrays.asList(owner);
+
+			Long ccaId = permissionReq.getCcaid();
+			String ccaName = permissionReq.getShortName();
+			String role = permissionReq.getRole();
+			Map<String, Object> summaryData = permissionReq.getData();
+			String requestorMessage = permissionReq.getRequestorMessage();
+
+			mailutils.sendPermissionRequest(requestee, ccaName, ccaId, role, requestor, encryptedKey, summaryData,
+					requestorMessage);
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return null;
+
 	}
 
 }

@@ -25,6 +25,7 @@ import com.strandls.activity.pojo.Activity;
 import com.strandls.activity.pojo.ActivityLoggingData;
 import com.strandls.activity.pojo.ActivityResult;
 import com.strandls.activity.pojo.CCAActivityLogging;
+import com.strandls.activity.pojo.CcaPermission;
 import com.strandls.activity.pojo.CommentLoggingData;
 import com.strandls.activity.pojo.DatatableActivityLogging;
 import com.strandls.activity.pojo.DocumentActivityLogging;
@@ -330,6 +331,26 @@ public class ActivityController {
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
+	}
+
+	@POST
+	@Path(ApiConstants.CCA + ApiConstants.REQUESTMAIL)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ApiOperation(value = "Send permission request mail for cca", notes = "Generates and sends cca permission email to owner", response = Boolean.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 400, message = "Unable to send cca permssion request mail", response = String.class) })
+
+	public Response ccaMailRequest(@Context HttpServletRequest request,
+			@ApiParam(name = "permissionReq") CcaPermission permissionReq) {
+		try {
+			Boolean result = service.checkCCARequest(permissionReq);
+			return Response.status(Status.OK).entity(result).build();
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+
 	}
 
 }
