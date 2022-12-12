@@ -13,6 +13,7 @@ public class RecoVoteActivity {
 	private String commonName;
 	private String givenName;
 	private Long speciesId;
+	private String source;
 
 	/**
 	 * 
@@ -27,12 +28,13 @@ public class RecoVoteActivity {
 	 * @param givenName
 	 * @param speciesId
 	 */
-	public RecoVoteActivity(String scientificName, String commonName, String givenName, Long speciesId) {
+	public RecoVoteActivity(String scientificName, String commonName, String givenName, Long speciesId, String source) {
 		super();
 		this.scientificName = scientificName;
 		this.commonName = commonName;
 		this.givenName = givenName;
 		this.speciesId = speciesId;
+		this.source = source;
 	}
 
 	public String getScientificName() {
@@ -65,6 +67,14 @@ public class RecoVoteActivity {
 
 	public void setSpeciesId(Long speciesId) {
 		this.speciesId = speciesId;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
 	}
 
 }
