@@ -220,14 +220,14 @@ public class MailServiceImpl implements MailService {
 		if (ccaMailData != null) {
 			Map<String, Object> mailData = ccaMailData.getData();
 			model.putAll(ccaMailData.getData());
-			if(type.getAction().startsWith("CCA_DATA_PERMISSION")) {
+			if (type.getAction().startsWith("CCA_DATA_PERMISSION")) {
 				List<Object> pU = new ArrayList<>();
 				List<String> pUsers = new ArrayList<>();
 				if (type.getAction().equalsIgnoreCase(MAIL_TYPE.CCA_DATA_PERMISSION.getAction())) {
 					pUsers.addAll((List<String>) ((Map<String, Object>) mailData.get("data")).get("permission"));
-				}
-				else if(type.getAction().equalsIgnoreCase( MAIL_TYPE.CCA_DATA_PERMISSION_REMOVED.getAction())){
-					pUsers.addAll((List<String>) ((Map<String, Object>) mailData.get("data")).get("permission removed"));
+				} else if (type.getAction().equalsIgnoreCase(MAIL_TYPE.CCA_DATA_PERMISSION_REMOVED.getAction())) {
+					pUsers.addAll(
+							(List<String>) ((Map<String, Object>) mailData.get("data")).get("permission removed"));
 				}
 				for (String s : pUsers) {
 					Map<String, Object> obj = new HashMap<>();
@@ -268,6 +268,8 @@ public class MailServiceImpl implements MailService {
 		model.put(COMMENT_POST.SITENAME.getAction(), siteName);
 		model.put(COMMENT_POST.SERVER_URL.getAction(), serverUrl);
 		model.put(SUGGEST_MAIL.RECO_VOTE.getAction(), name);
+
+		model.put("recoSource", reco.getSource());
 
 		if (comment != null) {
 			model.put(COMMENT_POST.COMMENT_BODY.getAction(), modifiedComment);
@@ -329,10 +331,9 @@ public class MailServiceImpl implements MailService {
 					(document != null && document.getTitle() != null) ? document.getTitle() : "Help Identify");
 		}
 
-
 		if (datatable != null) {
 			model.put(COMMENT_POST.WHAT_POSTED_ID.getAction(),
-					(datatable != null && datatable.getDataTableId() != null) ? datatable.getDataTableId(): null);
+					(datatable != null && datatable.getDataTableId() != null) ? datatable.getDataTableId() : null);
 
 			model.put(COMMENT_POST.WHAT_POSTED_NAME.getAction(),
 					(datatable != null && datatable.getTitle() != null) ? datatable.getTitle() : "Help Identify");
