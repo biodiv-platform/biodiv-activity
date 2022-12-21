@@ -63,7 +63,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 	private final Logger logger = LoggerFactory.getLogger(ActivityServiceImpl.class);
 
-	private String newComment ="Added a comment";
+	private String newComment = "Added a comment";
 
 	private String templateComment = "Template comment";
 
@@ -215,8 +215,7 @@ public class ActivityServiceImpl implements ActivityService {
 			"Field created", "Field updated", "Field deleted", "CCA Template Deleted"));
 	List<String> ccaDataActivityList = new ArrayList<>(Arrays.asList("Data created", "Data updated", "Data deleted",
 			"Permission added", "Permission removed", "Follower added", "Follower removed"));
-	List<String> ccaCommentActivityList = new ArrayList<>(
-			Arrays.asList(newComment, "Data comment", templateComment));
+	List<String> ccaCommentActivityList = new ArrayList<>(Arrays.asList(newComment, "Data comment", templateComment));
 
 	@Override
 	public Integer activityCount(String objectType, Long objectId) {
@@ -504,14 +503,12 @@ public class ActivityServiceImpl implements ActivityService {
 			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
 				loggingData = new CCAActivityLogging(commentData.getBody(), result.getRootHolderId(), result.getId(),
 						result.getRootHolderType(), result.getId(),
-						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? templateComment
-								: newComment,
+						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? templateComment : newComment,
 						commentData.getMailData());
 			} else {
 				loggingData = new CCAActivityLogging(commentData.getBody(), result.getRootHolderId(),
 						result.getCommentHolderId(), result.getRootHolderType(), result.getId(),
-						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? templateComment
-								: newComment,
+						result.getRootHolderType().equalsIgnoreCase("cca.Template") ? templateComment : newComment,
 						commentData.getMailData());
 			}
 			activityResult = logCCAActivities(request, userId, loggingData);
@@ -519,8 +516,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 		if (activityResult != null && commentData.getMailData() != null && !commentType.equals("cca")) {
 
-			MailActivityData mailActivityData = new MailActivityData(newComment, null,
-					commentData.getMailData());
+			MailActivityData mailActivityData = new MailActivityData(newComment, null, commentData.getMailData());
 			List<TaggedUser> taggedUsers = ActivityUtil.getTaggedUsers(commentData.getBody());
 
 			if (commentType.equals("document")) {
@@ -1053,6 +1049,12 @@ public class ActivityServiceImpl implements ActivityService {
 		}
 		return null;
 
+	}
+
+	@Override
+	public Boolean sendDownloadLink(String authorId, String fileName, String type) {
+		mailutils.sendMail(authorId, fileName, type);
+		return null;
 	}
 
 }
