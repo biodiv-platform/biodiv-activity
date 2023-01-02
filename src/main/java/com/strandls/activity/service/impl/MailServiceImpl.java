@@ -269,7 +269,9 @@ public class MailServiceImpl implements MailService {
 		model.put(COMMENT_POST.SERVER_URL.getAction(), serverUrl);
 		model.put(SUGGEST_MAIL.RECO_VOTE.getAction(), name);
 
-		model.put("recoSource", reco.getSource());
+		if (reco != null) {
+			model.put("recoSource", reco.getSource());
+		}
 
 		if (comment != null) {
 			model.put(COMMENT_POST.COMMENT_BODY.getAction(), modifiedComment);
