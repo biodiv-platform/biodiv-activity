@@ -1054,7 +1054,7 @@ public class ActivityServiceImpl implements ActivityService {
 	@Override
 	public Boolean sendDownloadLink(String authorId, String fileName, String type) {
 		mailutils.sendMail(authorId, fileName, type);
-		return null;
+		return true;
 	}
 
 }

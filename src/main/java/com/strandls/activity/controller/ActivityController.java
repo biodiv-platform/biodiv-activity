@@ -367,7 +367,6 @@ public class ActivityController {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			String userId = profile.getId();
-			System.out.println("userId "+userId);
 			Boolean result = service.sendDownloadLink(userId,fileName,type);
 
 			return Response.status(Status.OK).entity(result).build();

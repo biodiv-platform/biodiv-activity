@@ -87,10 +87,10 @@ public class CCAMailUtils {
 
 			Properties properties = PropertyFileUtil.fetchProperty("config.properties");
 
-			Map<String, Object> data = new HashMap<String, Object>();
+			Map<String, Object> data = new HashMap<>();
 			data.put(FIELDS.TO.getAction(), new String[] { user.getEmail() });
 			data.put(FIELDS.SUBSCRIPTION.getAction(), user.getSendNotification());
-			Map<String, Object> model = new HashMap<String, Object>();
+			Map<String, Object> model = new HashMap<>();
 			model.put(DOWNLOAD_MAIL.SERVER_URL.getAction(), properties.getProperty("serverUrl"));
 			model.put(DOWNLOAD_MAIL.SITENAME.getAction(), properties.getProperty("siteName"));
 			model.put(DOWNLOAD_MAIL.USER_DATA.getAction(), user);
@@ -99,7 +99,7 @@ public class CCAMailUtils {
 			model.put(DOWNLOAD_MAIL.TYPE.getAction(), MAIL_TYPE.DOWNLOAD_MAIL.getAction());
 			data.put(FIELDS.DATA.getAction(), JsonUtil.unflattenJSON(model));
 
-			Map<String, Object> mData = new HashMap<String, Object>();
+			Map<String, Object> mData = new HashMap<>();
 			mData.put(INFO_FIELDS.TYPE.getAction(), MAIL_TYPE.DOWNLOAD_MAIL.getAction());
 			mData.put(INFO_FIELDS.RECIPIENTS.getAction(), Arrays.asList(data));
 			if (user.getEmail() != null && !user.getEmail().isEmpty()) {
