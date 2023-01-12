@@ -52,4 +52,6 @@ public interface ActivityService {
 
 	public Boolean checkCCARequest(CcaPermission permissionReq);
 
+	public Boolean sendDownloadLink(String authorId, String fileName, String type);
+
 }
