@@ -29,6 +29,7 @@ import com.strandls.activity.pojo.CcaPermission;
 import com.strandls.activity.pojo.CommentLoggingData;
 import com.strandls.activity.pojo.DatatableActivityLogging;
 import com.strandls.activity.pojo.DocumentActivityLogging;
+import com.strandls.activity.pojo.ODKMailData;
 import com.strandls.activity.pojo.PageAcitvityLogging;
 import com.strandls.activity.pojo.SpeciesActivityLogging;
 import com.strandls.activity.pojo.TaxonomyActivityLogging;
@@ -42,6 +43,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import net.minidev.json.JSONArray;
 
 /**
  * @author Abhishek Rudra
@@ -367,13 +369,39 @@ public class ActivityController {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			String userId = profile.getId();
-			Boolean result = service.sendDownloadLink(userId,fileName,type);
+			Boolean result = service.sendDownloadLink(userId, fileName, type);
 
 			return Response.status(Status.OK).entity(result).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 
+	}
+
+	@POST
+	@Path(ApiConstants.ODK + ApiConstants.SENDMAIL)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ApiOperation(value = "Send email to ODK users", notes = "Generates emails for ODK users with their credentials", response = Boolean.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 400, message = "Unable to send email to ODK users", response = String.class) })
+
+	public Response odkUserMail(@Context HttpServletRequest request,
+			@ApiParam(name = "odkMailData") ODKMailData odkMailData) {
+		try {
+			Boolean result = false;
+			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+			JSONArray roles = (JSONArray) profile.getAttribute("roles");
+			if (roles.contains("ROLE_ADMIN")) {
+				result = service.odkUserMail(odkMailData);
+				return Response.status(Status.OK).entity(result).build();
+			}
+
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+		return Response.status(Status.UNAUTHORIZED).build();
 	}
 
 }
