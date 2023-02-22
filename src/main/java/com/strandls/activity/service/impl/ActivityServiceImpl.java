@@ -1066,7 +1066,7 @@ public class ActivityServiceImpl implements ActivityService {
 	public Boolean odkUserMail(ODKMailData odkMail) {
 
 		try {
-			String userId = odkMail.getSuserId();
+			String userId = odkMail.getsUserId();
 			String passWord = odkMail.getPassword();
 			String role = odkMail.getRole();
 			String projectId = odkMail.getProjectId();

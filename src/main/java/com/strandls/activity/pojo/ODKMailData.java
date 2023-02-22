@@ -38,7 +38,6 @@ public class ODKMailData {
 		this.projectName = projectName;
 		this.role = role;
 		this.sUserId = sUserId;
-
 	}
 
 	public String getPassword() {
@@ -73,11 +72,11 @@ public class ODKMailData {
 		this.role = role;
 	}
 
-	public String getSuserId() {
+	public String getsUserId() {
 		return sUserId;
 	}
 
-	public void setSuserId(String sUserId) {
+	public void setsUserId(String sUserId) {
 		this.sUserId = sUserId;
 	}
 
