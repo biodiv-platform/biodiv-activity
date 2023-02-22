@@ -12,7 +12,7 @@ public class ODKMailData {
 	private String projectId;
 	private String projectName;
 	private String role;
-	private String userId;
+	private String sUserId;
 
 	/**
 	 * 
@@ -27,17 +27,17 @@ public class ODKMailData {
 	 * @param projectId
 	 * @param projectName
 	 * @param role
-	 * @param userId
+	 * @param sUserId
 	 */
 
 	public ODKMailData(String email, String username, String password, String projectId, String projectName,
-			String role, String userId) {
+			String role, String sUserId) {
 		super();
 		this.password = password;
 		this.projectId = projectId;
 		this.projectName = projectName;
 		this.role = role;
-		this.userId = userId;
+		this.sUserId = sUserId;
 
 	}
 
@@ -73,12 +73,12 @@ public class ODKMailData {
 		this.role = role;
 	}
 
-	public String getUserId() {
-		return userId;
+	public String getSuserId() {
+		return sUserId;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setSuserId(String sUserId) {
+		this.sUserId = sUserId;
 	}
 
 }
