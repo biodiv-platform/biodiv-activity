@@ -88,7 +88,7 @@ public class MailServiceImpl implements MailService {
 				Map<String, Object> dataInfo = ccaMailData.getData();
 				User owner = userService.getUser(dataInfo.get("owner").toString());
 
-				if (taggedUsers != null) {
+				if (taggedUsers != null && !taggedUsers.isEmpty()) {
 					String linkTaggedUsers = ActivityUtil.linkTaggedUsersProfile(taggedUsers,
 							activity.getActivityDescription(), true);
 					activity.setActivityDescription(linkTaggedUsers);
