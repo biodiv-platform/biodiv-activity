@@ -537,7 +537,7 @@ public class ActivityServiceImpl implements ActivityService {
 			} else if (commentType.equals("datatable")) {
 				mailService.sendMail(MAIL_TYPE.DATATABLE_COMMENT_POST, activityResult.getRootHolderType(),
 						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers, null);
-			} else {
+			} else if (commentType.equals("observation")) {
 				objectType = OBJECT_TYPE.OBSERVATION;
 				mailService.sendMail(MAIL_TYPE.COMMENT_POST, activityResult.getRootHolderType(),
 						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers,
@@ -841,6 +841,7 @@ public class ActivityServiceImpl implements ActivityService {
 		try {
 			Activity activity = null;
 			MAIL_TYPE type = null;
+			List<TaggedUser> taggedUsers = ActivityUtil.getTaggedUsers(ccaActivityLogging.getActivityDescription());
 
 			if (ccaTemplateActivityList.contains(ccaActivityLogging.getActivityType())) {
 				activity = new Activity(null, ccaActivityLogging.getActivityDescription(),
@@ -880,7 +881,7 @@ public class ActivityServiceImpl implements ActivityService {
 						MailActivityData mailActivityData = new MailActivityData(ccaActivityLogging.getActivityType(),
 								ccaActivityLogging.getActivityDescription(), ccaActivityLogging.getMailData());
 						mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId,
-								null, mailActivityData, null, OBJECT_TYPE.CCA);
+								null, mailActivityData, taggedUsers, OBJECT_TYPE.CCA);
 					}
 				} catch (Exception e) {
 					logger.error(e.getMessage());

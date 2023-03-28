@@ -88,6 +88,17 @@ public class MailServiceImpl implements MailService {
 				Map<String, Object> dataInfo = ccaMailData.getData();
 				User owner = userService.getUser(dataInfo.get("owner").toString());
 
+				if (taggedUsers != null) {
+					String linkTaggedUsers = ActivityUtil.linkTaggedUsersProfile(taggedUsers,
+							activity.getActivityDescription(), true);
+					activity.setActivityDescription(linkTaggedUsers);
+					for (TaggedUser taggeduser : taggedUsers) {
+						User user = userService.getUser(taggeduser.getId().toString());
+						mailDataList.add(prepareCCAMailData(MAIL_TYPE.TAGGED_MAIL, who, user, ccaMailData, comment, activity));
+
+					}
+				}
+
 				if (type.toString().contains("DATA")) {
 					List<String> list = (List<String>) dataInfo.get("recipient");
 					List<String> recipients = list;
@@ -215,6 +226,8 @@ public class MailServiceImpl implements MailService {
 		Map<String, Object> follower = new HashMap<>();
 		follower.put("id", who.getId());
 		follower.put("name", who.getName());
+
+		model.put("comment_body", activity.getActivityDescription());
 
 		model.put("user", user);
 		if (ccaMailData != null) {
