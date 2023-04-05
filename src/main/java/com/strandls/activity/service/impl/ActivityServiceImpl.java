@@ -268,13 +268,13 @@ public class ActivityServiceImpl implements ActivityService {
 
 					if (activity.getActivityHolderId().equals(activity.getSubRootHolderId())) {
 						comment = commentsDao.findById(activity.getActivityHolderId());
-						commentIbp = new CommentsIbp(comment.getBody());
+						commentIbp = new CommentsIbp(comment.getId(), comment.getBody());
 
 					} else {
 						reply = commentsDao.findById(activity.getSubRootHolderId());
 						comment = commentsDao.findById(activity.getActivityHolderId());
-						replyIbp = new CommentsIbp(comment.getBody());
-						commentIbp = new CommentsIbp(reply.getBody());
+						replyIbp = new CommentsIbp(comment.getId(), comment.getBody());
+						commentIbp = new CommentsIbp(reply.getId(), reply.getBody());
 					}
 
 				} else if (userGroupActivities.contains(activity.getActivityType())) {
@@ -555,6 +555,19 @@ public class ActivityServiceImpl implements ActivityService {
 		}
 
 		return activityResult;
+	}
+
+	public Activity removeComment(HttpServletRequest request, Long userId, String commentType,
+			CommentLoggingData commentData, String commentId) {
+		CommentLoggingData c = commentData;
+
+		Comments comment = commentsDao.findById(Long.parseLong(commentId));
+
+		comment.setIsDeleted(true);
+
+		Comments result = commentsDao.update(comment);
+
+		return null; // commentsDao.deletById(commentId);
 	}
 
 //	USERGROUP ACTIVITY LOGGING

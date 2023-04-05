@@ -9,6 +9,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -150,6 +151,32 @@ public class ActivityController {
 			Long userId = Long.parseLong(profile.getId());
 			if (commentData.getBody().trim().length() > 0) {
 				Activity result = service.addComment(request, userId, commentType, commentData);
+				return Response.status(Status.OK).entity(result).build();
+			}
+			return Response.status(Status.NOT_ACCEPTABLE).entity("Blank Comment Not allowed").build();
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@PUT
+	@Path(ApiConstants.DELETE + ApiConstants.COMMENT + "/{commentType}" + "/{commentId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiOperation(value = "Adds a comment", notes = "Return the current activity", response = Activity.class)
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "Unable to log a comment", response = String.class) })
+
+	public Response deleteComment(@Context HttpServletRequest request,
+			@ApiParam(name = "commentData") CommentLoggingData commentData,
+			@PathParam("commentType") String commentType, @PathParam("commentId") String commentId) {
+		try {
+			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+			Long userId = Long.parseLong(profile.getId());
+			if (commentData.getBody().trim().length() > 0) {
+				Activity result = service.removeComment(request, userId, commentType, commentData, commentId);
 				return Response.status(Status.OK).entity(result).build();
 			}
 			return Response.status(Status.NOT_ACCEPTABLE).entity("Blank Comment Not allowed").build();
@@ -367,7 +394,7 @@ public class ActivityController {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			String userId = profile.getId();
-			Boolean result = service.sendDownloadLink(userId,fileName,type);
+			Boolean result = service.sendDownloadLink(userId, fileName, type);
 
 			return Response.status(Status.OK).entity(result).build();
 		} catch (Exception e) {

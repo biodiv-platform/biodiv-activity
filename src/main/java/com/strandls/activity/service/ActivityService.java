@@ -11,6 +11,7 @@ import com.strandls.activity.pojo.ActivityResult;
 import com.strandls.activity.pojo.CCAActivityLogging;
 import com.strandls.activity.pojo.CcaPermission;
 import com.strandls.activity.pojo.CommentLoggingData;
+import com.strandls.activity.pojo.Comments;
 import com.strandls.activity.pojo.DatatableActivityLogging;
 import com.strandls.activity.pojo.DocumentActivityLogging;
 import com.strandls.activity.pojo.PageAcitvityLogging;
@@ -53,5 +54,8 @@ public interface ActivityService {
 	public Boolean checkCCARequest(CcaPermission permissionReq);
 
 	public Boolean sendDownloadLink(String authorId, String fileName, String type);
+
+	public Activity removeComment(HttpServletRequest request, Long userId, String commentType,
+			CommentLoggingData commentData, String commentId);
 
 }

@@ -41,6 +41,7 @@ public class Comments implements Serializable {
 	private Long mainParentId;
 	private Long parentId;
 	private Long languageId;
+	private Boolean isDeleted;
 
 	/**
 	 * 
@@ -189,6 +190,15 @@ public class Comments implements Serializable {
 
 	public void setLanguageId(Long languageId) {
 		this.languageId = languageId;
+	}
+
+	@Column(name = "is_deleted")
+	public Boolean getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(Boolean isDeleted) {
+		this.isDeleted = isDeleted;
 	}
 
 }

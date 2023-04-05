@@ -9,14 +9,21 @@ package com.strandls.activity.pojo;
  */
 public class CommentsIbp {
 
+	private Long id;
 	private String body;
 
-	/**
-	 * @param body
-	 */
-	public CommentsIbp(String body) {
+	public CommentsIbp(Long id, String body) {
 		super();
+		this.id = id;
 		this.body = body;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getBody() {
