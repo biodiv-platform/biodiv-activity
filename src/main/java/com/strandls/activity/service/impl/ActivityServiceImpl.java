@@ -289,8 +289,16 @@ public class ActivityServiceImpl implements ActivityService {
 						activity.getDateCreated(), activity.getLastUpdated());
 
 				UserIbp user = userService.getUserIbp(activity.getAuthorId().toString());
-				ibpActivity.add(
-						new ShowActivityIbp(activityIbp, commentIbp, replyIbp, ugActivity, recoVoteActivity, user));
+
+				if ((commentIbp != null && comment.getIsDeleted() == false) || (commentIbp == null)) {
+
+					ibpActivity.add(
+							new ShowActivityIbp(activityIbp, commentIbp, replyIbp, ugActivity, recoVoteActivity, user));
+
+				}
+
+//				ibpActivity.add(
+//						new ShowActivityIbp(activityIbp, commentIbp, replyIbp, ugActivity, recoVoteActivity, user));
 
 			}
 			activityResult = new ActivityResult(ibpActivity, commentCount);
