@@ -268,6 +268,9 @@ public class ActivityServiceImpl implements ActivityService {
 
 					if (activity.getActivityHolderId().equals(activity.getSubRootHolderId())) {
 						comment = commentsDao.findById(activity.getActivityHolderId());
+						if (comment.getIsDeleted()) {
+							commentCount--;
+						}
 						commentIbp = new CommentsIbp(comment.getId(), comment.getBody());
 
 					} else {
