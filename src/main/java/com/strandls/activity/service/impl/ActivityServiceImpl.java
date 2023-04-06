@@ -65,6 +65,8 @@ public class ActivityServiceImpl implements ActivityService {
 
 	private String newComment = "Added a comment";
 
+	private String deletedComment = "Deleted a comment";
+
 	private String templateComment = "Template comment";
 
 	@Inject
@@ -119,7 +121,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 	List<String> obvFlagActivityList = new ArrayList<String>(Arrays.asList("Flag removed", "Flagged"));
 
-	List<String> commentActivityList = new ArrayList<>(Arrays.asList(newComment));
+	List<String> commentActivityList = new ArrayList<>(Arrays.asList(newComment, deletedComment));
 
 	List<String> observationActivityList = new ArrayList<String>(Arrays.asList("Featured", "Suggestion removed",
 			"Observation tag updated", "Custom field edited", "UnFeatured", "Observation species group updated"));
@@ -573,10 +575,33 @@ public class ActivityServiceImpl implements ActivityService {
 		CommentLoggingData c = commentData;
 
 		Comments comment = commentsDao.findById(Long.parseLong(commentId));
-
 		comment.setIsDeleted(true);
-
 		Comments result = commentsDao.update(comment);
+
+		Activity activityResult = null;
+
+		if (commentType.equals("observation")) {
+			ActivityLoggingData activity = null;
+			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
+				activity = new ActivityLoggingData(null, result.getRootHolderId(), result.getId(),
+						result.getRootHolderType(), result.getId(), deletedComment, commentData.getMailData());
+			} else {
+				activity = new ActivityLoggingData(null, result.getRootHolderId(), result.getCommentHolderId(),
+						result.getRootHolderType(), result.getId(), deletedComment, commentData.getMailData());
+			}
+			activityResult = logActivities(request, userId, activity);
+
+		}
+
+		OBJECT_TYPE objectType = null;
+
+		MailActivityData mailActivityData = new MailActivityData(deletedComment, null, commentData.getMailData());
+		List<TaggedUser> taggedUsers = ActivityUtil.getTaggedUsers(commentData.getBody());
+		objectType = OBJECT_TYPE.OBSERVATION;
+		mailService.sendMail(MAIL_TYPE.DELETED_COMMENT, activityResult.getRootHolderType(),
+				activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers, objectType);
+		notificationSevice.sendNotification(mailActivityData, result.getRootHolderType(), result.getRootHolderId(),
+				siteName, mailActivityData.getActivityType());
 
 		return null; // commentsDao.deletById(commentId);
 	}
