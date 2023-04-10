@@ -66,7 +66,7 @@ public class Comments implements Serializable {
 	 */
 	public Comments(Long id, Long authorId, String body, Long commentHolderId, String commentHolderType,
 			Date dateCreated, Date lastUpdated, Long rootHolderId, String rootHolderType, Long mainParentId,
-			Long parentId, Long languageId) {
+			Long parentId, Long languageId, Boolean isDeleted) {
 		super();
 		this.id = id;
 		this.authorId = authorId;
@@ -80,6 +80,7 @@ public class Comments implements Serializable {
 		this.mainParentId = mainParentId;
 		this.parentId = parentId;
 		this.languageId = languageId;
+		this.isDeleted = isDeleted;
 	}
 
 	@Id

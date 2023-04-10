@@ -423,13 +423,13 @@ public class ActivityServiceImpl implements ActivityService {
 			comment = new Comments(null, userId, commentData.getBody(), commentData.getSubRootHolderId(),
 					commentData.getSubRootHolderType(), new Date(), new Date(), commentData.getRootHolderId(),
 					commentData.getRootHolderType(), null, null,
-					commentData.getLanguageId() != null ? commentData.getLanguageId() : defaultLanguageId);
+					commentData.getLanguageId() != null ? commentData.getLanguageId() : defaultLanguageId, false);
 
 		} else {
 			comment = new Comments(null, userId, commentData.getBody(), commentData.getSubRootHolderId(),
 					commentData.getSubRootHolderType(), new Date(), new Date(), commentData.getRootHolderId(),
 					commentData.getRootHolderType(), commentData.getSubRootHolderId(), commentData.getSubRootHolderId(),
-					commentData.getLanguageId() != null ? commentData.getLanguageId() : defaultLanguageId);
+					commentData.getLanguageId() != null ? commentData.getLanguageId() : defaultLanguageId, false);
 
 		}
 
