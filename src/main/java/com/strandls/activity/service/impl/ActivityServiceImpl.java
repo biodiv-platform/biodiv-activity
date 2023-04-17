@@ -121,7 +121,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 	List<String> obvFlagActivityList = new ArrayList<String>(Arrays.asList("Flag removed", "Flagged"));
 
-	List<String> commentActivityList = new ArrayList<>(Arrays.asList(newComment, deletedComment));
+	List<String> commentActivityList = new ArrayList<>(Arrays.asList(newComment));
 
 	List<String> observationActivityList = new ArrayList<String>(Arrays.asList("Featured", "Suggestion removed",
 			"Observation tag updated", "Custom field edited", "UnFeatured", "Observation species group updated"));
@@ -266,13 +266,11 @@ public class ActivityServiceImpl implements ActivityService {
 				CommentsIbp replyIbp = null;
 				ActivityIbp activityIbp = null;
 
-				if (commentActivityList.contains(activity.getActivityType())) {
+				if (commentActivityList.contains(activity.getActivityType())
+						&& activity.getActivityHolderId() != null) {
 
 					if (activity.getActivityHolderId().equals(activity.getSubRootHolderId())) {
 						comment = commentsDao.findById(activity.getActivityHolderId());
-						if (comment.getIsDeleted()) {
-							commentCount--;
-						}
 						commentIbp = new CommentsIbp(comment.getId(), comment.getBody());
 
 					} else {
@@ -295,15 +293,8 @@ public class ActivityServiceImpl implements ActivityService {
 
 				UserIbp user = userService.getUserIbp(activity.getAuthorId().toString());
 
-				if ((commentIbp != null && comment.getIsDeleted() == false) || (commentIbp == null)) {
-
-					ibpActivity.add(
-							new ShowActivityIbp(activityIbp, commentIbp, replyIbp, ugActivity, recoVoteActivity, user));
-
-				}
-
-//				ibpActivity.add(
-//						new ShowActivityIbp(activityIbp, commentIbp, replyIbp, ugActivity, recoVoteActivity, user));
+				ibpActivity.add(
+						new ShowActivityIbp(activityIbp, commentIbp, replyIbp, ugActivity, recoVoteActivity, user));
 
 			}
 			activityResult = new ActivityResult(ibpActivity, commentCount);
@@ -358,6 +349,11 @@ public class ActivityServiceImpl implements ActivityService {
 					loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(), loggingData.getRootObjectId(),
 					ActivityEnums.OBSERVATION.getValue(), true);
 		} else if (commentActivityList.contains(loggingData.getActivityType())) {
+			activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+					ActivityEnums.COMMENTS.getValue(), loggingData.getActivityType(), userId, new Date(), new Date(),
+					loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(),
+					loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true);
+		} else if (deletedComment.equalsIgnoreCase(loggingData.getActivityType())) {
 			activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
 					ActivityEnums.COMMENTS.getValue(), loggingData.getActivityType(), userId, new Date(), new Date(),
 					loggingData.getRootObjectId(), ActivityEnums.OBSERVATION.getValue(),
@@ -583,11 +579,12 @@ public class ActivityServiceImpl implements ActivityService {
 		if (commentType.equals("observation")) {
 			ActivityLoggingData activity = null;
 			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
-				activity = new ActivityLoggingData(null, result.getRootHolderId(), result.getId(),
+				activity = new ActivityLoggingData(deletedComment, result.getRootHolderId(), result.getId(),
 						result.getRootHolderType(), result.getId(), deletedComment, commentData.getMailData());
 			} else {
-				activity = new ActivityLoggingData(null, result.getRootHolderId(), result.getCommentHolderId(),
-						result.getRootHolderType(), result.getId(), deletedComment, commentData.getMailData());
+				activity = new ActivityLoggingData(deletedComment, result.getRootHolderId(),
+						result.getCommentHolderId(), result.getRootHolderType(), result.getId(), deletedComment,
+						commentData.getMailData());
 			}
 			activityResult = logActivities(request, userId, activity);
 

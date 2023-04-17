@@ -49,7 +49,11 @@ public class ActivityDao extends AbstractDAO<Activity, Long> {
 	@SuppressWarnings("unchecked")
 	public List<Activity> findByObjectId(String objectType, Long id, String offset, String limit) {
 
-		String qry = "from Activity a where a.rootHolderType = :objectType and a.rootHolderId = :id order by a.lastUpdated desc";
+		String qry = "from Activity a where a.rootHolderType = :objectType and a.rootHolderId = :id"
+				+ " and (a.activityHolderId not in (select id from Comments c where c.rootHolderId = :id and c.rootHolderType = :objectType"
+				+ " and c.isDeleted = true)" + " or activityDescription = \'Deleted a comment\')"
+				+ " order by a.lastUpdated desc";
+
 		Session session = sessionFactory.openSession();
 		List<Activity> result = null;
 		try {
@@ -69,7 +73,8 @@ public class ActivityDao extends AbstractDAO<Activity, Long> {
 
 	@SuppressWarnings("unchecked")
 	public Integer findCommentCount(String objectType, Long objectId) {
-		String qry = "from Activity where rootHolderType = :objectType and rootHolderId = :id and activityType = \'Added a comment\' ";
+		String qry = "from Activity  where rootHolderType = :objectType and rootHolderId = :id and activityType = \'Added a comment\'"
+				+ " and activityHolderId in (select id from Comments where rootHolderType = :objectType and rootHolderId = :id and  isDeleted = false)";
 		Session session = sessionFactory.openSession();
 		Integer commentCount = 0;
 		try {
