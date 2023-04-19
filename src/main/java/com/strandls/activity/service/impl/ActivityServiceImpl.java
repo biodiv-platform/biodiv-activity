@@ -588,17 +588,42 @@ public class ActivityServiceImpl implements ActivityService {
 			}
 			activityResult = logActivities(request, userId, activity);
 
+			OBJECT_TYPE objectType = null;
+
+			MailActivityData mailActivityData = new MailActivityData(deletedComment, null, commentData.getMailData());
+			List<TaggedUser> taggedUsers = ActivityUtil.getTaggedUsers(commentData.getBody());
+			objectType = OBJECT_TYPE.OBSERVATION;
+			mailService.sendMail(MAIL_TYPE.DELETED_COMMENT, activityResult.getRootHolderType(),
+					activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers, objectType);
+			notificationSevice.sendNotification(mailActivityData, result.getRootHolderType(), result.getRootHolderId(),
+					siteName, mailActivityData.getActivityType());
+
+		} else if (commentType.equals("document")) {
+
+			DocumentActivityLogging loggingData = null;
+			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
+				loggingData = new DocumentActivityLogging(deletedComment, result.getRootHolderId(), result.getId(),
+						result.getRootHolderType(), result.getId(), deletedComment, commentData.getMailData());
+
+			} else {
+				loggingData = new DocumentActivityLogging(deletedComment, result.getRootHolderId(),
+						result.getCommentHolderId(), result.getRootHolderType(), result.getId(), deletedComment,
+						commentData.getMailData());
+			}
+
+			activityResult = logDocActivities(request, userId, loggingData);
+
+			OBJECT_TYPE objectType = null;
+
+			MailActivityData mailActivityData = new MailActivityData(deletedComment, null, commentData.getMailData());
+			List<TaggedUser> taggedUsers = ActivityUtil.getTaggedUsers(commentData.getBody());
+			objectType = OBJECT_TYPE.DOCUMENT;
+			mailService.sendMail(MAIL_TYPE.DELETED_COMMENT, activityResult.getRootHolderType(),
+					activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers, objectType);
+			notificationSevice.sendNotification(mailActivityData, result.getRootHolderType(), result.getRootHolderId(),
+					siteName, mailActivityData.getActivityType());
+
 		}
-
-		OBJECT_TYPE objectType = null;
-
-		MailActivityData mailActivityData = new MailActivityData(deletedComment, null, commentData.getMailData());
-		List<TaggedUser> taggedUsers = ActivityUtil.getTaggedUsers(commentData.getBody());
-		objectType = OBJECT_TYPE.OBSERVATION;
-		mailService.sendMail(MAIL_TYPE.DELETED_COMMENT, activityResult.getRootHolderType(),
-				activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers, objectType);
-		notificationSevice.sendNotification(mailActivityData, result.getRootHolderType(), result.getRootHolderId(),
-				siteName, mailActivityData.getActivityType());
 
 		return null; // commentsDao.deletById(commentId);
 	}
@@ -686,6 +711,11 @@ public class ActivityServiceImpl implements ActivityService {
 						new Date(), loggingData.getRootObjectId(), ActivityEnums.DOCUMENT.getValue(),
 						loggingData.getSubRootObjectId(), ActivityEnums.DOCUMENT.getValue(), true);
 
+			} else if (deletedComment.equalsIgnoreCase(loggingData.getActivityType())) {
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.COMMENTS.getValue(), loggingData.getActivityType(), userId, new Date(),
+						new Date(), loggingData.getRootObjectId(), ActivityEnums.DOCUMENT.getValue(),
+						loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true);
 			}
 
 			if (activity != null)
