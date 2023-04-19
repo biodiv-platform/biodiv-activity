@@ -51,7 +51,7 @@ public class ActivityDao extends AbstractDAO<Activity, Long> {
 
 		String qry = "from Activity a where a.rootHolderType = :objectType and a.rootHolderId = :id"
 				+ " and (a.activityHolderId not in (select id from Comments c where c.rootHolderId = :id and c.rootHolderType = :objectType"
-				+ " and c.isDeleted = true)" + " or activityDescription = \'Deleted a comment\')"
+				+ " and c.isDeleted = true)" + " or activityDescription = \'Deleted a comment\' or activityHolderId is null )"
 				+ " order by a.lastUpdated desc";
 
 		Session session = sessionFactory.openSession();
