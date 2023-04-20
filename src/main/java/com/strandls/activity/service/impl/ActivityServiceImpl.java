@@ -618,7 +618,7 @@ public class ActivityServiceImpl implements ActivityService {
 			MailActivityData mailActivityData = new MailActivityData(deletedComment, null, commentData.getMailData());
 			List<TaggedUser> taggedUsers = ActivityUtil.getTaggedUsers(commentData.getBody());
 			objectType = OBJECT_TYPE.DOCUMENT;
-			mailService.sendMail(MAIL_TYPE.DELETED_COMMENT, activityResult.getRootHolderType(),
+			mailService.sendMail(MAIL_TYPE.DOCUMENT_COMMENT_DELETE, activityResult.getRootHolderType(),
 					activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers, objectType);
 			notificationSevice.sendNotification(mailActivityData, result.getRootHolderType(), result.getRootHolderId(),
 					siteName, mailActivityData.getActivityType());
