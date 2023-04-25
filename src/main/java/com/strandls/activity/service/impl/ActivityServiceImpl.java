@@ -623,6 +623,30 @@ public class ActivityServiceImpl implements ActivityService {
 			notificationSevice.sendNotification(mailActivityData, result.getRootHolderType(), result.getRootHolderId(),
 					siteName, mailActivityData.getActivityType());
 
+		} else if (commentType.equals("species")) {
+
+			SpeciesActivityLogging loggingData = null;
+			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
+				loggingData = new SpeciesActivityLogging(deletedComment, result.getRootHolderId(), result.getId(),
+						result.getRootHolderType(), result.getId(), deletedComment, commentData.getMailData());
+			} else {
+				loggingData = new SpeciesActivityLogging(deletedComment, result.getRootHolderId(),
+						result.getCommentHolderId(), result.getRootHolderType(), result.getId(), deletedComment,
+						commentData.getMailData());
+			}
+			activityResult = logSpeciesActivities(request, userId, loggingData);
+
+			OBJECT_TYPE objectType = null;
+
+			MailActivityData mailActivityData = new MailActivityData(deletedComment, null, commentData.getMailData());
+			List<TaggedUser> taggedUsers = ActivityUtil.getTaggedUsers(commentData.getBody());
+			objectType = OBJECT_TYPE.SPECIES;
+
+			mailService.sendMail(MAIL_TYPE.SPECIES_COMMENT_DELETE, activityResult.getRootHolderType(),
+					activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers, objectType);
+			notificationSevice.sendNotification(mailActivityData, result.getRootHolderType(), result.getRootHolderId(),
+					siteName, mailActivityData.getActivityType());
+
 		}
 
 		return null; // commentsDao.deletById(commentId);
