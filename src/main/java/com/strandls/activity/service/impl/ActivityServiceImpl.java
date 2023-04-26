@@ -836,6 +836,11 @@ public class ActivityServiceImpl implements ActivityService {
 						ActivityEnums.SPECIES.getValue(), loggingData.getActivityType(), userId, new Date(), new Date(),
 						loggingData.getRootObjectId(), ActivityEnums.SPECIES.getValue(),
 						loggingData.getSubRootObjectId(), ActivityEnums.SPECIES.getValue(), true);
+			} else if (deletedComment.equalsIgnoreCase(loggingData.getActivityType())) {
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.COMMENTS.getValue(), loggingData.getActivityType(), userId, new Date(),
+						new Date(), loggingData.getRootObjectId(), ActivityEnums.DOCUMENT.getValue(),
+						loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true);
 			}
 
 			if (activity != null)
