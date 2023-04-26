@@ -839,7 +839,7 @@ public class ActivityServiceImpl implements ActivityService {
 			} else if (deletedComment.equalsIgnoreCase(loggingData.getActivityType())) {
 				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
 						ActivityEnums.COMMENTS.getValue(), loggingData.getActivityType(), userId, new Date(),
-						new Date(), loggingData.getRootObjectId(), ActivityEnums.DOCUMENT.getValue(),
+						new Date(), loggingData.getRootObjectId(), ActivityEnums.SPECIES.getValue(),
 						loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true);
 			}
 
