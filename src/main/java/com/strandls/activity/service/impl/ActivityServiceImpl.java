@@ -647,6 +647,32 @@ public class ActivityServiceImpl implements ActivityService {
 			notificationSevice.sendNotification(mailActivityData, result.getRootHolderType(), result.getRootHolderId(),
 					siteName, mailActivityData.getActivityType());
 
+		} else if (commentType.equals("page")) {
+
+			PageAcitvityLogging loggingData = null;
+
+			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
+				loggingData = new PageAcitvityLogging(deletedComment, result.getRootHolderId(), result.getId(),
+						result.getRootHolderType(), result.getId(), deletedComment, commentData.getMailData());
+
+			} else {
+				loggingData = new PageAcitvityLogging(deletedComment, result.getRootHolderId(),
+						result.getCommentHolderId(), result.getRootHolderType(), result.getId(), deletedComment,
+						commentData.getMailData());
+			}
+
+			activityResult = logPageActivities(request, userId, loggingData);
+			OBJECT_TYPE objectType = null;
+
+			MailActivityData mailActivityData = new MailActivityData(deletedComment, null, commentData.getMailData());
+			List<TaggedUser> taggedUsers = ActivityUtil.getTaggedUsers(commentData.getBody());
+			
+			mailService.sendMail(MAIL_TYPE.PAGE_COMMENT_DELETE, activityResult.getRootHolderType(),
+					activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers, objectType);
+			notificationSevice.sendNotification(mailActivityData, result.getRootHolderType(), result.getRootHolderId(),
+					siteName, mailActivityData.getActivityType());
+
+
 		}
 
 		return null; // commentsDao.deletById(commentId);
@@ -1067,6 +1093,11 @@ public class ActivityServiceImpl implements ActivityService {
 						true);
 			} else if (pageCommentActivityList.contains(loggingData.getActivityType())) {
 
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
+						ActivityEnums.COMMENTS.getValue(), loggingData.getActivityType(), userId, new Date(),
+						new Date(), loggingData.getRootObjectId(), ActivityEnums.PAGE.getValue(),
+						loggingData.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true);
+			} else if (deletedComment.equalsIgnoreCase(loggingData.getActivityType())) {
 				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
 						ActivityEnums.COMMENTS.getValue(), loggingData.getActivityType(), userId, new Date(),
 						new Date(), loggingData.getRootObjectId(), ActivityEnums.PAGE.getValue(),
