@@ -14,6 +14,7 @@ import com.strandls.activity.pojo.CommentLoggingData;
 import com.strandls.activity.pojo.Comments;
 import com.strandls.activity.pojo.DatatableActivityLogging;
 import com.strandls.activity.pojo.DocumentActivityLogging;
+import com.strandls.activity.pojo.ODKMailData;
 import com.strandls.activity.pojo.PageAcitvityLogging;
 import com.strandls.activity.pojo.SpeciesActivityLogging;
 import com.strandls.activity.pojo.TaxonomyActivityLogging;
@@ -57,5 +58,6 @@ public interface ActivityService {
 
 	public Activity removeComment(HttpServletRequest request, Long userId, String commentType,
 			CommentLoggingData commentData, String commentId);
+	public Boolean odkUserMail(ODKMailData odkMail);
 
 }
