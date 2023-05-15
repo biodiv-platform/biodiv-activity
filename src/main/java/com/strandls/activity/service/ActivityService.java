@@ -13,6 +13,7 @@ import com.strandls.activity.pojo.CcaPermission;
 import com.strandls.activity.pojo.CommentLoggingData;
 import com.strandls.activity.pojo.DatatableActivityLogging;
 import com.strandls.activity.pojo.DocumentActivityLogging;
+import com.strandls.activity.pojo.ODKMailData;
 import com.strandls.activity.pojo.PageAcitvityLogging;
 import com.strandls.activity.pojo.SpeciesActivityLogging;
 import com.strandls.activity.pojo.TaxonomyActivityLogging;
@@ -53,5 +54,7 @@ public interface ActivityService {
 	public Boolean checkCCARequest(CcaPermission permissionReq);
 
 	public Boolean sendDownloadLink(String authorId, String fileName, String type);
+
+	public Boolean odkUserMail(ODKMailData odkMail);
 
 }

@@ -35,6 +35,7 @@ import com.strandls.activity.pojo.CommentsIbp;
 import com.strandls.activity.pojo.DatatableActivityLogging;
 import com.strandls.activity.pojo.DocumentActivityLogging;
 import com.strandls.activity.pojo.MailActivityData;
+import com.strandls.activity.pojo.ODKMailData;
 import com.strandls.activity.pojo.PageAcitvityLogging;
 import com.strandls.activity.pojo.RecoVoteActivity;
 import com.strandls.activity.pojo.ShowActivityIbp;
@@ -49,6 +50,7 @@ import com.strandls.activity.service.NotificationService;
 import com.strandls.activity.util.ActivityUtil;
 import com.strandls.activity.util.CCAMailUtils;
 import com.strandls.activity.util.CCARoles;
+import com.strandls.activity.util.ODKMailUtils;
 import com.strandls.mail_utility.model.EnumModel.MAIL_TYPE;
 import com.strandls.mail_utility.model.EnumModel.OBJECT_TYPE;
 import com.strandls.user.controller.UserServiceApi;
@@ -89,7 +91,10 @@ public class ActivityServiceImpl implements ActivityService {
 	private Headers headers;
 
 	@Inject
-	private CCAMailUtils mailutils;
+	private CCAMailUtils ccaMailutils;
+
+	@Inject
+	private ODKMailUtils odkMailutils;
 
 	@Inject
 	private CcaPermissionRequestDao ccaPermissionDao;
@@ -1042,7 +1047,7 @@ public class ActivityServiceImpl implements ActivityService {
 			Map<String, Object> summaryData = permissionReq.getData();
 			String requestorMessage = permissionReq.getRequestorMessage();
 
-			mailutils.sendPermissionRequest(requestee, ccaName, ccaId, role, requestor, encryptedKey, summaryData,
+			ccaMailutils.sendPermissionRequest(requestee, ccaName, ccaId, role, requestor, encryptedKey, summaryData,
 					requestorMessage);
 
 		} catch (Exception e) {
@@ -1054,8 +1059,26 @@ public class ActivityServiceImpl implements ActivityService {
 
 	@Override
 	public Boolean sendDownloadLink(String authorId, String fileName, String type) {
-		mailutils.sendMail(authorId, fileName, type);
+		ccaMailutils.sendMail(authorId, fileName, type);
 		return true;
+	}
+
+	@Override
+	public Boolean odkUserMail(ODKMailData odkMail) {
+
+		try {
+			String userId = odkMail.getsUserId();
+			String passWord = odkMail.getPassword();
+			String role = odkMail.getRole();
+			String projectId = odkMail.getProjectId();
+			String projectName = odkMail.getProjectName();
+
+			odkMailutils.sendOdkUserMail(userId, passWord, role, projectId, projectName);
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return null;
 	}
 
 }
