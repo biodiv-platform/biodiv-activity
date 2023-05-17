@@ -193,7 +193,7 @@ public class Comments implements Serializable {
 		this.languageId = languageId;
 	}
 
-	@Column(name = "is_deleted")
+	@Column(name = "is_deleted", columnDefinition = "boolean default false")
 	public Boolean getIsDeleted() {
 		return isDeleted;
 	}
