@@ -573,7 +573,6 @@ public class ActivityServiceImpl implements ActivityService {
 
 	public Activity removeComment(HttpServletRequest request, Long userId, String commentType,
 			CommentLoggingData commentData, String commentId) {
-		CommentLoggingData c = commentData;
 
 		Comments comment = commentsDao.findById(Long.parseLong(commentId));
 		comment.setIsDeleted(true);
@@ -703,7 +702,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 		}
 
-		return activityResult; // commentsDao.deletById(commentId);
+		return activityResult;
 	}
 
 //	USERGROUP ACTIVITY LOGGING
