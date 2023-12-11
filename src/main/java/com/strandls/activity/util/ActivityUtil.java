@@ -156,7 +156,6 @@ public class ActivityUtil {
 			data.put("text", "Added species field");
 			break;
 
-	
 		case "Updated species field":
 			data.put("type", MAIL_TYPE.SPECIES_FIELD_UPDATED);
 			data.put("text", "Updated species field");
@@ -167,8 +166,7 @@ public class ActivityUtil {
 			data.put("text", "Deleted species field");
 			break;
 
-
-	case "Updated species gallery":
+		case "Updated species gallery":
 			data.put("type", MAIL_TYPE.SPECIES_RESOURCE);
 			data.put("text", "Updated species gallery");
 			break;
@@ -207,7 +205,6 @@ public class ActivityUtil {
 			data.put("type", MAIL_TYPE.DOCUMENT_POST_TO_GROUP);
 			data.put("text", "Removed resource");
 			break;
-
 
 		case "Datatable created":
 			data.put("type", MAIL_TYPE.DATATABLE_CREATED);
@@ -302,7 +299,6 @@ public class ActivityUtil {
 			data.put("type", MAIL_TYPE.RATED_MEDIA_RESOURCE);
 			data.put("text", "Rated media resource");
 			break;
-			
 		case "Page created":
 			data.put("type", MAIL_TYPE.PAGE_CREATE);
 			data.put("text", "Page created");
@@ -322,7 +318,7 @@ public class ActivityUtil {
 		}
 		return data;
 	}
-	
+
 	public static Map<String, Object> getCCAMailType(String activity, CCAActivityLogging loggingData) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		switch (activity) {
@@ -379,6 +375,14 @@ public class ActivityUtil {
 		case "Follower removed":
 			data.put("type", MAIL_TYPE.CCA_DATA_UNFOLLOW);
 			data.put("text", "CCA Data follower added");
+			break;
+		case "Posted resource":
+			data.put("type", MAIL_TYPE.CCA_DATA_POST_TO_GROUP);
+			data.put("text", "CCA Data Posted resource");
+			break;
+		case "Removed resoruce":
+			data.put("type", MAIL_TYPE.CCA_DATA_POST_TO_GROUP);
+			data.put("text", "CCA Data Removed resource");
 			break;
 		default:
 			data.put("type", null);

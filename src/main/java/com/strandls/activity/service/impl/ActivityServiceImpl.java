@@ -224,6 +224,9 @@ public class ActivityServiceImpl implements ActivityService {
 			"Permission added", "Permission removed", "Follower added", "Follower removed"));
 	List<String> ccaCommentActivityList = new ArrayList<>(Arrays.asList(newComment, "Data comment", templateComment));
 
+	List<String> ccaDataUserGroupActivityList = new ArrayList<String>(
+			Arrays.asList("Posted resource", "Removed resoruce", "Featured", "UnFeatured"));
+
 	@Override
 	public Integer activityCount(String objectType, Long objectId) {
 		if (objectType.equalsIgnoreCase("observation"))
@@ -1026,6 +1029,12 @@ public class ActivityServiceImpl implements ActivityService {
 						ccaActivityLogging.getActivityType(), userId, new Date(), new Date(),
 						ccaActivityLogging.getRootObjectId(), ccaActivityLogging.getRootObjectType(),
 						ccaActivityLogging.getSubRootObjectId(), ActivityEnums.COMMENTS.getValue(), true);
+			} else if (ccaDataUserGroupActivityList.contains(ccaActivityLogging.getActivityType())) {
+				activity = new Activity(null, ccaActivityLogging.getActivityDescription(),
+						ccaActivityLogging.getActivityId(), ActivityEnums.USERGROUP.getValue(),
+						ccaActivityLogging.getActivityType(), userId, new Date(), new Date(),
+						ccaActivityLogging.getRootObjectId(), ActivityEnums.CCADATA.getValue(),
+						ccaActivityLogging.getRootObjectId(), ActivityEnums.CCADATA.getValue(), true);
 			}
 			if (activity != null) {
 				activity = activityDao.save(activity);
