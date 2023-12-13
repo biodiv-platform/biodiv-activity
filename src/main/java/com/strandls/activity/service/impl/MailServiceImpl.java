@@ -65,6 +65,9 @@ public class MailServiceImpl implements MailService {
 	List<String> userGroupActivityList = new ArrayList<String>(
 			Arrays.asList("Posted resource", "Removed resoruce", "Featured", "UnFeatured"));
 
+	List<String> dataTableUserGroupActivityList = new ArrayList<String>(
+			Arrays.asList("Posted resource", "Removed resoruce", "Featured", "UnFeatured"));
+
 	public MailServiceImpl() {
 		Properties props = PropertyFileUtil.fetchProperty("config.properties");
 		siteName = props.getProperty("siteName");
@@ -94,7 +97,8 @@ public class MailServiceImpl implements MailService {
 					activity.setActivityDescription(linkTaggedUsers);
 					for (TaggedUser taggeduser : taggedUsers) {
 						User user = userService.getUser(taggeduser.getId().toString());
-						mailDataList.add(prepareCCAMailData(MAIL_TYPE.TAGGED_MAIL, who, user, ccaMailData, comment, activity));
+						mailDataList.add(
+								prepareCCAMailData(MAIL_TYPE.TAGGED_MAIL, who, user, ccaMailData, comment, activity));
 
 					}
 				}
@@ -156,6 +160,18 @@ public class MailServiceImpl implements MailService {
 				}
 				if (userGroupActivityList.contains(activity.getActivityType())) {
 					userGroup = mapper.readValue(activity.getActivityDescription(), UserGroupActivity.class);
+
+				}
+				if (dataTableUserGroupActivityList.contains(activity.getActivityType())) {
+					User contributor = userService
+							.getUser(String.valueOf(activity.getMailData().getDataTableMailData().getAuthorId()));
+					Recipients recipient = new Recipients();
+					recipient.setEmail(contributor.getEmail());
+					recipient.setIsSubscribed(contributor.getSendNotification());
+					recipient.setId(contributor.getId());
+					recipient.setName(contributor.getName());
+					recipient.setTokens(null);
+					recipientsList.add(recipient);
 				}
 
 				Map<String, Object> data = null;
