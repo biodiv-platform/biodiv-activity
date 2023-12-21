@@ -163,15 +163,28 @@ public class MailServiceImpl implements MailService {
 
 				}
 				if (dataTableUserGroupActivityList.contains(activity.getActivityType())) {
-					User contributor = userService
-							.getUser(String.valueOf(activity.getMailData().getDataTableMailData().getAuthorId()));
-					Recipients recipient = new Recipients();
-					recipient.setEmail(contributor.getEmail());
-					recipient.setIsSubscribed(contributor.getSendNotification());
-					recipient.setId(contributor.getId());
-					recipient.setName(contributor.getName());
-					recipient.setTokens(null);
-					recipientsList.add(recipient);
+					if (userId != activity.getMailData().getDataTableMailData().getAuthorId()) {
+						Recipients recipient = new Recipients();
+						recipient.setEmail(who.getEmail());
+						recipient.setIsSubscribed(who.getSendNotification());
+						recipient.setId(who.getId());
+						recipient.setName(who.getName());
+						recipient.setTokens(null);
+						recipientsList.add(recipient);
+					}
+				}
+
+				if (activity.getActivityType().equalsIgnoreCase("Datatable created")) {
+					if (userId != activity.getMailData().getDataTableMailData().getAuthorId()) {
+						Recipients recipient = new Recipients();
+						recipient.setEmail(who.getEmail());
+						recipient.setIsSubscribed(who.getSendNotification());
+						recipient.setId(who.getId());
+						recipient.setName(who.getName());
+						recipient.setTokens(null);
+						recipientsList.add(recipient);
+					}
+
 				}
 
 				Map<String, Object> data = null;
