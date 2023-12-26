@@ -1038,8 +1038,8 @@ public class ActivityServiceImpl implements ActivityService {
 					if (ccaActivityLogging.getMailData() != null && type != null && type != MAIL_TYPE.COMMENT_POST) {
 						MailActivityData mailActivityData = new MailActivityData(ccaActivityLogging.getActivityType(),
 								ccaActivityLogging.getActivityDescription(), ccaActivityLogging.getMailData());
-						mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId,
-								null, mailActivityData, taggedUsers, OBJECT_TYPE.CCA);
+//						mailService.sendMail(type, activity.getRootHolderType(), activity.getRootHolderId(), userId,
+//								null, mailActivityData, taggedUsers, OBJECT_TYPE.CCA);
 					}
 				} catch (Exception e) {
 					logger.error(e.getMessage());
