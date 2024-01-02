@@ -224,8 +224,8 @@ public class ActivityServiceImpl implements ActivityService {
 			"Permission added", "Permission removed", "Follower added", "Follower removed"));
 	List<String> ccaCommentActivityList = new ArrayList<>(Arrays.asList(newComment, "Data comment", templateComment));
 
-	List<String> ccaDataUserGroupActivityList = new ArrayList<String>(
-			Arrays.asList("Posted resource", "Removed resoruce", "Featured", "UnFeatured"));
+	List<String> ccaDataUserGroupActivityList = new ArrayList<>(
+			Arrays.asList("Posted resource", "Removed resource", "Featured", "UnFeatured"));
 
 	@Override
 	public Integer activityCount(String objectType, Long objectId) {
