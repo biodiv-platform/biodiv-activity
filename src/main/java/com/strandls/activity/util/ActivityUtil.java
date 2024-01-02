@@ -380,7 +380,7 @@ public class ActivityUtil {
 			data.put("type", MAIL_TYPE.CCA_DATA_POST_TO_GROUP);
 			data.put("text", "CCA Data Posted resource");
 			break;
-		case "Removed resoruce":
+		case "Removed resource":
 			data.put("type", MAIL_TYPE.CCA_DATA_POST_TO_GROUP);
 			data.put("text", "CCA Data Removed resource");
 			break;
