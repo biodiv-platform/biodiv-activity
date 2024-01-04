@@ -13,6 +13,8 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.strandls.activity.RabbitMqConnection;
 import com.strandls.activity.pojo.CCAMailData;
@@ -94,8 +96,8 @@ public class MailServiceImpl implements MailService {
 					activity.setActivityDescription(linkTaggedUsers);
 					for (TaggedUser taggeduser : taggedUsers) {
 						User user = userService.getUser(taggeduser.getId().toString());
-						mailDataList.add(prepareCCAMailData(MAIL_TYPE.TAGGED_MAIL, who, user, ccaMailData, comment, activity));
-
+						mailDataList.add(
+								prepareCCAMailData(MAIL_TYPE.TAGGED_MAIL, who, user, ccaMailData, comment, activity));
 					}
 				}
 
@@ -260,6 +262,26 @@ public class MailServiceImpl implements MailService {
 
 		model.put("follower", follower);
 
+		// CCA usergroup posting/unposting
+		List<UserGroupMailData> groups = activity.getMailData().getUserGroupData();
+		UserGroupActivity userGroup = null;
+		if (userGroupActivityList.contains(activity.getActivityType())) {
+			try {
+				userGroup = mapper.readValue(activity.getActivityDescription(), UserGroupActivity.class);
+			} catch (JsonMappingException e) {
+				logger.error(e.getMessage());
+			} catch (JsonProcessingException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			}
+		}
+		if (userGroup != null) {
+			model.put(POST_TO_GROUP.WHERE_WEB_ADDRESS.getAction(), userGroup.getWebAddress());
+			model.put(POST_TO_GROUP.WHERE_USER_GROUPNAME.getAction(), userGroup.getUserGroupName());
+		}
+		model.put(POST_TO_GROUP.SUBMIT_TYPE.getAction(),
+				activity.getActivityType().toLowerCase().contains("post") ? "post" : "");
+		model.put(COMMENT_POST.WHAT_POSTED_USERGROUPS.getAction(), groups);
 		data.put(FIELDS.DATA.getAction(), JsonUtil.unflattenJSON(model));
 		return data;
 	}
