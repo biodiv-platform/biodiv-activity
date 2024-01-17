@@ -1087,6 +1087,10 @@ public class ActivityServiceImpl implements ActivityService {
 				activity = activityDao.save(activity);
 
 			if (activity != null && loggingData.getMailData() != null) {
+
+				userService = headers.addUserHeader(userService, request.getHeader(HttpHeaders.AUTHORIZATION));
+				userService.updateFollow("content.eml.Datatable", loggingData.getRootObjectId().toString());
+
 				String mailType = dataTableUserGroupActivityList.contains(loggingData.getActivityType())
 						? activity.getActivityType() + " Datatable"
 						: activity.getActivityType();
