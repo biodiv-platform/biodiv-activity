@@ -163,30 +163,6 @@ public class MailServiceImpl implements MailService {
 					userGroup = mapper.readValue(activity.getActivityDescription(), UserGroupActivity.class);
 
 				}
-//				if (dataTableUserGroupActivityList.contains(activity.getActivityType())
-//						&& userId.equals(activity.getMailData().getDataTableMailData().getAuthorId())) {
-//
-//					Recipients recipient = new Recipients();
-//					recipient.setEmail(who.getEmail());
-//					recipient.setIsSubscribed(who.getSendNotification());
-//					recipient.setId(who.getId());
-//					recipient.setName(who.getName());
-//					recipient.setTokens(null);
-//					recipientsList.add(recipient);
-//				}
-//
-//				if (activity.getActivityType().equalsIgnoreCase("Datatable created")
-//						&& userId.equals(activity.getMailData().getDataTableMailData().getAuthorId())) {
-//
-//					Recipients recipient = new Recipients();
-//					recipient.setEmail(who.getEmail());
-//					recipient.setIsSubscribed(who.getSendNotification());
-//					recipient.setId(who.getId());
-//					recipient.setName(who.getName());
-//					recipient.setTokens(null);
-//					recipientsList.add(recipient);
-//
-//				}
 
 				Map<String, Object> data = null;
 				String linkTaggedUsers = "";
