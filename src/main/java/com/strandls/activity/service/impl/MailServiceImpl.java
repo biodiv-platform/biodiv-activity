@@ -67,6 +67,9 @@ public class MailServiceImpl implements MailService {
 	List<String> userGroupActivityList = new ArrayList<String>(
 			Arrays.asList("Posted resource", "Removed resoruce", "Featured", "UnFeatured"));
 
+	List<String> dataTableUserGroupActivityList = new ArrayList<>(
+			Arrays.asList("Posted resource", "Removed resoruce", "Featured", "UnFeatured"));
+
 	public MailServiceImpl() {
 		Properties props = PropertyFileUtil.fetchProperty("config.properties");
 		siteName = props.getProperty("siteName");
@@ -158,6 +161,7 @@ public class MailServiceImpl implements MailService {
 				}
 				if (userGroupActivityList.contains(activity.getActivityType())) {
 					userGroup = mapper.readValue(activity.getActivityDescription(), UserGroupActivity.class);
+
 				}
 
 				Map<String, Object> data = null;

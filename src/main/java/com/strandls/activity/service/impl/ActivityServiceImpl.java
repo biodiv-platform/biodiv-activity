@@ -1072,9 +1072,9 @@ public class ActivityServiceImpl implements ActivityService {
 
 			if (dataTableNullActivityList.contains(loggingData.getActivityType())) {
 				activity = new Activity(null, loggingData.getActivityDescription(), null, null,
-						loggingData.getActivityType(), userId, new Date(), new Date(), loggingData.getRootObjectId(),
-						ActivityEnums.DATATABLE.getValue(), loggingData.getSubRootObjectId(),
-						ActivityEnums.DATATABLE.getValue(), true);
+						loggingData.getActivityType(), loggingData.getMailData().getDataTableMailData().getAuthorId(),
+						new Date(), new Date(), loggingData.getRootObjectId(), ActivityEnums.DATATABLE.getValue(),
+						loggingData.getSubRootObjectId(), ActivityEnums.DATATABLE.getValue(), true);
 			} else if (dataTableUserGroupActivityList.contains(loggingData.getActivityType())) {
 				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityId(),
 						ActivityEnums.USERGROUP.getValue(), loggingData.getActivityType(), userId, new Date(),
@@ -1096,6 +1096,10 @@ public class ActivityServiceImpl implements ActivityService {
 				activity = activityDao.save(activity);
 
 			if (activity != null && loggingData.getMailData() != null) {
+
+				userService = headers.addUserHeader(userService, request.getHeader(HttpHeaders.AUTHORIZATION));
+				userService.updateFollow("content.eml.Datatable", loggingData.getRootObjectId().toString());
+
 				String mailType = dataTableUserGroupActivityList.contains(loggingData.getActivityType())
 						? activity.getActivityType() + " Datatable"
 						: activity.getActivityType();
