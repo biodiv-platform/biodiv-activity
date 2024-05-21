@@ -3,8 +3,14 @@
  */
 package com.strandls.activity.service;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONException;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.strandls.activity.pojo.Activity;
 import com.strandls.activity.pojo.ActivityLoggingData;
 import com.strandls.activity.pojo.ActivityResult;
@@ -60,4 +66,5 @@ public interface ActivityService {
 
 	public Boolean odkUserMail(ODKMailData odkMail);
 
+	public Activity logCropcertActivities(String jsonString);
 }

@@ -431,4 +431,19 @@ public class ActivityController {
 		return Response.status(Status.UNAUTHORIZED).build();
 	}
 
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@ValidateUser
+	@ApiOperation(value = "Save the activity", response = Activity.class)
+	public Response save(@Context HttpServletRequest request, String jsonString) {
+		Activity activity;
+		try {
+			activity = service.logCropcertActivities(jsonString);
+			return Response.status(Status.CREATED).entity(activity).build();
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
 }

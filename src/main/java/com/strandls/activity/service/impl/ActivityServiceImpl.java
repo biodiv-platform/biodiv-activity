@@ -3,11 +3,14 @@
  */
 package com.strandls.activity.service.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -101,6 +104,9 @@ public class ActivityServiceImpl implements ActivityService {
 	@Inject
 	private CcaPermissionRequestDao ccaPermissionDao;
 
+	@Inject
+	private ObjectMapper objectMappper;
+
 	private Long defaultLanguageId = Long
 			.parseLong(PropertyFileUtil.fetchProperty("config.properties", "defaultLanguageId"));
 
@@ -112,7 +118,7 @@ public class ActivityServiceImpl implements ActivityService {
 	List<String> recoActivities = new ArrayList<String>(Arrays.asList("obv unlocked", "Suggested species name",
 			"obv locked", "Agreed on species name", "Suggestion removed"));
 
-//	OBSERVATION ACTIVITY LIST
+	// OBSERVATION ACTIVITY LIST
 	List<String> obvNullActivityList = new ArrayList<String>(
 			Arrays.asList("Observation created", "Observation updated", "Rated media resource", "Observation Deleted"));
 
@@ -131,7 +137,7 @@ public class ActivityServiceImpl implements ActivityService {
 	List<String> observationActivityList = new ArrayList<String>(Arrays.asList("Featured", "Suggestion removed",
 			"Observation tag updated", "Custom field edited", "UnFeatured", "Observation species group updated"));
 
-//	USERGROUP ACTIVITY LIST
+	// USERGROUP ACTIVITY LIST
 
 	List<String> ugNullActivityList = new ArrayList<String>(Arrays.asList("Group updated", "Group created"));
 
@@ -146,7 +152,7 @@ public class ActivityServiceImpl implements ActivityService {
 	List<String> ugFilterRuleActivityList = new ArrayList<String>(
 			Arrays.asList("Added Filter Rule", "Removed Filter Rule", "Disabled Filter Rule", "Enabled Filter Rule"));
 
-//	DOCUMENT ACTIVITY LIST 
+	// DOCUMENT ACTIVITY LIST
 
 	List<String> docNullActivityList = new ArrayList<String>(
 			Arrays.asList("Document created", "Document updated", "Document Deleted"));
@@ -161,7 +167,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 	List<String> docCommentActivityList = new ArrayList<>(Arrays.asList(newComment));
 
-//	SPECIES ACTIVITY LIST
+	// SPECIES ACTIVITY LIST
 
 	List<String> speciesNullActivityList = new ArrayList<String>(Arrays.asList("Created species", "Deleted species"));
 
@@ -187,7 +193,7 @@ public class ActivityServiceImpl implements ActivityService {
 	List<String> speciesUserGroupActivityList = new ArrayList<String>(
 			Arrays.asList("Featured", "UnFeatured", "Posted resource", "Removed resoruce"));
 
-//	TAXONOMY ACTIVTY LIST
+	// TAXONOMY ACTIVTY LIST
 
 	List<String> taxonomyNullActivityList = new ArrayList<String>(
 			Arrays.asList("Deleted synonym", "Deleted common name"));
@@ -202,7 +208,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 	List<String> taxonomyCommentActivityList = new ArrayList<>(Arrays.asList(newComment));
 
-//	DATATABLE ACTIVITY LIST 
+	// DATATABLE ACTIVITY LIST
 
 	List<String> dataTableNullActivityList = new ArrayList<String>(
 			Arrays.asList("Datatable created", "Datatable updated", "Datatable deleted"));
@@ -217,7 +223,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 	List<String> pageCommentActivityList = new ArrayList<>(Arrays.asList(newComment));
 
-// CCA ACTIVITY LIST
+	// CCA ACTIVITY LIST
 	List<String> ccaTemplateActivityList = new ArrayList<>(Arrays.asList("Template created", "Template updated",
 			"Field created", "Field updated", "Field deleted", "CCA Template Deleted"));
 	List<String> ccaDataActivityList = new ArrayList<>(Arrays.asList("Data created", "Data updated", "Data deleted",
@@ -313,7 +319,7 @@ public class ActivityServiceImpl implements ActivityService {
 		return activityResult;
 	}
 
-//	OBSERVATION ACTIVITY LOGGING
+	// OBSERVATION ACTIVITY LOGGING
 
 	@Override
 	public Activity logActivities(HttpServletRequest request, Long userId, ActivityLoggingData loggingData) {
@@ -708,7 +714,7 @@ public class ActivityServiceImpl implements ActivityService {
 		return activityResult;
 	}
 
-//	USERGROUP ACTIVITY LOGGING
+	// USERGROUP ACTIVITY LOGGING
 
 	@Override
 	public Activity logUGActivities(Long userId, UserGroupActivityLogging loggingData) {
@@ -750,7 +756,7 @@ public class ActivityServiceImpl implements ActivityService {
 		return activity;
 	}
 
-//	DOCUMENT ACTIVITY LOGGING
+	// DOCUMENT ACTIVITY LOGGING
 
 	@Override
 	public Activity logDocActivities(HttpServletRequest request, Long userId, DocumentActivityLogging loggingData) {
@@ -836,7 +842,7 @@ public class ActivityServiceImpl implements ActivityService {
 		return null;
 	}
 
-//	SPECIES ACTIVITY LOGGING
+	// SPECIES ACTIVITY LOGGING
 	@Override
 	public Activity logSpeciesActivities(HttpServletRequest request, Long userId, SpeciesActivityLogging loggingData) {
 		try {
@@ -928,7 +934,8 @@ public class ActivityServiceImpl implements ActivityService {
 		return null;
 	}
 
-//	check if its a usergroup featuring or mother portal featuring and also if its usergroup activity
+	// check if its a usergroup featuring or mother portal featuring and also if its
+	// usergroup activity
 	private Boolean checkUserGroupFeatured(String acitivityType, String description) {
 		Boolean result = false;
 		try {
@@ -945,7 +952,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 	}
 
-//	TAXONOMY ACTIVITY LOGGING
+	// TAXONOMY ACTIVITY LOGGING
 
 	@Override
 	public Activity logTaxonomyActivities(HttpServletRequest request, Long userId,
@@ -987,7 +994,7 @@ public class ActivityServiceImpl implements ActivityService {
 			if (activity != null)
 				activity = activityDao.save(activity);
 
-//			TODO mailData integration
+			// TODO mailData integration
 
 			return activity;
 		} catch (Exception e) {
@@ -1255,6 +1262,30 @@ public class ActivityServiceImpl implements ActivityService {
 			logger.error(e.getMessage());
 		}
 		return null;
+	}
+
+	public Activity logCropcertActivities(String jsonString) {
+
+		try {
+			Activity activity = objectMapper.readValue(jsonString, Activity.class);
+			if (activity != null && isValidCropcertActivityType(activity.getActivityType())) {
+				activity = activityDao.save(activity);
+				return activity;
+			} else {
+				logger.error("Invalid or unsupported activity type: " + activity.getActivityType());
+			}
+		} catch (IOException e) {
+			logger.error("Error parsing JSON string: " + e.getMessage());
+		} catch (Exception e) {
+			logger.error("Error saving activity: " + e.getMessage());
+		}
+		return null;
+	}
+
+	private boolean isValidCropcertActivityType(String activityType) {
+		Set<String> allowedActivityTypes = new HashSet<>(Arrays.asList("BATCH_CREATION", "BATCH_UPDATE",
+				"FARMER_CREATION", "FARMER_UPDATE", "FARMER_DELETION", "LOT_CREATION", "LOT_UPDATE"));
+		return allowedActivityTypes.contains(activityType);
 	}
 
 }
