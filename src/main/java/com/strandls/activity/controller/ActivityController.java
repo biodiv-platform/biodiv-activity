@@ -432,6 +432,7 @@ public class ActivityController {
 	}
 
 	@POST
+	@Path(ApiConstants.LOG + ApiConstants.CROPCERT)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@ValidateUser
