@@ -1276,6 +1276,9 @@ public class ActivityServiceImpl implements ActivityService {
 						loggingData.getActivityHolderType(), loggingData.getActivityType(), loggingData.getAuthorId(),
 						dateCreated, lastUpdated, loggingData.getRootHolderId(), loggingData.getRootHolderType(),
 						loggingData.getSubRootHolderId(), loggingData.getSubRootHolderType(), true);
+			}
+			if (activity != null) {
+				activity = activityDao.save(activity);
 				return activity;
 			}
 		} catch (Exception e) {
