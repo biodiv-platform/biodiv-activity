@@ -437,10 +437,10 @@ public class ActivityController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@ValidateUser
 	@ApiOperation(value = "Save the activity", response = Activity.class)
-	public Response save(@Context HttpServletRequest request, String jsonString) {
+	public Response save(@Context HttpServletRequest request, @ApiParam(name = "loggingData") Activity loggingData) {
 		Activity activity;
 		try {
-			activity = service.logCropcertActivities(jsonString);
+			activity = service.logCropcertActivities(request, loggingData);
 			return Response.status(Status.CREATED).entity(activity).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();

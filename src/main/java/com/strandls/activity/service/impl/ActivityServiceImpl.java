@@ -1264,20 +1264,22 @@ public class ActivityServiceImpl implements ActivityService {
 		return null;
 	}
 
-	public Activity logCropcertActivities(String jsonString) {
-
+	public Activity logCropcertActivities(HttpServletRequest request, Activity loggingData) {
+		Activity activity = null;
 		try {
-			Activity activity = objectMapper.readValue(jsonString, Activity.class);
-			if (activity != null && isValidCropcertActivityType(activity.getActivityType())) {
-				activity = activityDao.save(activity);
+			if (isValidCropcertActivityType(loggingData.getActivityType())) {
+
+				Date dateCreated = loggingData.getDateCreated() != null ? loggingData.getDateCreated() : new Date();
+				Date lastUpdated = loggingData.getLastUpdated() != null ? loggingData.getLastUpdated() : new Date();
+
+				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityHolderId(),
+						loggingData.getActivityHolderType(), loggingData.getActivityType(), loggingData.getAuthorId(),
+						dateCreated, lastUpdated, loggingData.getRootHolderId(), loggingData.getRootHolderType(),
+						loggingData.getSubRootHolderId(), loggingData.getSubRootHolderType(), true);
 				return activity;
-			} else {
-				logger.error("Invalid or unsupported activity type: " + activity.getActivityType());
 			}
-		} catch (IOException e) {
-			logger.error("Error parsing JSON string: " + e.getMessage());
 		} catch (Exception e) {
-			logger.error("Error saving activity: " + e.getMessage());
+			logger.error(e.getMessage());
 		}
 		return null;
 	}
