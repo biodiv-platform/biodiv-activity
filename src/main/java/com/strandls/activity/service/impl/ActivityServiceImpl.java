@@ -1288,8 +1288,9 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	private boolean isValidCropcertActivityType(String activityType) {
-		Set<String> allowedActivityTypes = new HashSet<>(Arrays.asList("BATCH_CREATION", "BATCH_UPDATE",
-				"FARMER_CREATION", "FARMER_UPDATE", "FARMER_DELETION", "LOT_CREATION", "LOT_UPDATE"));
+		Set<String> allowedActivityTypes = new HashSet<>(
+				Arrays.asList("BATCH_CREATION", "BATCH_UPDATE", "FARMER_CREATION", "FARMER_UPDATE", "FARMER_DELETION",
+						"LOT_CREATION", "LOT_UPDATE", "FARMER_PRODUCE_CREATED", "FARMER_PRODUCE"));
 		return allowedActivityTypes.contains(activityType);
 	}
 
