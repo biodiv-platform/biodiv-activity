@@ -3,7 +3,6 @@
  */
 package com.strandls.activity.service.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -103,9 +102,6 @@ public class ActivityServiceImpl implements ActivityService {
 
 	@Inject
 	private CcaPermissionRequestDao ccaPermissionDao;
-
-	@Inject
-	private ObjectMapper objectMappper;
 
 	private Long defaultLanguageId = Long
 			.parseLong(PropertyFileUtil.fetchProperty("config.properties", "defaultLanguageId"));
