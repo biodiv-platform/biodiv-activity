@@ -39,7 +39,7 @@ public class ApiConstants {
 	public static final String REQUESTMAIL = "/requestmail";
 	public static final String DOWNLOADMAIL = "/downloadmail";
 	public static final String ODK = "/odk";
-
+	public static final String CROPCERT = "/cropcert";
 	public static final String PAGE = "/page";
 
 }
