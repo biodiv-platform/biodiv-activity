@@ -436,7 +436,7 @@ public class ActivityController {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@ValidateUser
-	@ApiOperation(value = "Save the activity", response = Activity.class)
+	@ApiOperation(value = "Save the cropcert activity", response = Activity.class)
 	public Response save(@Context HttpServletRequest request, @ApiParam(name = "loggingData") Activity loggingData) {
 		Activity activity;
 		try {
