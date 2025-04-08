@@ -60,5 +60,5 @@ public interface ActivityService {
 
 	public Boolean odkUserMail(ODKMailData odkMail);
 
-	public Activity logCropcertActivities(HttpServletRequest request, Activity loggingData);
+	public Activity logCropcertActivities(HttpServletRequest request, Long userId, Activity loggingData);
 }
