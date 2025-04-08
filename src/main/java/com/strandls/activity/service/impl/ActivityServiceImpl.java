@@ -1260,7 +1260,7 @@ public class ActivityServiceImpl implements ActivityService {
 		return null;
 	}
 
-	public Activity logCropcertActivities(HttpServletRequest request, Activity loggingData) {
+	public Activity logCropcertActivities(HttpServletRequest request, Long userId, Activity loggingData) {
 		Activity activity = null;
 		try {
 			if (isValidCropcertActivityType(loggingData.getActivityType())) {
@@ -1269,8 +1269,8 @@ public class ActivityServiceImpl implements ActivityService {
 				Date lastUpdated = loggingData.getLastUpdated() != null ? loggingData.getLastUpdated() : new Date();
 
 				activity = new Activity(null, loggingData.getActivityDescription(), loggingData.getActivityHolderId(),
-						loggingData.getActivityHolderType(), loggingData.getActivityType(), loggingData.getAuthorId(),
-						dateCreated, lastUpdated, loggingData.getRootHolderId(), loggingData.getRootHolderType(),
+						loggingData.getActivityHolderType(), loggingData.getActivityType(), userId, dateCreated,
+						lastUpdated, loggingData.getRootHolderId(), loggingData.getRootHolderType(),
 						loggingData.getSubRootHolderId(), loggingData.getSubRootHolderType(), true);
 			}
 			if (activity != null) {

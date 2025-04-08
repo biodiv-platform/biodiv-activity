@@ -440,7 +440,9 @@ public class ActivityController {
 	public Response save(@Context HttpServletRequest request, @ApiParam(name = "loggingData") Activity loggingData) {
 		Activity activity;
 		try {
-			activity = service.logCropcertActivities(request, loggingData);
+			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+			Long userId = Long.parseLong(profile.getId());
+			activity = service.logCropcertActivities(request, userId, loggingData);
 			return Response.status(Status.CREATED).entity(activity).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
