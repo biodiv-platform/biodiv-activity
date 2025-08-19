@@ -21,9 +21,7 @@ import com.strandls.mail_utility.model.EnumModel.MAIL_TYPE;
 
 public class ActivityUtil {
 
-	/**
-	 * 
-	 */
+	/** */
 	private ActivityUtil() {
 		super();
 	}
@@ -105,7 +103,6 @@ public class ActivityUtil {
 		}
 		Map<String, Object> data = new HashMap<String, Object>();
 		switch (activity) {
-
 		case "Created species":
 			data.put("type", MAIL_TYPE.SPECIES_ADDED);
 			data.put("text", "Created species");
@@ -414,5 +411,4 @@ public class ActivityUtil {
 		}
 		return "";
 	}
-
 }

@@ -1,32 +1,26 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.pojo;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
  * @author Abhishek Rudra
- *
  */
-
 @Entity
 @Table(name = "comment")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Comments implements Serializable {
 
-	/**
-	 * 
-	 */
+	/** */
 	private static final long serialVersionUID = -1560748571733072408L;
 
 	private Long id;
@@ -43,9 +37,7 @@ public class Comments implements Serializable {
 	private Long languageId;
 	private Boolean isDeleted;
 
-	/**
-	 * 
-	 */
+	/** */
 	public Comments() {
 		super();
 	}
@@ -201,5 +193,4 @@ public class Comments implements Serializable {
 	public void setIsDeleted(Boolean isDeleted) {
 		this.isDeleted = isDeleted;
 	}
-
 }

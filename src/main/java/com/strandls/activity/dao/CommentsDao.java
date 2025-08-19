@@ -1,9 +1,5 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.dao;
-
-import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -13,9 +9,10 @@ import org.slf4j.LoggerFactory;
 import com.strandls.activity.pojo.Comments;
 import com.strandls.activity.util.AbstractDAO;
 
+import jakarta.inject.Inject;
+
 /**
  * @author Abhishek Rudra
- *
  */
 public class CommentsDao extends AbstractDAO<Comments, Long> {
 
@@ -42,5 +39,4 @@ public class CommentsDao extends AbstractDAO<Comments, Long> {
 		}
 		return entity;
 	}
-
 }

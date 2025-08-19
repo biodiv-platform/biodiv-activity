@@ -1,18 +1,13 @@
 package com.strandls.activity.pojo;
 
 /**
- * 
  * @author vishnu
- *
  */
-
 public class DatatableActivityLogging extends CoreActivityLoggingData {
 
 	private MailData mailData;
 
-	/**
-	 * 
-	 */
+	/** */
 	public DatatableActivityLogging() {
 		super();
 	}
@@ -38,5 +33,4 @@ public class DatatableActivityLogging extends CoreActivityLoggingData {
 	public void setMailData(MailData mailData) {
 		this.mailData = mailData;
 	}
-
 }

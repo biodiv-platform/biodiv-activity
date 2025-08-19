@@ -1,17 +1,12 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.pojo;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupActivityLogging extends CoreActivityLoggingData {
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupActivityLogging() {
 	}
 
@@ -27,5 +22,4 @@ public class UserGroupActivityLogging extends CoreActivityLoggingData {
 			String rootObjectType, Long activityId, String activityType) {
 		super(activityDescription, rootObjectId, subRootObjectId, rootObjectType, activityId, activityType);
 	}
-
 }

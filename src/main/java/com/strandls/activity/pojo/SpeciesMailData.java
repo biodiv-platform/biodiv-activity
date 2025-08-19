@@ -1,12 +1,8 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.pojo;
 
 /**
  * @author Abhishek Rudra
- *
- * 
  */
 public class SpeciesMailData {
 	private Long speciesId;
@@ -15,9 +11,7 @@ public class SpeciesMailData {
 	private String iconUrl;
 	private Long authorId;
 
-	/**
-	 * 
-	 */
+	/** */
 	public SpeciesMailData() {
 		super();
 	}
@@ -28,7 +22,7 @@ public class SpeciesMailData {
 	 * @param iconUrl
 	 * @param authorId
 	 */
-	public SpeciesMailData(Long speciesId, String speciesName, String iconUrl, Long authorId,String group) {
+	public SpeciesMailData(Long speciesId, String speciesName, String iconUrl, Long authorId, String group) {
 		super();
 		this.speciesId = speciesId;
 		this.speciesName = speciesName;
@@ -76,5 +70,4 @@ public class SpeciesMailData {
 	public void setGroup(String group) {
 		this.group = group;
 	}
-
 }

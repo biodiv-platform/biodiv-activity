@@ -5,7 +5,6 @@ import java.util.Map;
 
 /**
  * @author Guddu Sharma
- *
  */
 public class CCAMailData {
 
@@ -16,9 +15,7 @@ public class CCAMailData {
 	private Activity activity;
 	private Map<String, Object> data;
 
-	/**
-	 * 
-	 */
+	/** */
 	public CCAMailData() {
 		super();
 	}
@@ -32,7 +29,8 @@ public class CCAMailData {
 	 * @param commonName
 	 * @param authorId
 	 */
-	public CCAMailData(Long id, String location, Date date, Long authorId, Activity activity, Map<String, Object> data) {
+	public CCAMailData(Long id, String location, Date date, Long authorId, Activity activity,
+			Map<String, Object> data) {
 		super();
 		this.id = id;
 		this.location = location;
@@ -77,11 +75,11 @@ public class CCAMailData {
 	public Activity getActivity() {
 		return activity;
 	}
-	
+
 	public void setActivity(Activity activity) {
 		this.activity = activity;
 	}
-	
+
 	public Map<String, Object> getData() {
 		return data;
 	}

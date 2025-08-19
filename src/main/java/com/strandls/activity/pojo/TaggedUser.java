@@ -1,14 +1,14 @@
 package com.strandls.activity.pojo;
 
 public class TaggedUser {
-	
+
 	private Long id;
 	private String name;
-	
+
 	public TaggedUser() {
 		super();
 	}
-	
+
 	public TaggedUser(Long id, String name) {
 		super();
 		this.id = id;
@@ -35,5 +35,4 @@ public class TaggedUser {
 	public String toString() {
 		return "TaggedUser [id=" + id + ", name=" + name + "]";
 	}
-
 }

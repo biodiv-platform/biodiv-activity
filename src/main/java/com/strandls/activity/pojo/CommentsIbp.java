@@ -1,11 +1,8 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.pojo;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class CommentsIbp {
 
@@ -33,5 +30,4 @@ public class CommentsIbp {
 	public void setBody(String body) {
 		this.body = body;
 	}
-
 }

@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +18,8 @@ import com.strandls.mail_utility.producer.RabbitMQProducer;
 import com.strandls.mail_utility.util.JsonUtil;
 import com.strandls.user.controller.UserServiceApi;
 import com.strandls.user.pojo.Recipients;
+
+import jakarta.inject.Inject;
 
 public class NotificationServiceImpl implements NotificationService {
 
@@ -67,5 +67,4 @@ public class NotificationServiceImpl implements NotificationService {
 			logger.error(ex.getMessage());
 		}
 	}
-
 }

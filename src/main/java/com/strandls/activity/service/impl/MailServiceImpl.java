@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +43,8 @@ import com.strandls.user.ApiException;
 import com.strandls.user.controller.UserServiceApi;
 import com.strandls.user.pojo.Recipients;
 import com.strandls.user.pojo.User;
+
+import jakarta.inject.Inject;
 
 public class MailServiceImpl implements MailService {
 
@@ -126,7 +126,6 @@ public class MailServiceImpl implements MailService {
 				mailData.put(INFO_FIELDS.TYPE.getAction(), type.getAction());
 				if (recordsType != null) {
 					mailData.put(INFO_FIELDS.OBJECT_TYPE.getAction(), recordsType.getAction());
-
 				}
 				mailData.put(INFO_FIELDS.RECIPIENTS.getAction(), mailDataList);
 				producer.produceMail(RabbitMqConnection.EXCHANGE, RabbitMqConnection.ROUTING_KEY, null,
@@ -161,7 +160,6 @@ public class MailServiceImpl implements MailService {
 				}
 				if (userGroupActivityList.contains(activity.getActivityType())) {
 					userGroup = mapper.readValue(activity.getActivityDescription(), UserGroupActivity.class);
-
 				}
 
 				Map<String, Object> data = null;
@@ -201,7 +199,6 @@ public class MailServiceImpl implements MailService {
 				mailData.put(INFO_FIELDS.TYPE.getAction(), type.getAction());
 				if (recordsType != null) {
 					mailData.put(INFO_FIELDS.OBJECT_TYPE.getAction(), recordsType.getAction());
-
 				}
 				mailData.put(INFO_FIELDS.RECIPIENTS.getAction(), mailDataList);
 				producer.produceMail(RabbitMqConnection.EXCHANGE, RabbitMqConnection.ROUTING_KEY, null,
@@ -361,7 +358,6 @@ public class MailServiceImpl implements MailService {
 
 			model.put(COMMENT_POST.WHAT_POSTED_SPECIES.getAction(),
 					species.getGroup() != null && !species.getGroup().isEmpty() ? species.getGroup() : null);
-
 		}
 
 		if (document != null) {
@@ -393,7 +389,6 @@ public class MailServiceImpl implements MailService {
 
 			model.put(COMMENT_POST.WHAT_POSTED_NAME.getAction(),
 					(page != null && page.getTitle() != null) ? page.getTitle() : null);
-
 		}
 
 		if (observation != null) {
@@ -439,5 +434,4 @@ public class MailServiceImpl implements MailService {
 		data.put(FIELDS.DATA.getAction(), JsonUtil.unflattenJSON(model));
 		return data;
 	}
-
 }

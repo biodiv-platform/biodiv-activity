@@ -1,13 +1,10 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.pojo;
 
 import java.util.Date;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class ObservationMailData {
 
@@ -19,9 +16,7 @@ public class ObservationMailData {
 	private String commonName;
 	private Long authorId;
 
-	/**
-	 * 
-	 */
+	/** */
 	public ObservationMailData() {
 		super();
 	}
@@ -102,5 +97,4 @@ public class ObservationMailData {
 	public void setAuthorId(Long authorId) {
 		this.authorId = authorId;
 	}
-
 }

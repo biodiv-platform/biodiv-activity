@@ -1,9 +1,5 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.dao;
-
-import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -15,17 +11,15 @@ import com.strandls.activity.pojo.CcaPermission;
 import com.strandls.activity.util.AbstractDAO;
 import com.strandls.activity.util.CCARoles;
 
+import jakarta.inject.Inject;
 
 /**
  * @author Arun
- *
- * 
  */
-
-public class CcaPermissionRequestDao extends AbstractDAO<CcaPermission, Long>{
+public class CcaPermissionRequestDao extends AbstractDAO<CcaPermission, Long> {
 
 	private final Logger logger = LoggerFactory.getLogger(CcaPermissionRequestDao.class);
-	
+
 	@Inject
 	protected CcaPermissionRequestDao(SessionFactory sessionFactory) {
 		super(sessionFactory);
@@ -46,7 +40,7 @@ public class CcaPermissionRequestDao extends AbstractDAO<CcaPermission, Long>{
 	}
 
 	@SuppressWarnings("unchecked")
-	public CcaPermission requestPermissionExist(Long requestorId, Long ccaid , CCARoles roles) {
+	public CcaPermission requestPermissionExist(Long requestorId, Long ccaid, CCARoles roles) {
 		String qry = "from CcaPermission where requestorId = :requestorId and ccaid = :ccaid  and role = :role";
 		Session session = sessionFactory.openSession();
 		CcaPermission result = null;
@@ -64,5 +58,4 @@ public class CcaPermissionRequestDao extends AbstractDAO<CcaPermission, Long>{
 		}
 		return result;
 	}
-
 }

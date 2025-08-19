@@ -1,19 +1,14 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.pojo;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class ActivityLoggingData extends CoreActivityLoggingData {
 
 	private MailData mailData;
 
-	/**
-	 * 
-	 */
+	/** */
 	public ActivityLoggingData() {
 	}
 
@@ -38,5 +33,4 @@ public class ActivityLoggingData extends CoreActivityLoggingData {
 	public void setMailData(MailData mailData) {
 		this.mailData = mailData;
 	}
-
 }

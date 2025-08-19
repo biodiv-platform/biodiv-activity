@@ -1,9 +1,5 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.service;
-
-import javax.servlet.http.HttpServletRequest;
 
 import com.strandls.activity.pojo.Activity;
 import com.strandls.activity.pojo.ActivityLoggingData;
@@ -19,9 +15,10 @@ import com.strandls.activity.pojo.SpeciesActivityLogging;
 import com.strandls.activity.pojo.TaxonomyActivityLogging;
 import com.strandls.activity.pojo.UserGroupActivityLogging;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 /**
  * @author Abhishek Rudra
- *
  */
 public interface ActivityService {
 

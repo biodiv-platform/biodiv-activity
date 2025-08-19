@@ -1,11 +1,8 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.pojo;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupMailData {
 
@@ -14,9 +11,7 @@ public class UserGroupMailData {
 	private String icon;
 	private String webAddress;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupMailData() {
 		super();
 	}
@@ -71,5 +66,4 @@ public class UserGroupMailData {
 	public String toString() {
 		return "UserGroupMailData [id=" + id + ", name=" + name + ", icon=" + icon + ", webAddress=" + webAddress + "]";
 	}
-
 }

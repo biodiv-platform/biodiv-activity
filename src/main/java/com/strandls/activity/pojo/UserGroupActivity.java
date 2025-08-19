@@ -1,11 +1,8 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.pojo;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupActivity {
 
@@ -15,9 +12,7 @@ public class UserGroupActivity {
 	private String featured;
 	private String reason;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupActivity() {
 		super();
 	}
@@ -78,5 +73,4 @@ public class UserGroupActivity {
 	public void setReason(String reason) {
 		this.reason = reason;
 	}
-
 }

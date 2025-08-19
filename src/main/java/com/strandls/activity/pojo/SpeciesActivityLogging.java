@@ -1,20 +1,14 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.pojo;
 
 /**
  * @author Abhishek Rudra
- *
- * 
  */
 public class SpeciesActivityLogging extends CoreActivityLoggingData {
 
 	private MailData mailData;
 
-	/**
-	 * 
-	 */
+	/** */
 	public SpeciesActivityLogging() {
 		super();
 	}
@@ -40,5 +34,4 @@ public class SpeciesActivityLogging extends CoreActivityLoggingData {
 	public void setMailData(MailData mailData) {
 		this.mailData = mailData;
 	}
-
 }

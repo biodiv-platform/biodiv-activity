@@ -1,6 +1,4 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity;
 
 import java.io.File;
@@ -23,8 +21,6 @@ import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Stream;
 
-import javax.servlet.ServletContextEvent;
-
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -44,9 +40,10 @@ import com.strandls.activity.service.impl.ActivityServiceModule;
 import com.strandls.mail_utility.producer.RabbitMQProducer;
 import com.strandls.user.controller.UserServiceApi;
 
+import jakarta.servlet.ServletContextEvent;
+
 /**
  * @author Abhishek Rudra
- *
  */
 public class ActivityServeletContextListener extends GuiceServletContextListener {
 
@@ -73,7 +70,7 @@ public class ActivityServeletContextListener extends GuiceServletContextListener
 				SessionFactory sessionFactory = configuration.buildSessionFactory();
 
 				Map<String, String> props = new HashMap<String, String>();
-				props.put("javax.ws.rs.Application", ApplicationConfig.class.getName());
+				props.put("jakarta.ws.rs.Application", ApplicationConfig.class.getName());
 				props.put("jersey.config.server.provider.packages", "com");
 				props.put("jersey.config.server.wadl.disableWadl", "true");
 
@@ -101,7 +98,6 @@ public class ActivityServeletContextListener extends GuiceServletContextListener
 		}, new ActivityControllerModule(), new ActivityServiceModule(), new ActivityDaoModule());
 
 		return injector;
-
 	}
 
 	protected List<Class<?>> getEntityClassesFromPackage(String packageName)
@@ -114,7 +110,7 @@ public class ActivityServeletContextListener extends GuiceServletContextListener
 			Annotation[] annotations = cls.getAnnotations();
 
 			for (Annotation annotation : annotations) {
-				if (annotation instanceof javax.persistence.Entity) {
+				if (annotation instanceof jakarta.persistence.Entity) {
 					classes.add(cls);
 				}
 			}
@@ -188,6 +184,5 @@ public class ActivityServeletContextListener extends GuiceServletContextListener
 						driver);
 			}
 		}
-
 	}
 }

@@ -1,17 +1,12 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class ApiConstants {
 
-	/**
-	 * 
-	 */
+	/** */
 	private ApiConstants() {
 		super();
 	}
@@ -41,5 +36,4 @@ public class ApiConstants {
 	public static final String ODK = "/odk";
 	public static final String CROPCERT = "/cropcert";
 	public static final String PAGE = "/page";
-
 }

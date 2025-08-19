@@ -1,13 +1,10 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.pojo;
 
 import java.util.Date;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class ActivityIbp {
 
@@ -15,8 +12,6 @@ public class ActivityIbp {
 	private String activityType;
 	private Date dateCreated;
 	private Date lastUpdated;
-	
-	
 
 	/**
 	 * @param activityDescription
@@ -63,5 +58,4 @@ public class ActivityIbp {
 	public void setLastUpdated(Date lastUpdated) {
 		this.lastUpdated = lastUpdated;
 	}
-
 }

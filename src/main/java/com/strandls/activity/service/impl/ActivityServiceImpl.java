@@ -1,6 +1,4 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.service.impl;
 
 import java.util.ArrayList;
@@ -11,10 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.HttpHeaders;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,9 +53,12 @@ import com.strandls.user.controller.UserServiceApi;
 import com.strandls.user.pojo.User;
 import com.strandls.user.pojo.UserIbp;
 
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.HttpHeaders;
+
 /**
  * @author Abhishek Rudra
- *
  */
 public class ActivityServiceImpl implements ActivityService {
 
@@ -296,7 +293,6 @@ public class ActivityServiceImpl implements ActivityService {
 				} else if (recoActivities.contains(activity.getActivityType())) {
 					String description = activity.getActivityDescription();
 					recoVoteActivity = objectMapper.readValue(description, RecoVoteActivity.class);
-
 				}
 				activityIbp = new ActivityIbp(activity.getActivityDescription(), activity.getActivityType(),
 						activity.getDateCreated(), activity.getLastUpdated());
@@ -305,7 +301,6 @@ public class ActivityServiceImpl implements ActivityService {
 
 				ibpActivity.add(
 						new ShowActivityIbp(activityIbp, commentIbp, replyIbp, ugActivity, recoVoteActivity, user));
-
 			}
 			activityResult = new ActivityResult(ibpActivity, commentCount);
 		} catch (Exception e) {
@@ -394,7 +389,6 @@ public class ActivityServiceImpl implements ActivityService {
 		}
 
 		return activity;
-
 	}
 
 	@Override
@@ -436,7 +430,6 @@ public class ActivityServiceImpl implements ActivityService {
 					commentData.getSubRootHolderType(), new Date(), new Date(), commentData.getRootHolderId(),
 					commentData.getRootHolderType(), commentData.getSubRootHolderId(), commentData.getSubRootHolderId(),
 					commentData.getLanguageId() != null ? commentData.getLanguageId() : defaultLanguageId, false);
-
 		}
 
 		Comments result = commentsDao.save(comment);
@@ -481,9 +474,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 			activityResult = logPageActivities(request, userId, loggingData);
 
-		}
-
-		else if (commentType.equals("document")) {
+		} else if (commentType.equals("document")) {
 
 			DocumentActivityLogging loggingData = null;
 			if (result.getCommentHolderId().equals(result.getRootHolderId())) {
@@ -570,7 +561,6 @@ public class ActivityServiceImpl implements ActivityService {
 						activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers,
 						objectType);
 			}
-
 		}
 
 		return activityResult;
@@ -704,7 +694,6 @@ public class ActivityServiceImpl implements ActivityService {
 					activityResult.getRootHolderId(), userId, commentData, mailActivityData, taggedUsers, objectType);
 			notificationSevice.sendNotification(mailActivityData, result.getRootHolderType(), result.getRootHolderId(),
 					siteName, mailActivityData.getActivityType());
-
 		}
 
 		return activityResult;
@@ -945,7 +934,6 @@ public class ActivityServiceImpl implements ActivityService {
 			logger.error(e.getMessage());
 		}
 		return result;
-
 	}
 
 	// TAXONOMY ACTIVITY LOGGING
@@ -1206,10 +1194,8 @@ public class ActivityServiceImpl implements ActivityService {
 				sendCCAPermisionMail(permissionReq);
 				return true;
 			}
-
 		}
 		return false;
-
 	}
 
 	public Boolean sendCCAPermisionMail(CcaPermission permissionReq) {
@@ -1233,7 +1219,6 @@ public class ActivityServiceImpl implements ActivityService {
 			logger.error(e.getMessage());
 		}
 		return null;
-
 	}
 
 	@Override
@@ -1290,5 +1275,4 @@ public class ActivityServiceImpl implements ActivityService {
 						"CONTAINER_UPDATE", "CONTAINER_DELETION"));
 		return allowedActivityTypes.contains(activityType);
 	}
-
 }

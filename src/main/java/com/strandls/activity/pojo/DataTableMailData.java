@@ -1,13 +1,10 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.pojo;
 
 import java.util.Date;
 
 /**
  * @author Arun
- *
  */
 public class DataTableMailData {
 
@@ -17,9 +14,7 @@ public class DataTableMailData {
 	private String title;
 	private String location;
 
-	/**
-	 * 
-	 */
+	/** */
 	public DataTableMailData() {
 		super();
 	}
@@ -30,8 +25,7 @@ public class DataTableMailData {
 	 * @param authorId
 	 * @param location
 	 */
-	public DataTableMailData(Long dataTableId, Date createdOn, Long authorId, String title,
-			String location) {
+	public DataTableMailData(Long dataTableId, Date createdOn, Long authorId, String title, String location) {
 		super();
 		this.dataTableId = dataTableId;
 		this.createdOn = createdOn;
@@ -79,5 +73,4 @@ public class DataTableMailData {
 	public void setLocation(String location) {
 		this.location = location;
 	}
-
 }

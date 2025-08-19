@@ -1,11 +1,8 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.pojo;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class RecoVoteActivity {
 
@@ -15,9 +12,7 @@ public class RecoVoteActivity {
 	private Long speciesId;
 	private String source;
 
-	/**
-	 * 
-	 */
+	/** */
 	public RecoVoteActivity() {
 		super();
 	}
@@ -76,5 +71,4 @@ public class RecoVoteActivity {
 	public void setSource(String source) {
 		this.source = source;
 	}
-
 }

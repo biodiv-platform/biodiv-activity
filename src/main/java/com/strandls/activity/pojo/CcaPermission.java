@@ -1,28 +1,24 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.pojo;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
  * @author Arun
- *
  */
-
 @Entity
 @Table(name = "cca_permission_request")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CcaPermission extends CCAMailData{
+public class CcaPermission extends CCAMailData {
 
 	private Long id;
 	private Long requestorId;
@@ -48,9 +44,8 @@ public class CcaPermission extends CCAMailData{
 	 * @param shortName
 	 * @param requestorMessage
 	 */
-
 	public CcaPermission(Long id, Long requestorId, Long ownerId, Long ccaid, String role, Date requestedOn,
-			String shortName, String encryptKey,String requestorMessage) {
+			String shortName, String encryptKey, String requestorMessage) {
 		super();
 		this.id = id;
 		this.requestorId = requestorId;
@@ -135,6 +130,7 @@ public class CcaPermission extends CCAMailData{
 	public void setEncryptKey(String encryptKey) {
 		this.encryptKey = encryptKey;
 	}
+
 	public String getRequestorMessage() {
 		return requestorMessage;
 	}
@@ -142,5 +138,4 @@ public class CcaPermission extends CCAMailData{
 	public void setRequestorMessage(String requestorMessage) {
 		this.requestorMessage = requestorMessage;
 	}
-
 }

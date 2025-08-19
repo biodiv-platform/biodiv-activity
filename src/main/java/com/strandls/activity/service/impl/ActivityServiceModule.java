@@ -1,6 +1,4 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.service.impl;
 
 import com.google.inject.AbstractModule;
@@ -11,7 +9,6 @@ import com.strandls.activity.service.NotificationService;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class ActivityServiceModule extends AbstractModule {
 
@@ -21,5 +18,4 @@ public class ActivityServiceModule extends AbstractModule {
 		bind(MailService.class).to(MailServiceImpl.class).in(Scopes.SINGLETON);
 		bind(NotificationService.class).to(NotificationServiceImpl.class).in(Scopes.SINGLETON);
 	}
-
 }

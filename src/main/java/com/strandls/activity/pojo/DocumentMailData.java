@@ -1,13 +1,10 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.pojo;
 
 import java.util.Date;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class DocumentMailData {
 
@@ -16,9 +13,7 @@ public class DocumentMailData {
 	private Long authorId;
 	private String title;
 
-	/**
-	 * 
-	 */
+	/** */
 	public DocumentMailData() {
 		super();
 	}
@@ -67,5 +62,4 @@ public class DocumentMailData {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-
 }

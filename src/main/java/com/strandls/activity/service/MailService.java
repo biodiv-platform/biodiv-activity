@@ -11,6 +11,5 @@ import com.strandls.mail_utility.model.EnumModel.OBJECT_TYPE;
 public interface MailService {
 
 	public void sendMail(MAIL_TYPE type, String objectType, Long objectId, Long userId, CommentLoggingData comment,
-			MailActivityData activity, List<TaggedUser> taggedUsers,OBJECT_TYPE recordsType);
-
+			MailActivityData activity, List<TaggedUser> taggedUsers, OBJECT_TYPE recordsType);
 }

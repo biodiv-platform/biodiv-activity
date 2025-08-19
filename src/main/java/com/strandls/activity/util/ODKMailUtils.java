@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +18,8 @@ import com.strandls.mail_utility.producer.RabbitMQProducer;
 import com.strandls.mail_utility.util.JsonUtil;
 import com.strandls.user.controller.UserServiceApi;
 import com.strandls.user.pojo.User;
+
+import jakarta.inject.Inject;
 
 public class ODKMailUtils {
 
@@ -65,5 +65,4 @@ public class ODKMailUtils {
 			logger.error(e.getMessage());
 		}
 	}
-
 }

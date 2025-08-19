@@ -1,23 +1,4 @@
-/**
- * 
- */
 package com.strandls.activity.controller;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.pac4j.core.profile.CommonProfile;
 
@@ -39,20 +20,32 @@ import com.strandls.activity.service.ActivityService;
 import com.strandls.authentication_utility.filter.ValidateUser;
 import com.strandls.authentication_utility.util.AuthUtil;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DefaultValue;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import net.minidev.json.JSONArray;
 
-/**
- * @author Abhishek Rudra
- *
- */
-
-@Api("Activity Serivce")
+@Tag(name = "Activity Service", description = "APIs for Activity module")
 @Path(ApiConstants.V1 + ApiConstants.SERVICE)
+@Produces(MediaType.APPLICATION_JSON)
 public class ActivityController {
 
 	@Inject
@@ -61,392 +54,345 @@ public class ActivityController {
 	@GET
 	@Path(ApiConstants.PING)
 	@Produces(MediaType.TEXT_PLAIN)
+	@Operation(summary = "Ping endpoint for health check", responses = {
+			@ApiResponse(responseCode = "200", description = "PONG", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response ping() {
-		return Response.status(Status.OK).entity("PONG").build();
+		return Response.status(Response.Status.OK).entity("PONG").build();
 	}
 
 	@GET
 	@Path(ApiConstants.IBP + "/{objectType}/{objectId}")
 	@Consumes(MediaType.TEXT_PLAIN)
-	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "Find activity by ID for IBP", notes = "Returns activity details", response = ActivityResult.class)
-	@ApiResponses(value = { @ApiResponse(code = 404, message = "Traits not found", response = String.class) })
-
-	public Response getIbpActivity(@PathParam("objectType") String objectType, @PathParam("objectId") String objectId,
-			@DefaultValue(value = "0") @QueryParam("offset") String offset,
-			@DefaultValue(value = "10") @QueryParam("limit") String limit) {
+	@Operation(summary = "Find activity by ID for IBP", responses = {
+			@ApiResponse(responseCode = "200", description = "Activity details", content = @Content(schema = @Schema(implementation = ActivityResult.class))),
+			@ApiResponse(responseCode = "400", description = "Bad request"),
+			@ApiResponse(responseCode = "404", description = "Traits not found", content = @Content(schema = @Schema(implementation = String.class))) })
+	public Response getIbpActivity(
+			@Parameter(description = "Object Type", required = true) @PathParam("objectType") String objectType,
+			@Parameter(description = "Object ID", required = true) @PathParam("objectId") String objectId,
+			@Parameter(description = "Offset", example = "0") @DefaultValue("0") @QueryParam("offset") String offset,
+			@Parameter(description = "Limit", example = "10") @DefaultValue("10") @QueryParam("limit") String limit) {
 		try {
 			Long id = Long.parseLong(objectId);
 			ActivityResult activityResult = service.fetchActivityIbp(objectType, id, offset, limit);
-			return Response.status(Status.OK).entity(activityResult).build();
-
+			return Response.status(Response.Status.OK).entity(activityResult).build();
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).build();
+			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
 	}
 
 	@POST
 	@Path(ApiConstants.LOG)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "Logs activity", notes = "Return the activity", response = Activity.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Unable to post the data", response = String.class) })
-
+	@Operation(summary = "Logs activity", requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = ActivityLoggingData.class))), responses = {
+			@ApiResponse(responseCode = "200", description = "Activity logged", content = @Content(schema = @Schema(implementation = Activity.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to post the data", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response logActivity(@Context HttpServletRequest request,
-			@ApiParam(name = "activityLogging") ActivityLoggingData activityLogging) {
-
+			@Parameter(description = "Activity logging data", required = true) ActivityLoggingData activityLogging) {
 		try {
-
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Long userId = Long.parseLong(profile.getId());
 			Activity result = service.logActivities(request, userId, activityLogging);
-			return Response.status(Status.OK).entity(result).build();
-
+			return Response.status(Response.Status.OK).entity(result).build();
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
-
 	}
 
 	@POST
 	@Path(ApiConstants.SENDMAIL)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-
 	@ValidateUser
-
-	@ApiOperation(value = "sents out cumulative mail and notification for observation create", notes = "sents out mail and notification for observationCreate", response = String.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to send the mail", response = String.class) })
-
+	@Operation(summary = "Sends out cumulative mail and notification for observation create", requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = ActivityLoggingData.class))), responses = {
+			@ApiResponse(responseCode = "200", description = "Mail and notification sent", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to send the mail", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response sendMailCreateObservation(@Context HttpServletRequest request,
-			@ApiParam(name = "activityLogging") ActivityLoggingData activityLogging) {
+			@Parameter(description = "Activity logging data", required = true) ActivityLoggingData activityLogging) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Long userId = Long.parseLong(profile.getId());
 			String result = service.sendObvCreateMail(userId, activityLogging);
-			return Response.status(Status.OK).entity(result).build();
-
+			return Response.status(Response.Status.OK).entity(result).build();
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
 
 	@POST
 	@Path(ApiConstants.ADD + ApiConstants.COMMENT + "/{commentType}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "Adds a comment", notes = "Return the current activity", response = Activity.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Unable to log a comment", response = String.class) })
-
+	@Operation(summary = "Adds a comment", requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = CommentLoggingData.class))), responses = {
+			@ApiResponse(responseCode = "200", description = "Comment logged", content = @Content(schema = @Schema(implementation = Activity.class))),
+			@ApiResponse(responseCode = "406", description = "Blank Comment Not Allowed", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to log a comment", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response addComment(@Context HttpServletRequest request,
-			@ApiParam(name = "commentData") CommentLoggingData commentData,
-			@PathParam("commentType") String commentType) {
+			@Parameter(description = "Comment data", required = true) CommentLoggingData commentData,
+			@Parameter(description = "Comment type", required = true) @PathParam("commentType") String commentType) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Long userId = Long.parseLong(profile.getId());
 			if (commentData.getBody().trim().length() > 0) {
 				Activity result = service.addComment(request, userId, commentType, commentData);
-				return Response.status(Status.OK).entity(result).build();
+				return Response.status(Response.Status.OK).entity(result).build();
 			}
-			return Response.status(Status.NOT_ACCEPTABLE).entity("Blank Comment Not allowed").build();
+			return Response.status(Response.Status.NOT_ACCEPTABLE).entity("Blank Comment Not allowed").build();
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
 
 	@PUT
-	@Path(ApiConstants.DELETE + ApiConstants.COMMENT + "/{commentType}" + "/{commentId}")
+	@Path(ApiConstants.DELETE + ApiConstants.COMMENT + "/{commentType}/{commentId}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "Adds a comment", notes = "Return the current activity", response = Activity.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Unable to log a comment", response = String.class) })
-
+	@Operation(summary = "Deletes (removes) a comment", requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = CommentLoggingData.class))), responses = {
+			@ApiResponse(responseCode = "200", description = "Comment removed", content = @Content(schema = @Schema(implementation = Activity.class))),
+			@ApiResponse(responseCode = "406", description = "Blank Comment Not Allowed", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to remove a comment", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response deleteComment(@Context HttpServletRequest request,
-			@ApiParam(name = "commentData") CommentLoggingData commentData,
-			@PathParam("commentType") String commentType, @PathParam("commentId") String commentId) {
+			@Parameter(description = "Comment data", required = true) CommentLoggingData commentData,
+			@Parameter(description = "Comment type", required = true) @PathParam("commentType") String commentType,
+			@Parameter(description = "Comment id", required = true) @PathParam("commentId") String commentId) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Long userId = Long.parseLong(profile.getId());
 			if (commentData.getBody().trim().length() > 0) {
 				Activity result = service.removeComment(request, userId, commentType, commentData, commentId);
-				return Response.status(Status.OK).entity(result).build();
+				return Response.status(Response.Status.OK).entity(result).build();
 			}
-			return Response.status(Status.NOT_ACCEPTABLE).entity("Blank Comment Not allowed").build();
+			return Response.status(Response.Status.NOT_ACCEPTABLE).entity("Blank Comment Not allowed").build();
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
 
 	@POST
 	@Path(ApiConstants.LOG + ApiConstants.USERGROUP)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "logs userGroup Activity", notes = "Retruns the activity that is logged", response = Activity.class)
-	@ApiResponses(value = {
-
-			@ApiResponse(code = 400, message = "Unable to log the activity", response = String.class) })
-
+	@Operation(summary = "Logs userGroup Activity", requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = UserGroupActivityLogging.class))), responses = {
+			@ApiResponse(responseCode = "200", description = "Activity logged", content = @Content(schema = @Schema(implementation = Activity.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to log the activity", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response logUserGroupActivity(@Context HttpServletRequest request,
-			@ApiParam(name = "userGroupActivityLogging") UserGroupActivityLogging loggingData) {
+			@Parameter(description = "UserGroup activity logging", required = true) UserGroupActivityLogging loggingData) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Long userId = Long.parseLong(profile.getId());
 			Activity result = service.logUGActivities(userId, loggingData);
-			return Response.status(Status.OK).entity(result).build();
+			return Response.status(Response.Status.OK).entity(result).build();
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
 
 	@POST
 	@Path(ApiConstants.LOG + ApiConstants.DOCUMENT)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "log document activities", notes = "Return the activity logged", response = Activity.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to log the activity", response = String.class) })
-
+	@Operation(summary = "Log document activities", requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = DocumentActivityLogging.class))), responses = {
+			@ApiResponse(responseCode = "200", description = "Activity logged", content = @Content(schema = @Schema(implementation = Activity.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to log the activity", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response logDocumentActivity(@Context HttpServletRequest request,
-			@ApiParam(name = "loggingData") DocumentActivityLogging loggingData) {
+			@Parameter(description = "Document activity logging", required = true) DocumentActivityLogging loggingData) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Long userId = Long.parseLong(profile.getId());
 			Activity result = service.logDocActivities(request, userId, loggingData);
-			return Response.status(Status.OK).entity(result).build();
+			return Response.status(Response.Status.OK).entity(result).build();
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
 
 	@POST
 	@Path(ApiConstants.LOG + ApiConstants.PAGE)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "log page activities", notes = "Return the activity logged", response = Activity.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to log the activity", response = String.class) })
-
+	@Operation(summary = "Log page activities", requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = PageAcitvityLogging.class))), responses = {
+			@ApiResponse(responseCode = "200", description = "Activity logged", content = @Content(schema = @Schema(implementation = Activity.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to log the activity", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response logPageActivity(@Context HttpServletRequest request,
-			@ApiParam(name = "loggingData") PageAcitvityLogging loggingData) {
+			@Parameter(description = "Page activity logging", required = true) PageAcitvityLogging loggingData) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Long userId = Long.parseLong(profile.getId());
 			Activity result = service.logPageActivities(request, userId, loggingData);
-			return Response.status(Status.OK).entity(result).build();
+			return Response.status(Response.Status.OK).entity(result).build();
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
 
 	@POST
 	@Path(ApiConstants.LOG + ApiConstants.SPECIES)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "log species activities", notes = "Return the activity logged", response = Activity.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to log the activity", response = String.class) })
-
+	@Operation(summary = "Log species activities", requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = SpeciesActivityLogging.class))), responses = {
+			@ApiResponse(responseCode = "200", description = "Activity logged", content = @Content(schema = @Schema(implementation = Activity.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to log the activity", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response logSpeciesActivities(@Context HttpServletRequest request,
-			@ApiParam(name = "loggingData") SpeciesActivityLogging loggingData) {
+			@Parameter(description = "Species activity logging", required = true) SpeciesActivityLogging loggingData) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Long userId = Long.parseLong(profile.getId());
 			Activity result = service.logSpeciesActivities(request, userId, loggingData);
-			return Response.status(Status.OK).entity(result).build();
+			return Response.status(Response.Status.OK).entity(result).build();
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
 
 	@POST
 	@Path(ApiConstants.LOG + ApiConstants.TAXONOMY)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "log Taxonomy activities", notes = "Return the activity logged", response = Activity.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to log the activity", response = String.class) })
-
+	@Operation(summary = "Log Taxonomy activities", requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = TaxonomyActivityLogging.class))), responses = {
+			@ApiResponse(responseCode = "200", description = "Activity logged", content = @Content(schema = @Schema(implementation = Activity.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to log the activity", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response logTaxonomyActivities(@Context HttpServletRequest request,
-			@ApiParam(name = "loggingData") TaxonomyActivityLogging loggingData) {
+			@Parameter(description = "Taxonomy activity logging", required = true) TaxonomyActivityLogging loggingData) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Long userId = Long.parseLong(profile.getId());
 			Activity result = service.logTaxonomyActivities(request, userId, loggingData);
-			return Response.status(Status.OK).entity(result).build();
+			return Response.status(Response.Status.OK).entity(result).build();
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
 
 	@POST
 	@Path(ApiConstants.LOG + ApiConstants.CCA)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "log cca activities", notes = "Return the activity logged", response = Activity.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to log the activity", response = String.class) })
-
+	@Operation(summary = "Log CCA activities", requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = CCAActivityLogging.class))), responses = {
+			@ApiResponse(responseCode = "200", description = "Activity logged", content = @Content(schema = @Schema(implementation = Activity.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to log the activity", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response logCCAActivities(@Context HttpServletRequest request,
-			@ApiParam(name = "loggingData") CCAActivityLogging loggingData) {
+			@Parameter(description = "CCA activity logging", required = true) CCAActivityLogging loggingData) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Long userId = Long.parseLong(profile.getId());
 			Activity result = service.logCCAActivities(request, userId, loggingData);
-			return Response.status(Status.OK).entity(result).build();
+			return Response.status(Response.Status.OK).entity(result).build();
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
 
 	@POST
 	@Path(ApiConstants.LOG + ApiConstants.DATATABLE)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "log DataTable activities", notes = "Return the activity logged", response = Activity.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to log the activity", response = String.class) })
-
+	@Operation(summary = "Log DataTable activities", requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = DatatableActivityLogging.class))), responses = {
+			@ApiResponse(responseCode = "200", description = "Activity logged", content = @Content(schema = @Schema(implementation = Activity.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to log the activity", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response logDatatableActivities(@Context HttpServletRequest request,
-			@ApiParam(name = "loggingData") DatatableActivityLogging loggingData) {
+			@Parameter(description = "DataTable activity logging", required = true) DatatableActivityLogging loggingData) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Long userId = Long.parseLong(profile.getId());
 			Activity result = service.logDatatableActivities(request, userId, loggingData);
-			return Response.status(Status.OK).entity(result).build();
+			return Response.status(Response.Status.OK).entity(result).build();
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
 
 	@GET
 	@Path(ApiConstants.COUNT + "/{objectType}/{objectId}")
 	@Consumes(MediaType.TEXT_PLAIN)
-	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "Get activity count per objectid", notes = "Returns the activity count for the object", response = Integer.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Unable to get the count", response = String.class) })
-
-	public Response getActivityCount(@PathParam("objectType") String objectType,
-			@PathParam("objectId") String objectId) {
+	@Operation(summary = "Get activity count per objectid", responses = {
+			@ApiResponse(responseCode = "200", description = "Activity count", content = @Content(schema = @Schema(implementation = Integer.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to get the count", content = @Content(schema = @Schema(implementation = String.class))) })
+	public Response getActivityCount(
+			@Parameter(description = "Object Type", required = true) @PathParam("objectType") String objectType,
+			@Parameter(description = "Object ID", required = true) @PathParam("objectId") String objectId) {
 		try {
 			Long id = Long.parseLong(objectId);
 			Integer result = service.activityCount(objectType, id);
-			return Response.status(Status.OK).entity(result).build();
+			return Response.status(Response.Status.OK).entity(result).build();
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
 
 	@POST
 	@Path(ApiConstants.CCA + ApiConstants.REQUESTMAIL)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "Send permission request mail for cca", notes = "Generates and sends cca permission email to owner", response = Boolean.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "Unable to send cca permssion request mail", response = String.class) })
-
+	@Operation(summary = "Send permission request mail for CCA", requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = CcaPermission.class))), responses = {
+			@ApiResponse(responseCode = "200", description = "Permission request sent", content = @Content(schema = @Schema(implementation = Boolean.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to send cca permission request mail", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response ccaMailRequest(@Context HttpServletRequest request,
-			@ApiParam(name = "permissionReq") CcaPermission permissionReq) {
+			@Parameter(description = "Permission request data", required = true) CcaPermission permissionReq) {
 		try {
 			Boolean result = service.checkCCARequest(permissionReq);
-			return Response.status(Status.OK).entity(result).build();
+			return Response.status(Response.Status.OK).entity(result).build();
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
-
 	}
 
 	@GET
 	@Path(ApiConstants.CCA + ApiConstants.DOWNLOADMAIL + "/{fileName}/{type}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "Send download link mail for cca", notes = "Generates and sends cca download link email to user", response = Boolean.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "Unable to send cca download  mail", response = String.class) })
-
-	public Response ccaDownloadMail(@Context HttpServletRequest request, @PathParam("fileName") String fileName,
-			@PathParam("type") String type) {
+	@Operation(summary = "Send download link mail for CCA", responses = {
+			@ApiResponse(responseCode = "200", description = "Download link sent", content = @Content(schema = @Schema(implementation = Boolean.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to send cca download mail", content = @Content(schema = @Schema(implementation = String.class))) })
+	public Response ccaDownloadMail(@Context HttpServletRequest request,
+			@Parameter(description = "File name", required = true) @PathParam("fileName") String fileName,
+			@Parameter(description = "Type", required = true) @PathParam("type") String type) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			String userId = profile.getId();
 			Boolean result = service.sendDownloadLink(userId, fileName, type);
-
-			return Response.status(Status.OK).entity(result).build();
+			return Response.status(Response.Status.OK).entity(result).build();
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
-
 	}
 
 	@POST
 	@Path(ApiConstants.ODK + ApiConstants.SENDMAIL)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "Send email to ODK users", notes = "Generates emails for ODK users with their credentials", response = Boolean.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "Unable to send email to ODK users", response = String.class) })
-
+	@Operation(summary = "Send email to ODK users", requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = ODKMailData.class))), responses = {
+			@ApiResponse(responseCode = "200", description = "ODK mail sent", content = @Content(schema = @Schema(implementation = Boolean.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to send email to ODK users", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized") })
 	public Response odkUserMail(@Context HttpServletRequest request,
-			@ApiParam(name = "odkMailData") ODKMailData odkMailData) {
+			@Parameter(description = "ODK mail data", required = true) ODKMailData odkMailData) {
 		try {
-			Boolean result = false;
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			JSONArray roles = (JSONArray) profile.getAttribute("roles");
 			if (roles.contains("ROLE_ADMIN")) {
-				result = service.odkUserMail(odkMailData);
-				return Response.status(Status.OK).entity(result).build();
+				Boolean result = service.odkUserMail(odkMailData);
+				return Response.status(Response.Status.OK).entity(result).build();
 			}
-
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
-		return Response.status(Status.UNAUTHORIZED).build();
+		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}
 
 	@POST
 	@Path(ApiConstants.LOG + ApiConstants.CROPCERT)
-	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@ValidateUser
-	@ApiOperation(value = "Save the cropcert activity", response = Activity.class)
-	public Response save(@Context HttpServletRequest request, @ApiParam(name = "loggingData") Activity loggingData) {
-		Activity activity;
+	@Operation(summary = "Save the cropcert activity", requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = Activity.class))), responses = {
+			@ApiResponse(responseCode = "201", description = "Activity created", content = @Content(schema = @Schema(implementation = Activity.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to save the activity", content = @Content(schema = @Schema(implementation = String.class))) })
+	public Response save(@Context HttpServletRequest request,
+			@Parameter(description = "Cropcert activity logging", required = true) Activity loggingData) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Long userId = Long.parseLong(profile.getId());
-			activity = service.logCropcertActivities(request, userId, loggingData);
-			return Response.status(Status.CREATED).entity(activity).build();
+			Activity activity = service.logCropcertActivities(request, userId, loggingData);
+			return Response.status(Response.Status.CREATED).entity(activity).build();
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
-
 }

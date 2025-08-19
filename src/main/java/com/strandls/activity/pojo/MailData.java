@@ -12,9 +12,7 @@ public class MailData {
 	private CCAMailData ccaMailData;
 	private DataTableMailData dataTableMailData;
 
-	/**
-	 * 
-	 */
+	/** */
 	public MailData() {
 		super();
 	}
@@ -27,7 +25,7 @@ public class MailData {
 	 */
 	public MailData(ObservationMailData observationData, DocumentMailData documentMailData,
 			List<UserGroupMailData> userGroupData, SpeciesMailData speciesData, PageMailData pageMailData,
-			CCAMailData ccaMailData , DataTableMailData dataTableMailData) {
+			CCAMailData ccaMailData, DataTableMailData dataTableMailData) {
 		super();
 		this.observationData = observationData;
 		this.documentMailData = documentMailData;

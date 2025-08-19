@@ -1,11 +1,8 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.pojo;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class MailActivityData {
 
@@ -13,9 +10,7 @@ public class MailActivityData {
 	private String activityDescription;
 	private MailData mailData;
 
-	/**
-	 * 
-	 */
+	/** */
 	public MailActivityData() {
 		super();
 	}
@@ -55,5 +50,4 @@ public class MailActivityData {
 	public void setMailData(MailData mailData) {
 		this.mailData = mailData;
 	}
-
 }

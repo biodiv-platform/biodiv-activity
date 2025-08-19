@@ -1,11 +1,8 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.pojo;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class CoreActivityLoggingData {
 
@@ -16,9 +13,7 @@ public class CoreActivityLoggingData {
 	private Long activityId;
 	private String activityType;
 
-	/**
-	 * 
-	 */
+	/** */
 	public CoreActivityLoggingData() {
 		super();
 	}
@@ -88,5 +83,4 @@ public class CoreActivityLoggingData {
 	public void setActivityType(String activityType) {
 		this.activityType = activityType;
 	}
-
 }

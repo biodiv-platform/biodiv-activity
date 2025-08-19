@@ -1,6 +1,4 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.dao;
 
 import java.util.List;
@@ -11,14 +9,13 @@ import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-
 import com.strandls.activity.pojo.Activity;
 import com.strandls.activity.util.AbstractDAO;
 
+import jakarta.inject.Inject;
+
 /**
  * @author Abhishek Rudra
- *
  */
 public class ActivityDao extends AbstractDAO<Activity, Long> {
 
@@ -51,7 +48,8 @@ public class ActivityDao extends AbstractDAO<Activity, Long> {
 
 		String qry = "from Activity a where a.rootHolderType = :objectType and a.rootHolderId = :id"
 				+ " and (a.activityHolderId not in (select id from Comments c where c.rootHolderId = :id and c.rootHolderType = :objectType"
-				+ " and c.isDeleted = true)" + " or activityDescription = \'Deleted a comment\' or activityHolderId is null )"
+				+ " and c.isDeleted = true)"
+				+ " or activityDescription = \'Deleted a comment\' or activityHolderId is null )"
 				+ " order by a.lastUpdated desc";
 
 		Session session = sessionFactory.openSession();
@@ -128,5 +126,4 @@ public class ActivityDao extends AbstractDAO<Activity, Long> {
 
 		return result;
 	}
-
 }

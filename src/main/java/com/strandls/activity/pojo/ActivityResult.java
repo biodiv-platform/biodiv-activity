@@ -1,13 +1,10 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.pojo;
 
 import java.util.List;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class ActivityResult {
 
@@ -39,5 +36,4 @@ public class ActivityResult {
 	public void setCommentCount(Integer commentCount) {
 		this.commentCount = commentCount;
 	}
-
 }

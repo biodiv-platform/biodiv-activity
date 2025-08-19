@@ -1,6 +1,4 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.util;
 
 import java.util.ArrayList;
@@ -10,11 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.strandls.activity.RabbitMqConnection;
+import com.strandls.activity.service.impl.PropertyFileUtil;
 import com.strandls.mail_utility.model.EnumModel.CCA_DATA_PERMISSION_REQUEST;
 import com.strandls.mail_utility.model.EnumModel.DOWNLOAD_MAIL;
 import com.strandls.mail_utility.model.EnumModel.FIELDS;
@@ -22,15 +20,13 @@ import com.strandls.mail_utility.model.EnumModel.INFO_FIELDS;
 import com.strandls.mail_utility.model.EnumModel.MAIL_TYPE;
 import com.strandls.mail_utility.producer.RabbitMQProducer;
 import com.strandls.mail_utility.util.JsonUtil;
-import com.strandls.activity.RabbitMqConnection;
-import com.strandls.activity.service.impl.PropertyFileUtil;
 import com.strandls.user.controller.UserServiceApi;
 import com.strandls.user.pojo.User;
 
+import jakarta.inject.Inject;
+
 /**
  * @author Arun
- *
- * 
  */
 public class CCAMailUtils {
 
@@ -77,7 +73,6 @@ public class CCAMailUtils {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
-
 	}
 
 	public void sendMail(String authorId, String fileName, String type) {

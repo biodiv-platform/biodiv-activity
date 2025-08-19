@@ -1,13 +1,10 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author Abhishek Rudra
- *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CommentLoggingData {
@@ -20,9 +17,7 @@ public class CommentLoggingData {
 	private MailData mailData;
 	private Long languageId;
 
-	/**
-	 * 
-	 */
+	/** */
 	public CommentLoggingData() {
 		super();
 	}
@@ -103,5 +98,4 @@ public class CommentLoggingData {
 	public void setLanguageId(Long languageId) {
 		this.languageId = languageId;
 	}
-
 }

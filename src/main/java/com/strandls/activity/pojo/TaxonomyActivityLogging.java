@@ -1,18 +1,12 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.pojo;
 
 /**
  * @author Abhishek Rudra
- *
- * 
  */
 public class TaxonomyActivityLogging extends CoreActivityLoggingData {
 
-	/**
-	 * 
-	 */
+	/** */
 	public TaxonomyActivityLogging() {
 		super();
 	}
@@ -29,5 +23,4 @@ public class TaxonomyActivityLogging extends CoreActivityLoggingData {
 			String rootObjectType, Long activityId, String activityType) {
 		super(activityDescription, rootObjectId, subRootObjectId, rootObjectType, activityId, activityType);
 	}
-
 }

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author Arun
- *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ODKMailData {
@@ -14,10 +13,7 @@ public class ODKMailData {
 	private String role;
 	private String sUserId;
 
-	/**
-	 * 
-	 */
-
+	/** */
 	public ODKMailData() {
 		super();
 	}
@@ -29,7 +25,6 @@ public class ODKMailData {
 	 * @param role
 	 * @param sUserId
 	 */
-
 	public ODKMailData(String email, String username, String password, String projectId, String projectName,
 			String role, String sUserId) {
 		super();
@@ -79,5 +74,4 @@ public class ODKMailData {
 	public void setsUserId(String sUserId) {
 		this.sUserId = sUserId;
 	}
-
 }

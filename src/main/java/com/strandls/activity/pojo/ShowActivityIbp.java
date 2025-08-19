@@ -1,13 +1,10 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.pojo;
 
 import com.strandls.user.pojo.UserIbp;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class ShowActivityIbp {
 
@@ -18,9 +15,7 @@ public class ShowActivityIbp {
 	private RecoVoteActivity recoVote;
 	private UserIbp userIbp;
 
-	/**
-	 * 
-	 */
+	/** */
 	public ShowActivityIbp() {
 		super();
 	}
@@ -91,5 +86,4 @@ public class ShowActivityIbp {
 	public void setUserIbp(UserIbp userIbp) {
 		this.userIbp = userIbp;
 	}
-
 }

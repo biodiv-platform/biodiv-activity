@@ -1,31 +1,26 @@
-/**
- * 
- */
+/** */
 package com.strandls.activity.pojo;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
  * @author Abhishek Rudra
- *
  */
 @Entity
 @Table(name = "activity_feed")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Activity implements Serializable {
 
-	/**
-	 * 
-	 */
+	/** */
 	private static final long serialVersionUID = 7491402738483974055L;
 
 	private Long id;
@@ -42,9 +37,7 @@ public class Activity implements Serializable {
 	private String subRootHolderType;
 	private Boolean isShowable;
 
-	/**
-	 * 
-	 */
+	/** */
 	public Activity() {
 		super();
 	}
@@ -94,7 +87,7 @@ public class Activity implements Serializable {
 		this.id = id;
 	}
 
-	@Column(name = "activity_descrption", columnDefinition="text")
+	@Column(name = "activity_descrption", columnDefinition = "text")
 	public String getActivityDescription() {
 		return activityDescription;
 	}
