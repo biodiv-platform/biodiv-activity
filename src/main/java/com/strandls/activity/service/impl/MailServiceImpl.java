@@ -33,7 +33,6 @@ import com.strandls.activity.pojo.UserGroupMailData;
 import com.strandls.activity.service.MailService;
 import com.strandls.activity.util.ActivityUtil;
 import com.strandls.mail_utility.model.EnumModel.COMMENT_POST;
-import com.strandls.mail_utility.model.EnumModel.DOWNLOAD_MAIL;
 import com.strandls.mail_utility.model.EnumModel.FIELDS;
 import com.strandls.mail_utility.model.EnumModel.INFO_FIELDS;
 import com.strandls.mail_utility.model.EnumModel.MAIL_TYPE;

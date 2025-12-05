@@ -3,10 +3,8 @@
  */
 package com.strandls.activity.util;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -15,7 +13,6 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.strandls.mail_utility.model.EnumModel.CCA_DATA_PERMISSION_REQUEST;
 import com.strandls.mail_utility.model.EnumModel.DOWNLOAD_MAIL;
 import com.strandls.mail_utility.model.EnumModel.FIELDS;
 import com.strandls.mail_utility.model.EnumModel.INFO_FIELDS;
