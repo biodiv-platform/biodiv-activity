@@ -184,7 +184,7 @@ public class ActivityServiceImpl implements ActivityService {
 			Arrays.asList("Added species field", "Updated species field", "Deleted species field"));
 
 	List<String> speciesTaxonomyActivityList = new ArrayList<String>(
-			Arrays.asList("Added hierarchy", "Deleted hierarchy"));
+			Arrays.asList("Added hierarchy", "Deleted hierarchy", "Updated taxon ID"));
 
 	List<String> speciesTraitActivityList = new ArrayList<String>(Arrays.asList("Added a fact", "Updated fact"));
 
