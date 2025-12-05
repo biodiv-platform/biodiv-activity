@@ -33,6 +33,7 @@ import com.strandls.activity.pojo.UserGroupMailData;
 import com.strandls.activity.service.MailService;
 import com.strandls.activity.util.ActivityUtil;
 import com.strandls.mail_utility.model.EnumModel.COMMENT_POST;
+import com.strandls.mail_utility.model.EnumModel.DOWNLOAD_MAIL;
 import com.strandls.mail_utility.model.EnumModel.FIELDS;
 import com.strandls.mail_utility.model.EnumModel.INFO_FIELDS;
 import com.strandls.mail_utility.model.EnumModel.MAIL_TYPE;
@@ -188,10 +189,22 @@ public class MailServiceImpl implements MailService {
 				} else {
 					for (Recipients recipient : recipientsList) {
 						User follower = userService.getUser(String.valueOf(recipient.getId()));
-						data = prepareMailData(type, recipient, follower, who, reco, userGroup, activity, comment, name,
-								activity.getMailData(), groups,
-								linkTaggedUsers != null && !linkTaggedUsers.isEmpty() ? linkTaggedUsers
-										: comment != null && !comment.getBody().isEmpty() ? comment.getBody() : "");
+						if (type == MAIL_TYPE.DOWNLOAD_MAIL) {
+							data.put(FIELDS.TO.getAction(), new String[] { recipient.getEmail() });
+							data.put(FIELDS.SUBSCRIPTION.getAction(), recipient.getIsSubscribed());
+							Map<String, Object> model = new HashMap<String, Object>();
+							model.put(DOWNLOAD_MAIL.SERVER_URL.getAction(), serverUrl);
+							model.put(DOWNLOAD_MAIL.SITENAME.getAction(), siteName);
+							model.put(DOWNLOAD_MAIL.USER_DATA.getAction(), recipient);
+							model.put(DOWNLOAD_MAIL.DOWNLOAD_TYPE.getAction(), type);
+							model.put(DOWNLOAD_MAIL.TYPE.getAction(), MAIL_TYPE.DOWNLOAD_MAIL.getAction());
+							data.put(FIELDS.DATA.getAction(), JsonUtil.unflattenJSON(model));
+						} else {
+							data = prepareMailData(type, recipient, follower, who, reco, userGroup, activity, comment,
+									name, activity.getMailData(), groups,
+									linkTaggedUsers != null && !linkTaggedUsers.isEmpty() ? linkTaggedUsers
+											: comment != null && !comment.getBody().isEmpty() ? comment.getBody() : "");
+						}
 						if (recipient.getEmail() != null && !recipient.getEmail().isEmpty()) {
 							mailDataList.add(data);
 						}
