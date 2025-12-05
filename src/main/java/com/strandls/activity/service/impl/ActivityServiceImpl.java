@@ -97,7 +97,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 	@Inject
 	private CCAMailUtils ccaMailutils;
-	
+
 	@Inject
 	private DownloadMailUtils downloadMailutils;
 
@@ -1245,7 +1245,7 @@ public class ActivityServiceImpl implements ActivityService {
 		ccaMailutils.sendMail(authorId, fileName, type);
 		return true;
 	}
-	
+
 	@Override
 	public Boolean sendSpeciesDownloadLink(String authorId, String fileName, String type) {
 		downloadMailutils.sendMail(authorId, fileName, type);

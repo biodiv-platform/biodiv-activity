@@ -404,7 +404,7 @@ public class ActivityController {
 		}
 
 	}
-	
+
 	@GET
 	@Path(ApiConstants.SPECIES + ApiConstants.DOWNLOADMAIL + "/{fileName}/{type}")
 	@Consumes(MediaType.APPLICATION_JSON)
