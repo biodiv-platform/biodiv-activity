@@ -355,6 +355,29 @@ public class ActivityController {
 		}
 	}
 
+	@GET
+	@Path(ApiConstants.SPECIES + ApiConstants.DOWNLOADMAIL + "/{fileName}/{type}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ApiOperation(value = "Send download link mail for cca", notes = "Generates and sends cca download link email to user", response = Boolean.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 400, message = "Unable to send cca download  mail", response = String.class) })
+
+	public Response speciesDownloadMail(@Context HttpServletRequest request, @PathParam("fileName") String fileName,
+			@PathParam("type") String type) {
+		try {
+			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+			String userId = profile.getId();
+			Boolean result = service.sendSpeciesDownloadLink(userId, fileName, type);
+
+			return Response.status(Status.OK).entity(result).build();
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+
+	}
+
 	@POST
 	@Path(ApiConstants.ODK + ApiConstants.SENDMAIL)
 	@Consumes(MediaType.APPLICATION_JSON)

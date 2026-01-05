@@ -58,4 +58,7 @@ public interface ActivityService {
 	public Boolean odkUserMail(ODKMailData odkMail);
 
 	public Activity logCropcertActivities(HttpServletRequest request, Long userId, Activity loggingData);
+
+	public Boolean sendSpeciesDownloadLink(String userId, String fileName, String type);
+
 }

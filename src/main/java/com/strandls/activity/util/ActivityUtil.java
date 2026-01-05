@@ -309,6 +309,10 @@ public class ActivityUtil {
 			data.put("type", MAIL_TYPE.PAGE_DELETED);
 			data.put("text", "Page Deleted");
 			break;
+		case "Updated taxon ID":
+			data.put("type", MAIL_TYPE.SPECIES_UPDATED);
+			data.put("text", "Updated taxon ID");
+			break;
 		default:
 			data.put("type", null);
 			break;
