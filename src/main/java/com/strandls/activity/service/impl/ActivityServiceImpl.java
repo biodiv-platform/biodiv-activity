@@ -196,12 +196,12 @@ public class ActivityServiceImpl implements ActivityService {
 			Arrays.asList("Deleted synonym", "Deleted common name"));
 
 	List<String> taxonomyCommonNameActivityList = new ArrayList<String>(
-			Arrays.asList("Added common name", "Updated common name"));
+			Arrays.asList("Added common name", "Updated common name", "Transferred common name"));
 
 	List<String> taxonomyTaxDefActivityList = new ArrayList<String>(
-			Arrays.asList("Taxon name updated", "Taxon created", "Taxon position updated", "Taxon status updated"));
+			Arrays.asList("Taxon name updated", "Taxon created", "Taxon position updated", "Taxon status updated", "Taxon hierarchy edited", "Taxon rank updated"));
 
-	List<String> taxonomySynonymActivityList = new ArrayList<String>(Arrays.asList("Added synonym", "Updated synonym"));
+	List<String> taxonomySynonymActivityList = new ArrayList<String>(Arrays.asList("Added synonym", "Updated synonym", "Transferred synonynm"));
 
 	List<String> taxonomyCommentActivityList = new ArrayList<>(Arrays.asList(newComment));
 
