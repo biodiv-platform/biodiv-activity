@@ -46,6 +46,7 @@ import com.strandls.activity.service.NotificationService;
 import com.strandls.activity.util.ActivityUtil;
 import com.strandls.activity.util.CCAMailUtils;
 import com.strandls.activity.util.CCARoles;
+import com.strandls.activity.util.DownloadMailUtils;
 import com.strandls.activity.util.ODKMailUtils;
 import com.strandls.mail_utility.model.EnumModel.MAIL_TYPE;
 import com.strandls.mail_utility.model.EnumModel.OBJECT_TYPE;
@@ -93,6 +94,9 @@ public class ActivityServiceImpl implements ActivityService {
 
 	@Inject
 	private CCAMailUtils ccaMailutils;
+
+	@Inject
+	private DownloadMailUtils downloadMailutils;
 
 	@Inject
 	private ODKMailUtils odkMailutils;
@@ -177,7 +181,7 @@ public class ActivityServiceImpl implements ActivityService {
 			Arrays.asList("Added species field", "Updated species field", "Deleted species field"));
 
 	List<String> speciesTaxonomyActivityList = new ArrayList<String>(
-			Arrays.asList("Added hierarchy", "Deleted hierarchy"));
+			Arrays.asList("Added hierarchy", "Deleted hierarchy", "Updated taxon ID"));
 
 	List<String> speciesTraitActivityList = new ArrayList<String>(Arrays.asList("Added a fact", "Updated fact"));
 
@@ -1224,6 +1228,12 @@ public class ActivityServiceImpl implements ActivityService {
 	@Override
 	public Boolean sendDownloadLink(String authorId, String fileName, String type) {
 		ccaMailutils.sendMail(authorId, fileName, type);
+		return true;
+	}
+
+	@Override
+	public Boolean sendSpeciesDownloadLink(String authorId, String fileName, String type) {
+		downloadMailutils.sendMail(authorId, fileName, type);
 		return true;
 	}
 
