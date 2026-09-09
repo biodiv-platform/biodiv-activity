@@ -8,6 +8,8 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.rabbitmq.client.Channel;
+import com.strandls.activity.RabbitChannelProvider;
 import com.strandls.activity.RabbitMqConnection;
 import com.strandls.activity.service.impl.PropertyFileUtil;
 import com.strandls.mail_utility.model.EnumModel.FIELDS;
@@ -26,7 +28,7 @@ public class ODKMailUtils {
 	private final Logger logger = LoggerFactory.getLogger(CCAMailUtils.class);
 
 	@Inject
-	private RabbitMQProducer mailProducer;
+	private RabbitChannelProvider channelProvider;
 
 	@Inject
 	private UserServiceApi userServiceApi;
@@ -58,7 +60,9 @@ public class ODKMailUtils {
 			mData.put(INFO_FIELDS.TYPE.getAction(), MAIL_TYPE.ODK_USER_EMAIL.getAction());
 			mData.put(INFO_FIELDS.RECIPIENTS.getAction(), Arrays.asList(data));
 			if (user.getEmail() != null && !user.getEmail().isEmpty()) {
-				mailProducer.produceMail(RabbitMqConnection.EXCHANGE, RabbitMqConnection.ROUTING_KEY, null,
+				Channel channel = channelProvider.get();
+				RabbitMQProducer producer = new RabbitMQProducer(channel);
+				producer.produceMail(RabbitMqConnection.EXCHANGE, RabbitMqConnection.ROUTING_KEY, null,
 						JsonUtil.mapToJSON(mData));
 			}
 		} catch (Exception e) {

@@ -13,12 +13,14 @@ import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.rabbitmq.client.Channel;
 import com.strandls.mail_utility.model.EnumModel.DOWNLOAD_MAIL;
 import com.strandls.mail_utility.model.EnumModel.FIELDS;
 import com.strandls.mail_utility.model.EnumModel.INFO_FIELDS;
 import com.strandls.mail_utility.model.EnumModel.MAIL_TYPE;
 import com.strandls.mail_utility.producer.RabbitMQProducer;
 import com.strandls.mail_utility.util.JsonUtil;
+import com.strandls.activity.RabbitChannelProvider;
 import com.strandls.activity.RabbitMqConnection;
 import com.strandls.activity.service.impl.PropertyFileUtil;
 import com.strandls.user.controller.UserServiceApi;
@@ -27,14 +29,14 @@ import com.strandls.user.pojo.User;
 /**
  * @author Mekala Rishitha Ravi
  *
- * 
+ *
  */
 public class DownloadMailUtils {
 
 	private final Logger logger = LoggerFactory.getLogger(CCAMailUtils.class);
 
 	@Inject
-	private RabbitMQProducer mailProducer;
+	private RabbitChannelProvider channelProvider;
 
 	@Inject
 	private UserServiceApi userServiceApi;
@@ -62,7 +64,9 @@ public class DownloadMailUtils {
 			mData.put(INFO_FIELDS.TYPE.getAction(), MAIL_TYPE.DOWNLOAD_MAIL.getAction());
 			mData.put(INFO_FIELDS.RECIPIENTS.getAction(), Arrays.asList(data));
 			if (user.getEmail() != null && !user.getEmail().isEmpty()) {
-				mailProducer.produceMail(RabbitMqConnection.EXCHANGE, RabbitMqConnection.ROUTING_KEY, null,
+				Channel channel = channelProvider.get();
+				RabbitMQProducer producer = new RabbitMQProducer(channel);
+				producer.produceMail(RabbitMqConnection.EXCHANGE, RabbitMqConnection.ROUTING_KEY, null,
 						JsonUtil.mapToJSON(mData));
 			}
 		} catch (Exception e) {

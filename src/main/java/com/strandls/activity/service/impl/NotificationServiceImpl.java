@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.rabbitmq.client.Channel;
+import com.strandls.activity.RabbitChannelProvider;
 import com.strandls.activity.RabbitMqConnection;
 import com.strandls.activity.pojo.MailActivityData;
 import com.strandls.activity.pojo.ObservationMailData;
@@ -26,7 +27,7 @@ public class NotificationServiceImpl implements NotificationService {
 	private final Logger logger = LoggerFactory.getLogger(NotificationServiceImpl.class);
 
 	@Inject
-	private Channel channel;
+	private RabbitChannelProvider channelProvider;
 
 	@Inject
 	private UserServiceApi userService;
@@ -55,10 +56,11 @@ public class NotificationServiceImpl implements NotificationService {
 				notification.put(NOTIFICATION_DATA.ICON.getAction(), resourceUrl + image);
 			}
 			data.put(NOTIFICATION_FIELDS.NOTIFICATION.getAction(), JsonUtil.unflattenJSON(notification));
+			Channel channel = channelProvider.get();
+			RabbitMQProducer producer = new RabbitMQProducer(channel);
 			for (Recipients recipient : recipients) {
 				for (String token : recipient.getTokens()) {
 					data.put(NOTIFICATION_FIELDS.TO.getAction(), token);
-					RabbitMQProducer producer = new RabbitMQProducer(channel);
 					producer.produceNotification(RabbitMqConnection.EXCHANGE,
 							RabbitMqConnection.NOTIFICATION_ROUTING_KEY, null, JsonUtil.mapToJSON(data));
 				}
