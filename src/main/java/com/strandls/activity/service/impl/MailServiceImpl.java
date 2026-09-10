@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rabbitmq.client.Channel;
+import com.strandls.activity.RabbitChannelProvider;
 import com.strandls.activity.RabbitMqConnection;
 import com.strandls.activity.pojo.CCAMailData;
 import com.strandls.activity.pojo.CommentLoggingData;
@@ -53,7 +55,7 @@ public class MailServiceImpl implements MailService {
 	private String serverUrl = "";
 
 	@Inject
-	private RabbitMQProducer producer;
+	private RabbitChannelProvider channelProvider;
 
 	@Inject
 	private UserServiceApi userService;
@@ -128,6 +130,8 @@ public class MailServiceImpl implements MailService {
 					mailData.put(INFO_FIELDS.OBJECT_TYPE.getAction(), recordsType.getAction());
 				}
 				mailData.put(INFO_FIELDS.RECIPIENTS.getAction(), mailDataList);
+				Channel channel = channelProvider.get();
+				RabbitMQProducer producer = new RabbitMQProducer(channel);
 				producer.produceMail(RabbitMqConnection.EXCHANGE, RabbitMqConnection.ROUTING_KEY, null,
 						JsonUtil.mapToJSON(mailData));
 			} else {
@@ -201,6 +205,8 @@ public class MailServiceImpl implements MailService {
 					mailData.put(INFO_FIELDS.OBJECT_TYPE.getAction(), recordsType.getAction());
 				}
 				mailData.put(INFO_FIELDS.RECIPIENTS.getAction(), mailDataList);
+				Channel channel = channelProvider.get();
+				RabbitMQProducer producer = new RabbitMQProducer(channel);
 				producer.produceMail(RabbitMqConnection.EXCHANGE, RabbitMqConnection.ROUTING_KEY, null,
 						JsonUtil.mapToJSON(mailData));
 			}
