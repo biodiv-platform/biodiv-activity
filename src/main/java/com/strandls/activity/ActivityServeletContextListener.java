@@ -81,7 +81,7 @@ public class ActivityServeletContextListener extends GuiceServletContextListener
 				try {
 					rabbitConnection = rabbitMqConnection.connect();
 				} catch (Exception e) {
-					logger.error("Failed to establish RabbitMQ connection", e);
+					logger.error("[biodiv-activity] Failed to establish RabbitMQ connection", e);
 				}
 
 				bind(Connection.class).toInstance(rabbitConnection);
